@@ -1,0 +1,32 @@
+{
+  "theme_color": "#9aa7fe",
+  "background_color": "#9aa7fe",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "dnd-6-frontend",
+  "description": "\ud589\uc0ac \uc0ac\uc9c4 \uc5c5\ub85c\ub4dc \uc11c\ube44\uc2a4",
+  "short_name": "\uc6b0\ub2f9\ud0d5",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

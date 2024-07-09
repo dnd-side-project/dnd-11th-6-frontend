@@ -1,23 +1,26 @@
-import styled from "styled-components";
-
-interface ButtonProps {
-  primary?: boolean;
-}
-
-const Button = styled.button<ButtonProps>`
-  background-color: ${(props) =>
-    props.primary ? props.theme.colors.blue : props.theme.colors.purple};
-  color: ${(props) => props.theme.colors.white};
-  border: 2px solid;
-  padding: 10px 20px;
-  cursor: pointer;
-`;
+import Button from '@/components/Button'
 
 export default function Home() {
   return (
     <div>
-      <Button primary>Primary</Button>
-      <Button>Secondary</Button>
+      <Button
+        width="150px"
+        height="30px"
+        bgColor="orange"
+        textColor="white"
+        fontSize="16px"
+      >
+        하이하이
+      </Button>
+      <Button
+        width="150px"
+        height="30px"
+        bgColor="purple"
+        textColor="white"
+        fontSize="16px"
+      >
+        바이바이
+      </Button>
     </div>
-  );
+  )
 }

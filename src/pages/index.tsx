@@ -1,13 +1,14 @@
 import styled from "styled-components";
 
-type ButtonProps = {
+interface ButtonProps {
   primary?: boolean;
-};
+}
 
 const Button = styled.button<ButtonProps>`
-  background-color: ${(props) => (props.primary ? "blue" : "white")};
-  color: ${(props) => (props.primary ? "white" : "blue")};
-  border: 2px solid blue;
+  background-color: ${(props) =>
+    props.primary ? props.theme.colors.blue : props.theme.colors.purple};
+  color: ${(props) => props.theme.colors.white};
+  border: 2px solid;
   padding: 10px 20px;
   cursor: pointer;
 `;

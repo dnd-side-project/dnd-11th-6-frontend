@@ -1,6 +1,6 @@
-import withPWA from "next-pwa";
+import withPWA from 'next-pwa'
 
 export default withPWA({
-  dest: "public",
+  dest: 'public',
   disable: false,
-});
+})

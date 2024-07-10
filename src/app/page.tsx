@@ -1,10 +1,20 @@
+'use client'
+
 import Button from '@/components/Button/Button'
+import useStore from '@/state/useStore'
 
 export default function Home() {
+  const { count, increment, decrement } = useStore()
+
   return (
     <div>
-      <Button bgColor="bg-blue-500">Blue Button</Button>
-      <Button bgColor="bg-red-500">Red Button</Button>
+      <h1>Count: {count}</h1>
+      <Button bgColor="bg-blue-500" onClick={increment}>
+        Increment
+      </Button>
+      <Button bgColor="bg-red-500" onClick={decrement}>
+        Decrement
+      </Button>
     </div>
   )
 }

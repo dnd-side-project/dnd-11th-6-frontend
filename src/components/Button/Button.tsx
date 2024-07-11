@@ -7,7 +7,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   borderColor?: string
   textColor?: string
   fontSize?: string
-  type?: 'button' | 'submit' | 'reset'
 }
 
 function Button({
@@ -19,14 +18,15 @@ function Button({
   borderColor = 'border-white',
   textColor = 'text-black',
   fontSize = 'text-base',
-  type = 'button',
-  ...rest
+  disabled,
+  onClick,
 }: ButtonProps) {
   return (
     <button
-      type={type}
+      type="button"
       className={`cursor-pointer inline-flex justify-center items-center ${width} ${height} ${bgColor} border ${borderColor} rounded ${textColor} ${fontSize} ${className}`}
-      {...rest}
+      disabled={disabled}
+      onClick={onClick}
     >
       {children}
     </button>
@@ -41,7 +41,6 @@ Button.defaultProps = {
   borderColor: 'border-white',
   textColor: 'text-black',
   fontSize: 'text-base',
-  type: 'button',
 }
 
 export default Button

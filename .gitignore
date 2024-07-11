@@ -17,13 +17,13 @@
 /build
 
 # public build files
-/public/sw.js
+/public/sw*.js
 /public/sw.js.map
 /public/workbox-*.js
 /public/workerbox-*.js.map
 
 # pnpm lock file
-pnpm-lock.yaml
+pnpm-lock*.yaml
 
 # misc
 .DS_Store

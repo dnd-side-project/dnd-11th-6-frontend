@@ -1,0 +1,27 @@
+{
+  "theme_color": "#9aa7fe",
+  "background_color": "#9aa7fe",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "dnd-6-frontend",
+  "description": "행사 사진 업로드 서비스",
+  "short_name": "우당탕탕",
+  "icons": [
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

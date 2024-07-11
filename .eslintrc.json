@@ -57,5 +57,5 @@
       }
     ]
   },
-  "ignorePatterns": ["public/**/*.js"]
+  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"]
 }

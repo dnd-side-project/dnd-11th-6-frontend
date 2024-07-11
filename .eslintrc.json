@@ -10,8 +10,9 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
+  "plugins": ["react"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "jsx-props-no-spreading": "on"
+    "react/jsx-props-no-spreading": "error"
   }
 }

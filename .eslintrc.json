@@ -3,16 +3,59 @@
     "next/core-web-vitals",
     "airbnb",
     "airbnb-typescript",
-    "prettier"
+    "prettier",
+    "plugin:import/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json",
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": ["react", "import"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "react/jsx-props-no-spreading": "error"
-  }
+    "react/jsx-props-no-spreading": "error",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "type",
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "unknown"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react*",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@hooks/",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@pages/",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@components/*",
+            "group": "internal",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["@tanstack*"],
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ]
+  },
+  "ignorePatterns": ["public/**/*.js"]
 }

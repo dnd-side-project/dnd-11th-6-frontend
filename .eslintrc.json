@@ -4,14 +4,18 @@
     "airbnb",
     "airbnb-typescript",
     "prettier",
-    "plugin:import/recommended"
+    "plugin:import/recommended",
+    "plugin:storybook/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json",
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": ["react", "import"],
+  "plugins": [
+    "react",
+    "import"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "error",
@@ -50,12 +54,18 @@
             "position": "after"
           }
         ],
-        "pathGroupsExcludedImportTypes": ["@tanstack*"],
+        "pathGroupsExcludedImportTypes": [
+          "@tanstack*"
+        ],
         "alphabetize": {
           "order": "asc"
         }
       }
     ]
   },
-  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"]
+  "ignorePatterns": [
+    "public/**/*.js",
+    "jest.config.js",
+    "jest.setup.js"
+  ]
 }

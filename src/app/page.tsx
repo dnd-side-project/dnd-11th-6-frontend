@@ -1,20 +1,31 @@
-'use client'
+import Image from 'next/image'
+import Link from 'next/link'
+import SearchForm from '@/components/Form/Search/SearchForm'
 
-import Button from '@/components/Button/Button'
-import useStore from '@/state/useStore'
-
-export default function Home() {
-  const { count, increment, decrement } = useStore()
-
+function Home() {
   return (
-    <div>
-      <h1>Count: {count}</h1>
-      <Button bgColor="bg-blue-500" onClick={increment}>
-        Increment
-      </Button>
-      <Button bgColor="bg-red-500" onClick={decrement}>
-        Decrement
-      </Button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mb-2">
+            <Image src="/favicon.ico" alt="Logo" width={40} height={40} />
+          </div>
+        </div>
+
+        <SearchForm />
+
+        <div className="text-center">
+          <p className="mb-4">직접 모임을 만들어보시겠어요?</p>
+          <Link
+            href="/create-album"
+            className="inline-block w-full py-3 bg-gray-200 text-gray-700 rounded-md text-center"
+          >
+            모임 앨범 만들기 &gt;
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
+
+export default Home

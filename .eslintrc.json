@@ -12,13 +12,16 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": [
-    "react",
-    "import"
-  ],
+  "plugins": ["react", "import"],
   "rules": {
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        "some": ["nesting", "id"]
+      }
+    ],
+    "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
-    "react/jsx-props-no-spreading": "error",
     "import/order": [
       "error",
       {
@@ -54,18 +57,12 @@
             "position": "after"
           }
         ],
-        "pathGroupsExcludedImportTypes": [
-          "@tanstack*"
-        ],
+        "pathGroupsExcludedImportTypes": ["@tanstack*"],
         "alphabetize": {
           "order": "asc"
         }
       }
     ]
   },
-  "ignorePatterns": [
-    "public/**/*.js",
-    "jest.config.js",
-    "jest.setup.js"
-  ]
+  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"]
 }

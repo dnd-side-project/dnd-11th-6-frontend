@@ -8,7 +8,6 @@ function PasswordInput({ onPasswordSubmit }: PasswordInputProps) {
   return (
     <div className="w-full">
       <div className="flex justify-center">
-        {' '}
         <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mb-12">
           <Image src="/favicon.ico" alt="Logo" width={40} height={40} />
         </div>

@@ -15,7 +15,6 @@ function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
   return (
     <div className="w-full">
       <div className="flex justify-center">
-        {' '}
         <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mb-12">
           <Image src="/favicon.ico" alt="Logo" width={40} height={40} />
         </div>
@@ -31,7 +30,6 @@ function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
         />
         {isAdminChecked && (
           <>
-            {' '}
             <p className="mb-4">관리자 인증키를 입력해주세요.</p>
             <input
               type="password"
@@ -39,7 +37,7 @@ function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
               className="w-full p-3 border border-gray-300 rounded-md mb-4"
             />
           </>
-        )}{' '}
+        )}
         <button
           type="submit"
           className="w-full bg-black text-white py-3 rounded-md relative"

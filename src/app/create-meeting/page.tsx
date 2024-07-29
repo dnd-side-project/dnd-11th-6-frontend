@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import * as z from 'zod'
 
-const CreateAlbumSchema = z
+const CreateMeetingSchema = z
   .object({
     name: z.string().min(1, { message: '모임 이름을 입력해주세요.' }),
     description: z.string().min(1, { message: '모임 설명을 입력해주세요.' }),
@@ -28,7 +28,7 @@ const CreateAlbumSchema = z
     },
   )
 
-type FormData = z.infer<typeof CreateAlbumSchema>
+type FormData = z.infer<typeof CreateMeetingSchema>
 
 function CreateMeetingForm() {
   const {
@@ -37,7 +37,7 @@ function CreateMeetingForm() {
     formState: { errors, isValid },
     watch,
   } = useForm<FormData>({
-    resolver: zodResolver(CreateAlbumSchema),
+    resolver: zodResolver(CreateMeetingSchema),
     defaultValues: {
       name: '',
       description: '',

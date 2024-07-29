@@ -1,10 +1,17 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 
-function SearchForm() {
+interface SearchFormProps {
+  redirectTo: string
+}
+
+function SearchForm({ redirectTo }: SearchFormProps) {
+  const router = useRouter()
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    router.push(redirectTo)
   }
 
   return (

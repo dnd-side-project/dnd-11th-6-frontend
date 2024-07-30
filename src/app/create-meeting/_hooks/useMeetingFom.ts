@@ -4,6 +4,7 @@ import { CreateMeetingSchema, MeetingFormModel } from '@/lib/meetingSchema'
 
 function useMeetingForm() {
   const [step, setStep] = useState(1)
+  const [pin, setPin] = useState<string>('')
 
   const meetingForm = useZodForm<MeetingFormModel>(CreateMeetingSchema, {
     mode: 'onChange',
@@ -44,11 +45,15 @@ function useMeetingForm() {
       if (isStep2Valid) {
         setStep(3)
       }
-    } else {
+    } else if (step === 3) {
       const { password } = passwordForm.getValues()
       const allData = { ...data, password }
       console.log('Meeting created with password:', allData)
       // Here you would typically send the data to your backend
+    } else {
+      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
+      setPin(generatedPin)
+      setStep(4)
     }
   }
 
@@ -56,6 +61,7 @@ function useMeetingForm() {
     meetingForm,
     passwordForm,
     step,
+    pin,
     setStep,
     onSubmit,
   }

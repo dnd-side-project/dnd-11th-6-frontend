@@ -5,7 +5,7 @@ import MeetingInfo from './MeetingInfo'
 import NicknameInput from './NicknameInput'
 import PasswordInput from './PasswordInput'
 
-function MeetingEntry() {
+function EntryMeeting() {
   const [page, setPage] = useState('info')
 
   const renderPage = () => {
@@ -28,4 +28,4 @@ function MeetingEntry() {
   return <div className="flex flex-col items-center">{renderPage()}</div>
 }
 
-export default MeetingEntry
+export default EntryMeeting

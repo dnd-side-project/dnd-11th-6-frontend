@@ -6,6 +6,7 @@ import RenderStep1 from './_components/RenderStep1'
 import RenderStep2 from './_components/RenderStep2'
 import RenderStep3 from './_components/RenderStep3'
 import RenderStep4 from './_components/RenderStep4'
+import RenderStep5 from './_components/RenderStep5'
 import useMeetingForm from './_hooks/useMeetingFom'
 
 const stepTitles = {
@@ -13,6 +14,7 @@ const stepTitles = {
   2: '모임 테마',
   3: '비밀번호 설정',
   4: '관리자 PIN 안내',
+  5: ' 모임 생성 완료',
 }
 
 function CreateMeetingPage() {
@@ -20,6 +22,14 @@ function CreateMeetingPage() {
 
   const handleSubmit = (data: Partial<MeetingFormModel>) => {
     onSubmit(data as MeetingFormModel)
+  }
+
+  const handleShareMeeting = () => {
+    console.log('Share meeting')
+  }
+
+  const handleGoToMyMeeting = () => {
+    console.log('Go to my meeting')
   }
 
   const renderStep = () => {
@@ -32,6 +42,13 @@ function CreateMeetingPage() {
         return <RenderStep3 form={meetingForm} onSubmit={handleSubmit} />
       case 4:
         return <RenderStep4 pin={pin} onNext={() => setStep(5)} />
+      case 5:
+        return (
+          <RenderStep5
+            onShareMeeting={handleShareMeeting}
+            onGoToMyMeeting={handleGoToMyMeeting}
+          />
+        )
       default:
         return null
     }

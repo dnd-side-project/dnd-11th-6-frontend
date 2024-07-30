@@ -48,12 +48,12 @@ function useMeetingForm() {
     } else if (step === 3) {
       const { password } = passwordForm.getValues()
       const allData = { ...data, password }
-      console.log('Meeting created with password:', allData)
-      // Here you would typically send the data to your backend
-    } else {
       const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
       setPin(generatedPin)
       setStep(4)
+      console.log(allData)
+    } else if (step === 4) {
+      setStep(5)
     }
   }
 

@@ -10,6 +10,7 @@ export const CreateMeetingSchema = z
     endDate: z.string().optional(),
     photo: z.string().optional(),
     color: z.string().optional(),
+    password: z.string().min(6, '비밀번호는 최소 6자리 이상이어야 합니다.'),
   })
   .refine(
     (data) => {

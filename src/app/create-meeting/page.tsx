@@ -18,7 +18,7 @@ const stepTitles = {
   2: '모임 테마',
   3: '비밀번호 설정',
   4: '관리자 PIN 안내',
-  5: ' 모임 생성 완료',
+  5: '',
 }
 
 function CreateMeetingPage() {
@@ -45,6 +45,12 @@ function CreateMeetingPage() {
     console.log('Go to my meeting')
   }
 
+  const handleGoBack = () => {
+    if (step > 1 && step < 5) {
+      setStep(step - 1)
+    }
+  }
+
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -69,9 +75,20 @@ function CreateMeetingPage() {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">
-        {stepTitles[step as keyof typeof stepTitles]}
-      </h1>
+      <div className="flex gap-4 ">
+        <button
+          type="button"
+          onClick={handleGoBack}
+          className={`text-2xl mr-4 ${step === 1 || step === 5 ? 'invisible' : ''}`}
+          disabled={step === 1 || step === 5}
+        >
+          &lt;
+        </button>
+        <h1 className="text-2xl font-bold mb-4 m-auto">
+          {stepTitles[step as keyof typeof stepTitles]}
+        </h1>
+      </div>
+
       {renderStep()}
     </div>
   )

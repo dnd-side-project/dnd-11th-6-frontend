@@ -32,7 +32,7 @@ function MeetingInfo({ onEnterClick }: MeetingInfoProps) {
           직접 모임을 만들어보시겠어요?
         </p>
         <Link
-          href="/create-album"
+          href="/create-meeting"
           className="inline-block w-[353px] py-3 bg-gray-200 text-gray-700 rounded-md text-center"
         >
           모임 앨범 만들기 &gt;

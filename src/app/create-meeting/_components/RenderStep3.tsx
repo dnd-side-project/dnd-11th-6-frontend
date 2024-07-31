@@ -1,13 +1,14 @@
 import React from 'react'
 import FormInput from '@/components/Form/Input/FormInput'
-import { Step3Props } from '@/types/meetingStep'
+import useMeetingForm from '../_hooks/useMeetingFom'
 
-function RenderStep3({ form, onSubmit }: Step3Props) {
+function RenderStep3() {
+  const { passwordForm, onSubmit } = useMeetingForm()
   const {
     control,
     formState: { errors, isValid },
     handleSubmit,
-  } = form
+  } = passwordForm
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

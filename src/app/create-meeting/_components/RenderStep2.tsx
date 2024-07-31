@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { Step2Props } from '@/types/meetingStep'
+import useMeetingForm from '../_hooks/useMeetingFom'
 
-function RenderStep2({ form, onSubmit }: Step2Props) {
+function RenderStep2() {
+  const { themeForm, onSubmit } = useMeetingForm()
   const {
     control,
     formState: { errors },
     handleSubmit,
-  } = form
-
+  } = themeForm
   const [isView, setIsView] = useState<boolean>(false)
 
   return (

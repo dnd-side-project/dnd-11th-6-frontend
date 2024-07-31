@@ -2,15 +2,16 @@
 
 import React from 'react'
 import { Controller } from 'react-hook-form'
-import { Step1Props } from '@/types/meetingStep'
+import useMeetingForm from '../_hooks/useMeetingFom'
 
-function RenderStep1({ form, onSubmit }: Step1Props) {
+function RenderStep1() {
+  const { meetingForm, onSubmit } = useMeetingForm()
   const {
     control,
     formState: { errors, isValid },
     watch,
     handleSubmit,
-  } = form
+  } = meetingForm
   const isRecurring = watch('isRecurring')
 
   return (

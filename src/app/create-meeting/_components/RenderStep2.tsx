@@ -1,7 +1,7 @@
 import { Controller } from 'react-hook-form'
-import { StepProps } from '@/types/meetingStep'
+import { Step2Props } from '@/types/meetingStep'
 
-function RenderStep2({ form, onSubmit }: StepProps) {
+function RenderStep2({ form, onSubmit }: Step2Props) {
   const {
     control,
     formState: { errors },

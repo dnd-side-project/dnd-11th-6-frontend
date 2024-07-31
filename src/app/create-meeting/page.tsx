@@ -1,7 +1,11 @@
 'use client'
 
 import React from 'react'
-import { MeetingFormModel } from '@/lib/meetingSchema'
+import {
+  MeetingFormModel,
+  PasswordFormModel,
+  ThemeFormModel,
+} from '@/lib/meetingSchema'
 import RenderStep1 from './_components/RenderStep1'
 import RenderStep2 from './_components/RenderStep2'
 import RenderStep3 from './_components/RenderStep3'
@@ -18,10 +22,19 @@ const stepTitles = {
 }
 
 function CreateMeetingPage() {
-  const { meetingForm, step, onSubmit, pin, setStep } = useMeetingForm()
+  const { meetingForm, passwordForm, themeForm, step, onSubmit, pin, setStep } =
+    useMeetingForm()
 
-  const handleSubmit = (data: Partial<MeetingFormModel>) => {
-    onSubmit(data as MeetingFormModel)
+  const handleStep1Submit = (data: MeetingFormModel) => {
+    onSubmit(data)
+  }
+
+  const handleStep2Submit = (data: ThemeFormModel) => {
+    onSubmit(data)
+  }
+
+  const handleStep3Submit = (data: PasswordFormModel) => {
+    onSubmit(data)
   }
 
   const handleShareMeeting = () => {
@@ -35,11 +48,11 @@ function CreateMeetingPage() {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <RenderStep1 form={meetingForm} onSubmit={handleSubmit} />
+        return <RenderStep1 form={meetingForm} onSubmit={handleStep1Submit} />
       case 2:
-        return <RenderStep2 form={meetingForm} onSubmit={handleSubmit} />
+        return <RenderStep2 form={themeForm} onSubmit={handleStep2Submit} />
       case 3:
-        return <RenderStep3 form={meetingForm} onSubmit={handleSubmit} />
+        return <RenderStep3 form={passwordForm} onSubmit={handleStep3Submit} />
       case 4:
         return <RenderStep4 pin={pin} onNext={() => setStep(5)} />
       case 5:

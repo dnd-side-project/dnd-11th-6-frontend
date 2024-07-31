@@ -1,8 +1,8 @@
 import React from 'react'
 import FormInput from '@/components/Form/Input/FormInput'
-import { StepProps } from '@/types/meetingStep'
+import { Step3Props } from '@/types/meetingStep'
 
-function RenderStep3({ form, onSubmit }: StepProps) {
+function RenderStep3({ form, onSubmit }: Step3Props) {
   const {
     control,
     formState: { errors, isValid },

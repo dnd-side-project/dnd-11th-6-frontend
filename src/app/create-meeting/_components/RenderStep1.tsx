@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { Controller } from 'react-hook-form'
-import { StepProps } from '@/types/meetingStep'
+import { Step1Props } from '@/types/meetingStep'
 
-function RenderStep1({ form, onSubmit }: StepProps) {
+function RenderStep1({ form, onSubmit }: Step1Props) {
   const {
     control,
     formState: { errors, isValid },
@@ -12,6 +12,7 @@ function RenderStep1({ form, onSubmit }: StepProps) {
     handleSubmit,
   } = form
   const isRecurring = watch('isRecurring')
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-4">
@@ -89,25 +90,6 @@ function RenderStep1({ form, onSubmit }: StepProps) {
         )}
       </div>
 
-      <div className="mb-4">
-        <Controller
-          name="isRecurring"
-          control={control}
-          render={({ field: { onChange, value, ref } }) => (
-            <label htmlFor="isRecurring" className="flex items-center">
-              <input
-                id="isRecurring"
-                type="checkbox"
-                onChange={onChange}
-                checked={value}
-                ref={ref}
-                className="mr-2"
-              />
-              <span>종료일 설정하기</span>
-            </label>
-          )}
-        />
-      </div>
       {isRecurring && (
         <div className="mb-4">
           <label htmlFor="endDate" className="block font-bold mb-2">
@@ -131,8 +113,28 @@ function RenderStep1({ form, onSubmit }: StepProps) {
         </div>
       )}
 
+      <div className="mb-4">
+        <Controller
+          name="isRecurring"
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <label htmlFor="isRecurring" className="flex items-center">
+              <input
+                id="isRecurring"
+                type="checkbox"
+                onChange={onChange}
+                checked={value}
+                ref={ref}
+                className="mr-2"
+              />
+              <span>종료일 설정하기</span>
+            </label>
+          )}
+        />
+      </div>
+
       <p className="text-sm text-gray-500 mb-4">
-        링크는 {isRecurring ? '종료일' : 'yyyy.mm.dd'} 까지 유효합니다.
+        링크는 {isRecurring ? watch('endDate') : '24시간 이내'} 까지 유효합니다.
       </p>
 
       <button

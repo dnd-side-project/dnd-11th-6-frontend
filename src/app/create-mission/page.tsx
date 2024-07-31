@@ -2,41 +2,59 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import MissionRoulette from '@/components/Roulette/Roulette'
+import useMissionStore from '@/stores/useMissionStore'
 
-type MissionType = 'random' | 'group'
+const missions = [
+  '여기에서 제일 연장자 찾기',
+  '여기에서 제일 막내 찾기',
+  '옆 사람 어깨 주물러주기',
+  '옆 사람에게 칭찬 해주기',
+  '지금 기분을 춤으로 표현하기',
+  '가장 좋아하는 음식 말하기',
+  '최근에 본 영화 추천하기',
+  '1분 동안 눈 안 깜빡이고 있기',
+  '좋아하는 노래 한 소절 부르기',
+  '짝꿍과 손잡고 1분 동안 있기',
+]
 
 function MissionCreationPage() {
-  const [missionType, setMissionType] = useState<MissionType>('random')
-  const [missions, setMissions] = useState<string[]>([])
-  const [newMission, setNewMission] = useState<string>('')
+  const { missionType, setMissionType } = useMissionStore()
+  const [isSpinning, setIsSpinning] = useState(false)
   const [selectedMission, setSelectedMission] = useState<string | null>(null)
+  const [visibleMissions, setVisibleMissions] = useState<string[]>([
+    '?',
+    '?',
+    '?',
+  ])
 
-  const handleAddMission = () => {
-    if (newMission.trim()) {
-      setMissions([...missions, newMission.trim()])
-      setNewMission('')
-    }
-  }
-
-  const handleRemoveMission = (index: number) => {
-    setMissions(missions.filter((_, i) => i !== index))
-  }
-
-  const handleMissionStop = (mission: string) => {
-    setSelectedMission(mission)
-  }
-
-  const handleSubmit = () => {
-    if (missionType === 'random') {
-      // 랜덤 미션 시작
-    } else {
-      // 모임 미션 시작
-    }
+  const startSpinning = () => {
+    setIsSpinning(true)
+    setSelectedMission(null)
+    let counter = 0
+    const spinInterval = setInterval(() => {
+      setVisibleMissions((prevMissions) => {
+        const newMissions = [...prevMissions]
+        newMissions.pop()
+        newMissions.unshift(
+          missions[Math.floor(Math.random() * missions.length)],
+        )
+        return newMissions
+      })
+      counter++
+      if (counter >= 30) {
+        // 약 3초 동안 회전
+        clearInterval(spinInterval)
+        setIsSpinning(false)
+        const randomMission =
+          missions[Math.floor(Math.random() * missions.length)]
+        setSelectedMission(randomMission)
+        setVisibleMissions([randomMission, '?', '?'])
+      }
+    }, 100)
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen ">
       <header className="bg-white p-4 flex items-center justify-between shadow-md">
         <Link href="/" className="text-2xl">
           &lt;
@@ -48,77 +66,61 @@ function MissionCreationPage() {
       <div className="flex justify-center p-4 bg-white">
         <button
           type="button"
-          className={`px-4 py-2 rounded-l-full ${missionType === 'random' ? 'bg-black text-white' : 'bg-gray-200'}`}
+          className={`px-4 py-2 rounded-l-full ${
+            missionType === 'random' ? 'bg-black text-white' : 'bg-gray-200'
+          }`}
           onClick={() => setMissionType('random')}
         >
           랜덤 미션
         </button>
         <button
           type="button"
-          className={`px-4 py-2 rounded-r-full ${missionType === 'group' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          onClick={() => setMissionType('group')}
+          className={`px-4 py-2 rounded-r-full ${
+            missionType === 'select' ? 'bg-black text-white' : 'bg-gray-200'
+          }`}
+          onClick={() => setMissionType('select')}
         >
           모임 미션
         </button>
       </div>
 
-      {missions.length > 0 && (
-        <div className="p-4">
-          <MissionRoulette missions={missions} onStop={handleMissionStop} />
-        </div>
-      )}
-
-      {selectedMission && (
-        <div className="p-4 bg-green-100 text-green-800 text-center">
-          선택된 미션: {selectedMission}
-        </div>
-      )}
-
-      <div className="flex-grow p-4 overflow-y-auto">
-        {missions.map((mission, index) => (
+      <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-300">
+        <div className="w-64 h-64 mb-8 overflow-hidden">
           <div
-            key={index}
-            className="bg-white p-4 mb-2 rounded-lg shadow flex justify-between items-center"
+            className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
           >
-            <span>{mission}</span>
-            <button
-              type="button"
-              onClick={() => handleRemoveMission(index)}
-              className="text-red-500"
-            >
-              삭제
-            </button>
+            {visibleMissions.map((mission, index) => (
+              <div
+                key={index}
+                className="w-full h-64 bg-white shadow-md rounded-lg flex items-center justify-center p-4 text-center mb-4"
+              >
+                <p className="text-lg font-semibold">{mission}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <div className="p-4 bg-white border-t">
-        <div className="flex">
-          <input
-            type="text"
-            value={newMission}
-            onChange={(e) => setNewMission(e.target.value)}
-            placeholder="여기에 제일 연장자 찍기"
-            className="flex-grow p-2 border rounded-l-lg"
-          />
-          <button
-            type="button"
-            onClick={handleAddMission}
-            className="bg-gray-200 px-4 py-2 rounded-r-lg"
-          >
-            추가
-          </button>
         </div>
       </div>
-
-      <div className="p-4">
+      <div className="flex space-x-4">
         <button
           type="button"
-          onClick={handleSubmit}
-          className="w-full bg-black text-white p-3 rounded-lg"
+          onClick={startSpinning}
+          disabled={isSpinning}
+          className="px-6 py-2 bg-blue-500 text-white rounded-full disabled:bg-gray-400"
         >
-          {missionType === 'random' ? '미션 뽑기' : '미션 수행하기'}
+          {isSpinning ? '돌리는 중...' : '룰렛 돌리기'}
         </button>
+        {selectedMission && (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedMission(null)
+              setVisibleMissions(['?', '?', '?'])
+            }}
+            className="px-6 py-2 bg-green-500 text-white rounded-full"
+          >
+            미션 수행하기
+          </button>
+        )}
       </div>
     </div>
   )

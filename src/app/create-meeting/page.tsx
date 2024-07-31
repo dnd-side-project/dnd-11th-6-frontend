@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import useMeetStore from '@/stores/useMeetStrore'
+import useMeetStore from '@/stores/useMeetStore'
 import RenderStep1 from './_components/RenderStep1'
 import RenderStep2 from './_components/RenderStep2'
 import RenderStep3 from './_components/RenderStep3'

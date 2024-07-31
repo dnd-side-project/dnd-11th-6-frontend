@@ -7,7 +7,7 @@ import {
   ThemeFormModel,
   ThemeSchema,
 } from '@/lib/meetingSchema'
-import useMeetStore from '@/stores/useMeetStrore'
+import useMeetStore from '@/stores/useMeetStore'
 
 function useMeetingForm() {
   const { step, setStep, setPin } = useMeetStore()

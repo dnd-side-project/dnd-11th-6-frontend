@@ -1,5 +1,5 @@
 import React from 'react'
-import useMeetStore from '@/stores/useMeetStrore'
+import useMeetStore from '@/stores/useMeetStore'
 
 function RenderStep4() {
   const { pin, setStep } = useMeetStore()

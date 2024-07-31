@@ -67,5 +67,13 @@
       }
     ]
   },
-  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"]
+  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"],
+  "overrides": [
+    {
+      "files": ["*.stories.tsx", "*.stories.jsx"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
 }

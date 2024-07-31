@@ -1,10 +1,6 @@
-'use client'
-
-import { useParams } from 'next/navigation'
-
-function MeetingPage() {
-  const params = useParams()
+function MeetingPage({ params }: { params: { meetingId: string } }) {
   const meetingId = params.meetingId as string
+
   const photos = [
     { id: '1', name: 'photo1' },
     { id: '2', name: 'photo2' },

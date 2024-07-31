@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 
 interface RenderStep4Props {
   pin: string
@@ -12,14 +11,6 @@ function RenderStep4({ pin, onNext }: RenderStep4Props) {
       <p className="text-lg mb-4">관리자 등록을 위해 다음의 PIN이 필요해요!</p>
       <div className="bg-gray-100 rounded-lg p-6 mb-4 relative">
         <span className="text-4xl font-bold">{pin}</span>
-        <div className="absolute bottom-2 right-2">
-          <Image
-            src="/path-to-your-logo.png"
-            alt="Logo"
-            width={24}
-            height={24}
-          />
-        </div>
       </div>
       <button
         type="button"

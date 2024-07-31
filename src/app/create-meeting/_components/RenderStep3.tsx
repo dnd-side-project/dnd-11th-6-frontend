@@ -11,7 +11,6 @@ function RenderStep3({ form, onSubmit }: Step3Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h2 className="text-xl font-bold mb-4">비밀번호 설정</h2>
       <FormInput
         name="password"
         control={control}

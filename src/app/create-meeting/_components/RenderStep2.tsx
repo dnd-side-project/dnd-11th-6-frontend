@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { Step2Props } from '@/types/meetingStep'
 
@@ -7,6 +8,8 @@ function RenderStep2({ form, onSubmit }: Step2Props) {
     formState: { errors },
     handleSubmit,
   } = form
+
+  const [isView, setIsView] = useState<boolean>(false)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -20,32 +23,29 @@ function RenderStep2({ form, onSubmit }: Step2Props) {
               <button
                 type="button"
                 className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mb-2 cursor-pointer"
-                onClick={() => console.log('Open photo picker')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    console.log('Open photo picker')
-                  }
-                }}
+                onClick={() => setIsView((prev) => !prev)}
               >
                 <span className="text-4xl text-gray-400">+</span>
               </button>
-              <div className="bg-gray-700 text-white p-2 rounded-md text-center">
-                <button
-                  type="button"
-                  className="w-full text-left"
-                  onClick={() => console.log('Open photo gallery')}
-                >
-                  사진 보관함
-                </button>
-                <button
-                  type="button"
-                  className="w-full text-left"
-                  onClick={() => console.log('Open camera')}
-                >
-                  사진찍기
-                </button>
-              </div>
-              <input type="hidden" {...field} />
+              {isView && (
+                <div className="bg-gray-700 text-white p-2 rounded-md text-center">
+                  <button
+                    type="button"
+                    className="w-full text-left"
+                    onClick={() => alert('사진 보관함')}
+                  >
+                    사진 보관함
+                  </button>
+                  <button
+                    type="button"
+                    className="w-full text-left"
+                    onClick={() => alert('사진찍기')}
+                  >
+                    사진찍기
+                  </button>
+                  <input type="hidden" {...field} />
+                </div>
+              )}
             </div>
           )}
         />
@@ -75,11 +75,6 @@ function RenderStep2({ form, onSubmit }: Step2Props) {
                   className={`w-16 h-16 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${field.value === color ? 'ring-2 ring-offset-2 ring-black' : ''}`}
                   style={{ backgroundColor: color }}
                   onClick={() => field.onChange(color)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      field.onChange(color)
-                    }
-                  }}
                   aria-label={`Select ${color} color`}
                 />
               ))}

@@ -1,11 +1,8 @@
 import React from 'react'
+import useMeetStore from '@/stores/useMeetStrore'
 
-interface RenderStep4Props {
-  pin: string
-  onNext: () => void
-}
-
-function RenderStep4({ pin, onNext }: RenderStep4Props) {
+function RenderStep4() {
+  const { pin, setStep } = useMeetStore()
   return (
     <div className="flex flex-col items-center">
       <p className="text-lg mb-4">관리자 등록을 위해 다음의 PIN이 필요해요!</p>
@@ -14,7 +11,7 @@ function RenderStep4({ pin, onNext }: RenderStep4Props) {
       </div>
       <button
         type="button"
-        onClick={onNext}
+        onClick={() => setStep(5)}
         className="w-full p-3 bg-gray-300 text-black rounded-md"
       >
         복사하기
@@ -24,7 +21,7 @@ function RenderStep4({ pin, onNext }: RenderStep4Props) {
       </p>
       <button
         type="button"
-        onClick={onNext}
+        onClick={() => setStep(5)}
         className="w-full p-3 mt-4 bg-black text-white rounded-md"
       >
         다음으로

@@ -2,12 +2,12 @@
 
 import React from 'react'
 
+import useMeetStore from '@/stores/useMeetStrore'
 import RenderStep1 from './_components/RenderStep1'
 import RenderStep2 from './_components/RenderStep2'
 import RenderStep3 from './_components/RenderStep3'
 import RenderStep4 from './_components/RenderStep4'
 import RenderStep5 from './_components/RenderStep5'
-import useMeetingForm from './_hooks/useMeetingFom'
 
 const stepTitles = {
   1: '모임 정보 입력하기',
@@ -18,7 +18,7 @@ const stepTitles = {
 }
 
 function CreateMeetingPage() {
-  const { step, pin, setStep } = useMeetingForm()
+  const { step, setStep } = useMeetStore()
 
   const handleShareMeeting = () => {
     console.log('Share meeting')
@@ -43,7 +43,7 @@ function CreateMeetingPage() {
       case 3:
         return <RenderStep3 />
       case 4:
-        return <RenderStep4 pin={pin} onNext={() => setStep(5)} />
+        return <RenderStep4 />
       case 5:
         return (
           <RenderStep5

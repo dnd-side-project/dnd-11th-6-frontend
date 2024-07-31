@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import useZodForm from '@/hooks/useZodForm'
 import {
   MeetingFormModel,
@@ -8,10 +7,10 @@ import {
   ThemeFormModel,
   ThemeSchema,
 } from '@/lib/meetingSchema'
+import useMeetStore from '@/stores/useMeetStrore'
 
 function useMeetingForm() {
-  const [step, setStep] = useState(1)
-  const [pin, setPin] = useState<string>('')
+  const { step, setStep, setPin } = useMeetStore()
 
   const meetingForm = useZodForm<MeetingFormModel>(MeetingSchema, {
     mode: 'onChange',
@@ -76,9 +75,6 @@ function useMeetingForm() {
     meetingForm,
     themeForm,
     passwordForm,
-    step,
-    pin,
-    setStep,
     onSubmit,
   }
 }

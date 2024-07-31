@@ -1,5 +1,12 @@
+import { useEffect } from 'react'
+import useMeetingStore from '@/stores/useMeetingStore'
+
 function MeetingPage({ params }: { params: { meetingId: string } }) {
-  const meetingId = params.meetingId as string
+  const { meetingId, setMeetingId } = useMeetingStore()
+
+  useEffect(() => {
+    setMeetingId(params.meetingId)
+  }, [params.meetingId, setMeetingId])
 
   const photos = [
     { id: '1', name: 'photo1' },

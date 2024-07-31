@@ -40,9 +40,8 @@ function MissionCreationPage() {
         )
         return newMissions
       })
-      counter++
+      counter += 1
       if (counter >= 30) {
-        // 약 3초 동안 회전
         clearInterval(spinInterval)
         setIsSpinning(false)
         const randomMission =
@@ -53,9 +52,18 @@ function MissionCreationPage() {
     }, 100)
   }
 
+  const selectMission = (mission: string) => {
+    setSelectedMission(mission)
+  }
+
+  const performMission = () => {
+    setSelectedMission(null)
+    setVisibleMissions(['?', '?', '?'])
+  }
+
   return (
-    <div className="flex flex-col min-h-screen ">
-      <header className="bg-white p-4 flex items-center justify-between shadow-md">
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-white p-4 flex items-center justify-between ">
         <Link href="/" className="text-2xl">
           &lt;
         </Link>
@@ -66,57 +74,85 @@ function MissionCreationPage() {
       <div className="flex justify-center p-4 bg-white">
         <button
           type="button"
-          className={`px-4 py-2 rounded-l-full ${
-            missionType === 'random' ? 'bg-black text-white' : 'bg-gray-200'
-          }`}
-          onClick={() => setMissionType('random')}
+          className={`px-4 py-2 rounded-l-full ${missionType === 'random' ? 'bg-black text-white' : 'bg-gray-200'}`}
+          onClick={() => {
+            setMissionType('random')
+            setSelectedMission(null)
+          }}
         >
           랜덤 미션
         </button>
         <button
           type="button"
-          className={`px-4 py-2 rounded-r-full ${
-            missionType === 'select' ? 'bg-black text-white' : 'bg-gray-200'
-          }`}
-          onClick={() => setMissionType('select')}
+          className={`px-4 py-2 rounded-r-full ${missionType === 'select' ? 'bg-black text-white' : 'bg-gray-200'}`}
+          onClick={() => {
+            setMissionType('select')
+            setSelectedMission(null)
+          }}
         >
           모임 미션
         </button>
       </div>
 
       <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-300">
-        <div className="w-64 h-64 mb-8 overflow-hidden">
-          <div
-            className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
-          >
-            {visibleMissions.map((mission, index) => (
-              <div
+        {missionType === 'random' ? (
+          <div className="w-64 h-64 mb-8 overflow-hidden">
+            <div
+              className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
+            >
+              {visibleMissions.map((mission, index) => (
+                <div
+                  key={index}
+                  className="w-full h-64 bg-white shadow-md rounded-lg flex items-center justify-center p-4 text-center mb-4"
+                >
+                  <p className="text-lg font-semibold">{mission}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="w-full max-w-md">
+            {missions.map((mission, index) => (
+              <button
+                type="button"
                 key={index}
-                className="w-full h-64 bg-white shadow-md rounded-lg flex items-center justify-center p-4 text-center mb-4"
+                className={`w-full p-4 bg-white mb-2 rounded-lg cursor-pointer ${selectedMission === mission ? ' cursor-pointer bg-red-200' : ''}`}
+                onClick={() => selectMission(mission)}
               >
-                <p className="text-lg font-semibold">{mission}</p>
-              </div>
+                {mission}
+              </button>
             ))}
           </div>
-        </div>
+        )}
       </div>
-      <div className="flex space-x-4">
-        <button
-          type="button"
-          onClick={startSpinning}
-          disabled={isSpinning}
-          className="px-6 py-2 bg-blue-500 text-white rounded-full disabled:bg-gray-400"
-        >
-          {isSpinning ? '돌리는 중...' : '룰렛 돌리기'}
-        </button>
-        {selectedMission && (
+
+      <div className="flex justify-center space-x-4 p-4">
+        {missionType === 'random' ? (
+          <>
+            <button
+              type="button"
+              onClick={startSpinning}
+              disabled={isSpinning}
+              className="px-6 py-2 bg-blue-500 text-white rounded-full disabled:bg-gray-400"
+            >
+              {isSpinning ? '돌리는 중...' : '룰렛 돌리기'}
+            </button>
+            {selectedMission && (
+              <button
+                type="button"
+                onClick={performMission}
+                className="px-6 py-2 bg-green-500 text-white rounded-full"
+              >
+                미션 수행하기
+              </button>
+            )}
+          </>
+        ) : (
           <button
             type="button"
-            onClick={() => {
-              setSelectedMission(null)
-              setVisibleMissions(['?', '?', '?'])
-            }}
-            className="px-6 py-2 bg-green-500 text-white rounded-full"
+            onClick={performMission}
+            disabled={!selectedMission}
+            className="px-6 py-2 bg-green-500 text-white rounded-full disabled:bg-gray-400"
           >
             미션 수행하기
           </button>

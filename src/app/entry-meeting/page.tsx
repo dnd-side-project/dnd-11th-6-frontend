@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import MeetingInfo from './_components/MeetingInfo'
-import NicknameInput from './_components/NicknameInput'
-import PasswordInput from './_components/PasswordInput'
+import { MeetingInfo, NicknameInput, PasswordInput } from './_components'
 
 function EntryMeeting() {
   const [page, setPage] = useState('info')

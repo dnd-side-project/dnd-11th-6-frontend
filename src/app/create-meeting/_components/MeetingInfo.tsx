@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { Controller } from 'react-hook-form'
-import useMeetingForm from '../_hooks/useMeetingFom'
+import useMeetingForm from '../_hooks/useMeetingForm'
 
-function RenderStep1() {
+function MeetingInfo() {
   const { meetingForm, onSubmit } = useMeetingForm()
   const {
     control,
@@ -149,4 +149,4 @@ function RenderStep1() {
   )
 }
 
-export default RenderStep1
+export default MeetingInfo

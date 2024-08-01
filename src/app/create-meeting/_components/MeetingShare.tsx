@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface RenderStep5Props {
+interface MeetingShareProps {
   onShareMeeting: () => void
   onGoToMyMeeting: () => void
 }
 
-function RenderStep5({ onShareMeeting, onGoToMyMeeting }: RenderStep5Props) {
+function MeetingShare({ onShareMeeting, onGoToMyMeeting }: MeetingShareProps) {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-2xl font-bold mb-4">모임이 생성되었어요</h2>
@@ -31,4 +31,4 @@ function RenderStep5({ onShareMeeting, onGoToMyMeeting }: RenderStep5Props) {
   )
 }
 
-export default RenderStep5
+export default MeetingShare

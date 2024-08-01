@@ -1,8 +1,8 @@
 import React from 'react'
 import FormInput from '@/components/Form/Input/FormInput'
-import useMeetingForm from '../_hooks/useMeetingFom'
+import useMeetingForm from '../_hooks/useMeetingForm'
 
-function RenderStep3() {
+function MeetingPassword() {
   const { passwordForm, onSubmit } = useMeetingForm()
   const {
     control,
@@ -35,4 +35,4 @@ function RenderStep3() {
   )
 }
 
-export default RenderStep3
+export default MeetingPassword

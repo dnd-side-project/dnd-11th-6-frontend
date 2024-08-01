@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Controller } from 'react-hook-form'
-import useMeetingForm from '../_hooks/useMeetingFom'
+import useMeetingForm from '../_hooks/useMeetingForm'
 
-function RenderStep2() {
+function MeetingTheme() {
   const { themeForm, onSubmit } = useMeetingForm()
   const {
     control,
@@ -96,4 +96,4 @@ function RenderStep2() {
   )
 }
 
-export default RenderStep2
+export default MeetingTheme

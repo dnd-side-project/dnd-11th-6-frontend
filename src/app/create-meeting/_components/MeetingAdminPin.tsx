@@ -1,7 +1,7 @@
 import React from 'react'
 import useMeetStore from '@/stores/useMeetStore'
 
-function RenderStep4() {
+function MeetingAdminPin() {
   const { pin, setStep } = useMeetStore()
   return (
     <div className="flex flex-col items-center">
@@ -30,4 +30,4 @@ function RenderStep4() {
   )
 }
 
-export default RenderStep4
+export default MeetingAdminPin

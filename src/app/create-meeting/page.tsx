@@ -3,11 +3,13 @@
 import React from 'react'
 
 import useMeetStore from '@/stores/useMeetStore'
-import RenderStep1 from './_components/RenderStep1'
-import RenderStep2 from './_components/RenderStep2'
-import RenderStep3 from './_components/RenderStep3'
-import RenderStep4 from './_components/RenderStep4'
-import RenderStep5 from './_components/RenderStep5'
+import {
+  MeetingAdminPin,
+  MeetingInfo,
+  MeetingPassword,
+  MeetingShare,
+  MeetingTheme,
+} from './_components'
 
 const stepTitles = {
   1: '모임 정보 입력하기',
@@ -37,16 +39,16 @@ function CreateMeetingPage() {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <RenderStep1 />
+        return <MeetingInfo />
       case 2:
-        return <RenderStep2 />
+        return <MeetingTheme />
       case 3:
-        return <RenderStep3 />
+        return <MeetingPassword />
       case 4:
-        return <RenderStep4 />
+        return <MeetingAdminPin />
       case 5:
         return (
-          <RenderStep5
+          <MeetingShare
             onShareMeeting={handleShareMeeting}
             onGoToMyMeeting={handleGoToMyMeeting}
           />

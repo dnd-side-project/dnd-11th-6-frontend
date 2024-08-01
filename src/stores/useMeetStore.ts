@@ -1,16 +1,16 @@
 import { create } from 'zustand'
 
-type MeetState = {
+interface MeetState {
   step: number
   pin: string
 }
 
-type MeetActions = {
+interface MeetActions {
   setStep: (step: number) => void
   setPin: (pin: string) => void
 }
 
-type MeetStore = MeetState & MeetActions
+interface MeetStore extends MeetState, MeetActions {}
 
 const useMeetStore = create<MeetStore>((set) => ({
   step: 1,

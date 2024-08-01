@@ -2,12 +2,17 @@ import { create } from 'zustand'
 
 interface MissionState {
   missionType: 'random' | 'select'
-  setMissionType: (type: 'random' | 'select') => void
   currentMission: string | null
+}
+
+interface MissionActions {
+  setMissionType: (type: 'random' | 'select') => void
   setCurrentMission: (mission: string | null) => void
 }
 
-const useMissionStore = create<MissionState>((set) => ({
+interface MissionStore extends MissionState, MissionActions {}
+
+const useMissionStore = create<MissionStore>((set) => ({
   missionType: 'random',
   setMissionType: (type) => set({ missionType: type }),
   currentMission: null,

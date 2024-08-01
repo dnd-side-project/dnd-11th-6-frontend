@@ -5,12 +5,17 @@ interface Photo {
   url: string
 }
 
-interface MeetingStore {
+interface MeetingState {
   meetingId: string
   photos: Photo[]
+}
+
+interface MeetingActions {
   setMeetingId: (meetingId: string) => void
   setPhotos: (photo: Photo[]) => void
 }
+
+interface MeetingStore extends MeetingState, MeetingActions {}
 
 const useMeetingStore = create<MeetingStore>((set) => ({
   meetingId: '',

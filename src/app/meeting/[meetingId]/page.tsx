@@ -1,24 +1,26 @@
+import useMeetingStore from '@/stores/useMeetingStore'
 import MeetingPageClient from './MeetingPageClient'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getPhotos(meetingId: string) {
   return [
-    { id: '1', name: 'photo1' },
-    { id: '2', name: 'photo2' },
-    { id: '3', name: 'photo3' },
-    { id: '4', name: 'photo4' },
-    { id: '5', name: 'photo5' },
-    { id: '6', name: 'photo6' },
-    { id: '7', name: 'photo7' },
-    { id: '8', name: 'photo8' },
-    { id: '9', name: 'photo9' },
-    { id: '10', name: 'photo10' },
+    { id: '1', url: 'photo1' },
+    { id: '2', url: 'photo2' },
+    { id: '3', url: 'photo3' },
+    { id: '4', url: 'photo4' },
+    { id: '5', url: 'photo5' },
+    { id: '6', url: 'photo6' },
+    { id: '7', url: 'photo7' },
+    { id: '8', url: 'photo8' },
+    { id: '9', url: 'photo9' },
+    { id: '10', url: 'photo10' },
   ]
 }
 
 async function MeetingPage({ params }: { params: { meetingId: string } }) {
   const photos = await getPhotos(params.meetingId)
-  return <MeetingPageClient meetingId={params.meetingId} photos={photos} />
+  useMeetingStore.setState({ meetingId: params.meetingId, photos })
+  return <MeetingPageClient />
 }
 
 export default MeetingPage

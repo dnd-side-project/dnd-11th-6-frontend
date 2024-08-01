@@ -1,24 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
 import useMeetingStore from '@/stores/useMeetingStore'
 
-interface Photo {
-  id: string
-  name: string
-}
-
-interface MeetingPageClientProps {
-  meetingId: string
-  photos: Photo[]
-}
-
-function MeetingPageClient({ meetingId, photos }: MeetingPageClientProps) {
-  const { setMeetingId } = useMeetingStore()
-
-  useEffect(() => {
-    setMeetingId(meetingId)
-  }, [meetingId, setMeetingId])
+function MeetingPageClient() {
+  const { meetingId, photos } = useMeetingStore()
 
   return (
     <div className="flex flex-col">
@@ -44,7 +29,7 @@ function MeetingPageClient({ meetingId, photos }: MeetingPageClientProps) {
             key={photo.id}
             className="bg-pink-200 w-full h-52 cursor-pointer"
           >
-            {photo.name}
+            {photo.url}
           </div>
         ))}
       </div>

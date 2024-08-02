@@ -1,214 +1,82 @@
 'use client'
 
 import React from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import * as z from 'zod'
 
-const CreateMeetingSchema = z
-  .object({
-    name: z.string().min(1, { message: '모임 이름을 입력해주세요.' }),
-    description: z.string().min(1, { message: '모임 설명을 입력해주세요.' }),
-    date: z.string().min(1, { message: '날짜를 선택해주세요.' }),
-    time: z.string().min(1, { message: '시간을 선택해주세요.' }),
-    isRecurring: z.boolean().optional(),
-    endDate: z.string().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.isRecurring && data.endDate) {
-        return new Date(data.endDate) > new Date(data.date)
-      }
-      return true
-    },
-    {
-      message: '종료일은 시작일 이후여야 합니다.',
-      path: ['endDate'],
-    },
-  )
+import useMeetStore from '@/stores/useMeetStore'
+import {
+  MeetingAdminPin,
+  MeetingInfo,
+  MeetingPassword,
+  MeetingShare,
+  MeetingTheme,
+} from './_components'
 
-type FormData = z.infer<typeof CreateMeetingSchema>
+const stepTitles = {
+  1: '모임 정보 입력하기',
+  2: '모임 테마',
+  3: '비밀번호 설정',
+  4: '관리자 PIN 안내',
+  5: '',
+}
 
-function CreateMeetingForm() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isValid },
-    watch,
-  } = useForm<FormData>({
-    resolver: zodResolver(CreateMeetingSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      date: '',
-      time: '',
-      isRecurring: false,
-      endDate: '',
-    },
-  })
+function CreateMeetingPage() {
+  const { step, setStep } = useMeetStore()
 
-  const isRecurring = watch('isRecurring')
+  const handleShareMeeting = () => {
+    console.log('Share meeting')
+  }
 
-  const onSubmit = (data: FormData) => {
-    console.log(data)
+  const handleGoToMyMeeting = () => {
+    console.log('Go to my meeting')
+  }
+
+  const handleGoBack = () => {
+    if (step > 1 && step < 5) {
+      setStep(step - 1)
+    }
+  }
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return <MeetingInfo />
+      case 2:
+        return <MeetingTheme />
+      case 3:
+        return <MeetingPassword />
+      case 4:
+        return <MeetingAdminPin />
+      case 5:
+        return (
+          <MeetingShare
+            onShareMeeting={handleShareMeeting}
+            onGoToMyMeeting={handleGoToMyMeeting}
+          />
+        )
+      default:
+        return null
+    }
   }
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <div className="flex items-center mb-4">
-        <Link href="/" className="text-2xl">
-          &lt;
-        </Link>
-        <h1 className="text-xl font-bold ml-4">모임 정보 입력하기</h1>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <div className="flex items-center mb-2">
-            <label htmlFor="name" className="font-bold">
-              모임 이름
-            </label>
-          </div>
-          <Controller
-            name="name"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <input
-                id="name"
-                onChange={onChange}
-                value={value}
-                name={name}
-                className="w-full p-2 border rounded"
-                placeholder="모임이름을 입력해주세요."
-              />
-            )}
-          />
-          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-        </div>
-
-        <div className="mb-4">
-          <div className="flex items-center mb-2">
-            <label htmlFor="description" className="font-bold">
-              모임 설명
-            </label>
-          </div>
-          <Controller
-            name="description"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <textarea
-                id="description"
-                onChange={onChange}
-                value={value}
-                name={name}
-                className="w-full p-2 border rounded"
-                placeholder="모임에 대한 설명을 입력해주세요."
-              />
-            )}
-          />
-          {errors.description && (
-            <p className="text-red-500">{errors.description.message}</p>
-          )}
-        </div>
-
-        <div className="mb-4">
-          <div className="flex items-center mb-2">
-            <label htmlFor="startMeet" className="font-bold">
-              모임 시작일
-            </label>
-          </div>
-          <div className="flex gap-2">
-            <Controller
-              name="date"
-              control={control}
-              render={({ field: { onChange, value, name } }) => (
-                <input
-                  id="date"
-                  type="date"
-                  onChange={onChange}
-                  value={value}
-                  name={name}
-                  className="w-1/2 p-2 border rounded"
-                />
-              )}
-            />
-            <Controller
-              name="time"
-              control={control}
-              render={({ field: { onChange, value, name } }) => (
-                <input
-                  id="time"
-                  type="time"
-                  onChange={onChange}
-                  value={value}
-                  name={name}
-                  className="w-1/2 p-2 border rounded"
-                />
-              )}
-            />
-          </div>
-          {(errors.date || errors.time) && (
-            <p className="text-red-500">날짜와 시간을 선택해주세요.</p>
-          )}
-        </div>
-
-        {isRecurring && (
-          <div className="mb-4">
-            <label htmlFor="endDate" className="block font-bold mb-2">
-              종료일
-            </label>
-            <Controller
-              name="endDate"
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  id="endDate"
-                  type="date"
-                  className="w-full p-2 border rounded"
-                />
-              )}
-            />
-            {errors.endDate && (
-              <p className="text-red-500">{errors.endDate.message}</p>
-            )}
-          </div>
-        )}
-
-        <div className="mb-4">
-          <Controller
-            name="isRecurring"
-            control={control}
-            render={({ field: { onChange, value, name } }) => (
-              <label htmlFor="isRecurring" className="flex items-center">
-                <input
-                  id="isRecurring"
-                  type="checkbox"
-                  onChange={onChange}
-                  checked={value}
-                  name={name}
-                  className="mr-2"
-                />
-                <span>종료일 설정하기</span>
-              </label>
-            )}
-          />
-        </div>
-
-        <p className="text-sm text-gray-500 mb-4">
-          링크는 {isRecurring ? '종료일' : 'yyyy.mm.dd'} 까지 유효합니다.
-        </p>
-
+      <div className="flex gap-4 ">
         <button
-          type="submit"
-          className={`w-full p-3 rounded-md ${isValid ? 'bg-black text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-          disabled={!isValid}
+          type="button"
+          onClick={handleGoBack}
+          className={`text-2xl mr-4 ${step === 1 || step === 5 ? 'invisible' : ''}`}
+          disabled={step === 1 || step === 5}
         >
-          다음
+          &lt;
         </button>
-      </form>
+        <h1 className="text-2xl font-bold mb-4 m-auto">
+          {stepTitles[step as keyof typeof stepTitles]}
+        </h1>
+      </div>
+
+      {renderStep()}
     </div>
   )
 }
 
-export default CreateMeetingForm
+export default CreateMeetingPage

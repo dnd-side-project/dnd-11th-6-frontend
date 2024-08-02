@@ -11,7 +11,7 @@ function Home() {
         </div>
       </div>
 
-      <SearchForm redirectTo="/meeting-entry" />
+      <SearchForm redirectTo="/entry-meeting" />
 
       <div className="text-center">
         <p className="mb-4">직접 모임을 만들어보시겠어요?</p>

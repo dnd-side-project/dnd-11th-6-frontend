@@ -1,11 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import MeetingInfo from './MeetingInfo'
-import NicknameInput from './NicknameInput'
-import PasswordInput from './PasswordInput'
+import { MeetingInfo, NicknameInput, PasswordInput } from './_components'
 
-function MeetingEntry() {
+function EntryMeeting() {
   const [page, setPage] = useState('info')
 
   const renderPage = () => {
@@ -28,4 +26,4 @@ function MeetingEntry() {
   return <div className="flex flex-col items-center">{renderPage()}</div>
 }
 
-export default MeetingEntry
+export default EntryMeeting

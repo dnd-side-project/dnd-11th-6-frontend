@@ -1,9 +1,10 @@
 export interface DrawerProps {
   isVisible: boolean
   onClose: () => void
+  children: React.ReactNode
 }
 
-function Drawer({ isVisible, onClose }: DrawerProps) {
+function Drawer({ isVisible, onClose, children }: DrawerProps) {
   return (
     <div
       className={`fixed top-0 left-0 w-full h-full bg-white z-50 transition-transform duration-500 ${
@@ -17,10 +18,7 @@ function Drawer({ isVisible, onClose }: DrawerProps) {
       >
         X
       </button>
-      <div className="p-5">
-        <h1 className="mb-4">Drawer</h1>
-        <p>SNAPPY!!</p>
-      </div>
+      <div className="p-5">{children}</div>
     </div>
   )
 }

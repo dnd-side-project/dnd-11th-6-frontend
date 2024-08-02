@@ -1,13 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Drawer from '@/components/Drawer/Drawer'
-import useMeetingStore from '@/stores/useMeetingStore'
+import useMeetingStore, { Photo } from '@/stores/useMeetingStore'
 import MeetingInfo from './_components/MeetingInfo'
 
-function MeetingPageClient() {
-  const { meetingId, photos } = useMeetingStore()
+interface MeetingPageClientProps {
+  initialMeetingId: string
+  initialPhotos: Photo[]
+}
+
+function MeetingPageClient({
+  initialMeetingId,
+  initialPhotos,
+}: MeetingPageClientProps) {
+  const { setMeetingId, setPhotos } = useMeetingStore()
   const [isVisible, setIsVisible] = useState<boolean>(false)
+
+  useEffect(() => {
+    setMeetingId(initialMeetingId)
+    setPhotos(initialPhotos)
+  }, [initialMeetingId, initialPhotos, setMeetingId, setPhotos])
+
+  const { meetingId, photos } = useMeetingStore()
 
   const handleToggle = (): void => setIsVisible(!isVisible)
   const handleClose = (): void => setIsVisible(false)

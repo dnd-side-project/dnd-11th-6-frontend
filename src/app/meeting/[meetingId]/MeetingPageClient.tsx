@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import useMeetingStore from '@/stores/useMeetingStore'
 
 function MeetingPageClient() {
@@ -34,12 +35,14 @@ function MeetingPageClient() {
         ))}
       </div>
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2">
-        <button
-          type="button"
-          className="w-52 h-12 bg-black text-white rounded-full"
-        >
-          📷 사진 찍기
-        </button>
+        <Link href="/meeting/photo-capture">
+          <button
+            type="button"
+            className="w-52 h-12 bg-black text-white rounded-full"
+          >
+            📷 사진 찍기 {meetingId}
+          </button>
+        </Link>
       </div>
     </div>
   )

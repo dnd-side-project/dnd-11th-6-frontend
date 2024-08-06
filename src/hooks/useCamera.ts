@@ -24,8 +24,23 @@ function useCamera(setPhoto: (photo: string | null) => void) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints)
       if (videoRef.current) {
+        if (videoRef.current.srcObject) {
+          const existingStream = videoRef.current.srcObject as MediaStream
+          existingStream.getTracks().forEach((track) => track.stop())
+          videoRef.current.srcObject = null
+        }
+
         videoRef.current.srcObject = stream
-        videoRef.current.play()
+
+        videoRef.current.onloadeddata = async () => {
+          try {
+            if (videoRef.current) {
+              await videoRef.current.play()
+            }
+          } catch (err) {
+            console.error('비디오를 재생할 수 없습니다:', err)
+          }
+        }
       }
     } catch (err) {
       console.error('카메라를 열 수 없습니다:', err)

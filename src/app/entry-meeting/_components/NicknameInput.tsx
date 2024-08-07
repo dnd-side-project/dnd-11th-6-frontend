@@ -1,15 +1,48 @@
-import { useState } from 'react'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
+import { z } from 'zod'
+import { Button } from '@/components/Button'
+import { Input } from '@/components/Input'
+
+const nicknameSchema = z.object({
+  nickname: z.string().min(2, '닉네임은 최소 2글자 이상이어야 합니다.'),
+  isAdmin: z.boolean(),
+  adminKey: z
+    .string()
+    .optional()
+    .refine((val) => {
+      if (val === undefined) return true
+      return val.length > 0
+    }, '관리자 인증키를 입력해주세요.'),
+})
+
+type NicknameFormData = z.infer<typeof nicknameSchema>
 
 interface NicknameInputProps {
-  onNicknameSubmit: () => void
+  onNicknameSubmit: (data: NicknameFormData) => void
 }
 
 function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
-  const [isAdminChecked, setIsAdminChecked] = useState(false)
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<NicknameFormData>({
+    resolver: zodResolver(nicknameSchema),
+    defaultValues: {
+      nickname: '',
+      isAdmin: false,
+      adminKey: '',
+    },
+  })
 
-  const handleCheckboxChange = () => {
-    setIsAdminChecked(!isAdminChecked)
+  const isAdmin = watch('isAdmin')
+
+  const onSubmit = (data: NicknameFormData) => {
+    onNicknameSubmit(data)
   }
 
   return (
@@ -21,40 +54,40 @@ function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
       </div>
 
       <div className="flex justify-center mb-16">모임 이름</div>
-      <form onSubmit={onNicknameSubmit} className="mb-8">
-        <p className="mb-4">사용할 닉네임을 입력해주세요.</p>
-        <input
-          type="text"
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
+        <Input
+          name="nickname"
+          control={control}
+          label="사용할 닉네임을 입력해주세요."
           placeholder="닉네임을 입력하세요"
-          className="w-full p-3 border border-gray-300 rounded-md mb-4"
+          error={errors.nickname?.message}
         />
-        {isAdminChecked && (
-          <>
-            <p className="mb-4">관리자 인증키를 입력해주세요.</p>
-            <input
-              type="password"
-              placeholder="관리자 인증키를 입력하세요"
-              className="w-full p-3 border border-gray-300 rounded-md mb-4"
-            />
-          </>
-        )}
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-3 rounded-md relative"
-        >
-          완료
-        </button>
-        <div className="flex justify-end mt-4">
-          <input
+
+        <div className="flex justify-end mt-4 mb-4">
+          <Input
+            name="isAdmin"
+            control={control}
             type="checkbox"
-            id="admin-checkbox"
-            checked={isAdminChecked}
-            onChange={handleCheckboxChange}
+            as="checkbox"
+            label="관리자 인증을 하시겠어요?"
+            className="flex-row-reverse"
           />
-          <label htmlFor="nickname" className="ml-2">
-            관리자 인증을 하시겠어요?
-          </label>
         </div>
+
+        {isAdmin && (
+          <Input
+            name="adminKey"
+            control={control}
+            label="관리자 인증키를 입력해주세요."
+            type="password"
+            placeholder="관리자 인증키를 입력하세요"
+            error={errors.adminKey?.message}
+          />
+        )}
+
+        <Button type="submit" fullWidth variant="primary">
+          완료
+        </Button>
       </form>
     </div>
   )

@@ -12,12 +12,12 @@ export interface InputProps<T extends FieldValues> {
   name: Path<T>
   control?: Control<T>
   rules?: RegisterOptions
-  label: string
+  label?: string
   type?: string
   placeholder?: string
   error?: string | FieldError
   className?: string
-  as?: 'input' | 'textarea'
+  as?: 'input' | 'textarea' | 'checkbox'
 }
 
 export function Input<T extends FieldValues>({
@@ -38,17 +38,28 @@ export function Input<T extends FieldValues>({
       id: name,
       type,
       placeholder,
-      className: inputClassName,
+      className: as === 'checkbox' ? 'mr-2' : inputClassName,
     }
 
-    return as === 'textarea' ? <textarea {...props} /> : <input {...props} />
+    if (as === 'textarea') return <textarea {...props} />
+    if (as === 'checkbox') {
+      return (
+        <label htmlFor={name} className="flex items-center">
+          <input {...props} />
+          <span>{label}</span>
+        </label>
+      )
+    }
+    return <input {...props} />
   }
 
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block font-bold mb-2">
-        {label}
-      </label>
+      {as !== 'checkbox' && (
+        <label htmlFor={name} className="block font-bold mb-2">
+          {label}
+        </label>
+      )}
       {control ? (
         <Controller
           name={name}

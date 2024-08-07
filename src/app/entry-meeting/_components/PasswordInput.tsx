@@ -17,10 +17,9 @@ type PasswordFormData = z.infer<typeof passwordSchema>
 
 interface PasswordInputProps {
   onPasswordSubmit: (password: string) => void
-  meetingName: string
 }
 
-function PasswordInput({ onPasswordSubmit, meetingName }: PasswordInputProps) {
+function PasswordInput({ onPasswordSubmit }: PasswordInputProps) {
   const {
     control,
     handleSubmit,
@@ -44,7 +43,7 @@ function PasswordInput({ onPasswordSubmit, meetingName }: PasswordInputProps) {
         </div>
       </div>
 
-      <div className="flex justify-center mb-16">{meetingName}</div>
+      <div className="flex justify-center mb-16">모임 이름</div>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
         <Input
           name="password"

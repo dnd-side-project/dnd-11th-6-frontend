@@ -1,10 +1,40 @@
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
+import { z } from 'zod'
+import { Button } from '@/components/Button'
+import { Input } from '@/components/Input'
+
+const passwordSchema = z.object({
+  password: z
+    .string()
+    .min(1, '암호를 입력해주세요.')
+    .min(6, '암호는 최소 6자 이상이어야 합니다.'),
+})
+
+type PasswordFormData = z.infer<typeof passwordSchema>
 
 interface PasswordInputProps {
-  onPasswordSubmit: () => void
+  onPasswordSubmit: (password: string) => void
 }
 
 function PasswordInput({ onPasswordSubmit }: PasswordInputProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      password: '',
+    },
+  })
+
+  const onSubmit = (data: PasswordFormData) => {
+    onPasswordSubmit(data.password)
+  }
+
   return (
     <div className="w-full">
       <div className="flex justify-center">
@@ -14,19 +44,18 @@ function PasswordInput({ onPasswordSubmit }: PasswordInputProps) {
       </div>
 
       <div className="flex justify-center mb-16">모임 이름</div>
-      <form onSubmit={onPasswordSubmit} className="mb-8">
-        <p className="mb-4">모임의 암호를 입력하세요.</p>
-        <input
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
+        <Input
+          name="password"
+          control={control}
           type="password"
+          label="모임의 암호를 입력하세요."
           placeholder="암호를 입력하세요"
-          className="w-full p-3 border border-gray-300 rounded-md mb-4"
+          error={errors.password?.message}
         />
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-3 rounded-md relative"
-        >
+        <Button type="submit" fullWidth variant="primary">
           입력하기
-        </button>
+        </Button>
       </form>
     </div>
   )

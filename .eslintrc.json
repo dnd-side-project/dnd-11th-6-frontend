@@ -20,16 +20,25 @@
         "some": ["nesting", "id"]
       }
     ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.stories.@(ts|tsx|js|jsx)",
+          "**/*.test.@(ts|tsx|js|jsx)",
+          "**/next.config.js",
+          "**/next.config.mjs"
+        ]
+      }
+    ],
     "jsx-a11y/media-has-caption": "off",
     "no-nested-ternary": "off",
+    "react/button-has-type": "off",
+    "react/function-component-definition": "off",
     "react/no-array-index-key": "off",
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      { "devDependencies": ["**/next.config.js", "**/next.config.mjs"] }
-    ],
     "import/order": [
       "error",
       {

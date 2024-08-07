@@ -1,5 +1,6 @@
 import React from 'react'
-import FormInput from '@/components/Form/Input/FormInput'
+import { Button } from '@/components/Button'
+import { Input } from '@/components/Input'
 import useMeetingForm from '../_hooks/useMeetingForm'
 
 function MeetingPassword() {
@@ -12,7 +13,7 @@ function MeetingPassword() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormInput
+      <Input
         name="password"
         control={control}
         label="비밀번호를 설정해주세요."
@@ -20,7 +21,7 @@ function MeetingPassword() {
         placeholder="******"
         error={errors.password?.message}
       />
-      <button
+      <Button
         type="submit"
         className={`w-full p-3 rounded-md ${
           isValid
@@ -30,7 +31,7 @@ function MeetingPassword() {
         disabled={!isValid}
       >
         등록하기
-      </button>
+      </Button>
     </form>
   )
 }

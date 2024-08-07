@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Drawer from '@/components/Drawer/Drawer'
 import useMeetingStore, { Photo } from '@/stores/useMeetingStore'
 import MeetingInfo from './_components/MeetingInfo'
+import Link from 'next/link'
+
 
 interface MeetingPageClientProps {
   initialMeetingId: string
@@ -21,6 +23,7 @@ function MeetingPageClient({
     setMeetingId(initialMeetingId)
     setPhotos(initialPhotos)
   }, [initialMeetingId, initialPhotos])
+
 
   const { meetingId, photos } = useMeetingStore()
 
@@ -62,16 +65,18 @@ function MeetingPageClient({
             >
               {photo.url}
             </div>
-          ))}
-        </div>
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2">
+        ))}
+      </div>
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2">
+        <Link href="/meeting/photo-capture">
           <button
             type="button"
             className="w-52 h-12 bg-black text-white rounded-full"
           >
-            📷 사진 찍기
+
+            📷 사진 찍기 {meetingId}
           </button>
-        </div>
+        </Link>
       </div>
       <Drawer isVisible={isVisible} onClose={closeDrawer}>
         <MeetingInfo />

@@ -1,7 +1,6 @@
 import MeetingPageClient from './MeetingPageClient'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getPhotos(meetingId: string) {
+async function getPhotos() {
   return [
     { id: '1', url: 'photo1' },
     { id: '2', url: 'photo2' },
@@ -17,7 +16,7 @@ async function getPhotos(meetingId: string) {
 }
 
 async function MeetingPage({ params }: { params: { meetingId: string } }) {
-  const photos = await getPhotos(params.meetingId)
+  const photos = await getPhotos()
   return (
     <MeetingPageClient
       initialMeetingId={params.meetingId}

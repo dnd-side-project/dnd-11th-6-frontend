@@ -24,8 +24,8 @@ function MeetingPageClient({
 
   const { meetingId, photos } = useMeetingStore()
 
-  const handleToggle = (): void => setIsVisible(!isVisible)
-  const handleClose = (): void => setIsVisible(false)
+  const toggleDrawer = (): void => setIsVisible(!isVisible)
+  const closeDrawer = (): void => setIsVisible(false)
 
   return (
     <>
@@ -34,11 +34,11 @@ function MeetingPageClient({
         <div className="flex justify-between items-center mb-3">
           <div className="text-xl">LOGO</div>
           <div
-            onClick={handleToggle}
+            onClick={toggleDrawer}
             className="flex justify-center items-center rounded-full w-12 h-12 bg-gray-300"
             tabIndex={0}
             role="button"
-            onKeyDown={(e) => e.key === 'Enter' && handleToggle()}
+            onKeyDown={(e) => e.key === 'Enter' && toggleDrawer()}
           >
             photo
           </div>
@@ -73,7 +73,7 @@ function MeetingPageClient({
           </button>
         </div>
       </div>
-      <Drawer isVisible={isVisible} onClose={handleClose}>
+      <Drawer isVisible={isVisible} onClose={closeDrawer}>
         <MeetingInfo />
       </Drawer>
     </>

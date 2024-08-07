@@ -1,6 +1,6 @@
 import React from 'react'
-import FormInput from '@/components/Form/Input/FormInput'
 import useMeetingForm from '../_hooks/useMeetingForm'
+import { Input } from '@/components/Input'
 
 function MeetingPassword() {
   const { passwordForm, onSubmit } = useMeetingForm()
@@ -12,7 +12,7 @@ function MeetingPassword() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormInput
+      <Input
         name="password"
         control={control}
         label="비밀번호를 설정해주세요."

@@ -1,4 +1,3 @@
-import useMeetingStore from '@/stores/useMeetingStore'
 import MeetingPageClient from './MeetingPageClient'
 
 async function getPhotos() {
@@ -18,8 +17,12 @@ async function getPhotos() {
 
 async function MeetingPage({ params }: { params: { meetingId: string } }) {
   const photos = await getPhotos()
-  useMeetingStore.setState({ meetingId: params.meetingId, photos })
-  return <MeetingPageClient />
+  return (
+    <MeetingPageClient
+      initialMeetingId={params.meetingId}
+      initialPhotos={photos}
+    />
+  )
 }
 
 export default MeetingPage

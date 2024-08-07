@@ -20,7 +20,7 @@ function MeetingPageClient({
   useEffect(() => {
     setMeetingId(initialMeetingId)
     setPhotos(initialPhotos)
-  }, [initialMeetingId, initialPhotos, setMeetingId, setPhotos])
+  }, [initialMeetingId, initialPhotos])
 
   const { meetingId, photos } = useMeetingStore()
 

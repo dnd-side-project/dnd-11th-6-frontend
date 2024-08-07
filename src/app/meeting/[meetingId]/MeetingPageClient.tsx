@@ -49,8 +49,8 @@ function MeetingPageClient({
         </div>
         <div className="flex justify-between">
           <div className="flex mb-5">
-            <input type="checkbox" />
-            <div>모임 미션 사진 보기</div>
+            <input type="checkbox" id="misson-photo-checkbox" />
+            <label htmlFor="misson-photo-checkbox">모임 미션 사진 보기</label>
           </div>
           <div>사진 삭제하기</div>
         </div>

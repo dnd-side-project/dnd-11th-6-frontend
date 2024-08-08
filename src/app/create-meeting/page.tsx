@@ -61,14 +61,19 @@ function CreateMeetingPage() {
   return (
     <div className="p-4 max-w-md mx-auto">
       <div className="flex gap-4 ">
-        <button
-          type="button"
-          onClick={handleGoBack}
-          className={`text-2xl mr-4 ${step === 1 || step === 5 ? 'invisible' : ''}`}
-          disabled={step === 1 || step === 5}
-        >
-          &lt;
-        </button>
+        {step === 1 || step === 5 ? (
+          ''
+        ) : (
+          <button
+            type="button"
+            onClick={handleGoBack}
+            className="text-2xl mr-4 bg-white"
+            disabled={step === 1 || step === 5}
+          >
+            &gt;
+          </button>
+        )}
+
         <h1 className="text-2xl font-bold mb-4 m-auto">
           {stepTitles[step as keyof typeof stepTitles]}
         </h1>

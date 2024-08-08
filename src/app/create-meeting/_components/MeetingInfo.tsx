@@ -33,17 +33,14 @@ function MeetingInfo() {
       />
 
       <div className="mb-4">
-        <div className="flex gap-2">
-          <Input
-            label="모임 시작일"
-            name="date"
-            control={control}
-            type="date"
-            className="w-1/2"
-          />
-          <Input name="time" control={control} type="time" className="w-1/2" />
-        </div>
-        {(errors.date || errors.time) && (
+        <Input
+          label="모임 시작일"
+          name="date"
+          control={control}
+          type="datetime-local"
+          className="w-1/2"
+        />
+        {errors.date && (
           <p className="text-red-500">날짜와 시간을 선택해주세요.</p>
         )}
       </div>

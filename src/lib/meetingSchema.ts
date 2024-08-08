@@ -5,7 +5,6 @@ export const MeetingSchema = z
     name: z.string().min(1, { message: '모임 이름을 입력해주세요.' }),
     description: z.string().min(1, { message: '모임 설명을 입력해주세요.' }),
     date: z.string().min(1, { message: '날짜를 선택해주세요.' }),
-    time: z.string().min(1, { message: '시간을 선택해주세요.' }),
     isRecurring: z.boolean().optional(),
     endDate: z.string().optional(),
   })

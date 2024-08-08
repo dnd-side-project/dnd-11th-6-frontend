@@ -1,35 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
-import { motion, useAnimation } from 'framer-motion'
+import { useRef } from 'react'
 import Image from 'next/image'
 
 function Home() {
-  const controls = useAnimation()
-  const [ref, inView] = useInView()
+  const section2Ref = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible')
-    }
-  }, [controls, inView])
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
+  const scrollToSection2 = () => {
+    section2Ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
-
   return (
-    <div className="snap-y snap-mandatory h-screen overflow-y-scroll">
+    <div className="h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
       {/* Section 1 */}
-      <section className="snap-start h-screen flex flex-col items-center justify-center bg-white">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="text-center"
-        >
+      <section className="h-screen flex flex-col items-center justify-center bg-white snap-start">
+        <div className="text-center">
           <Image
             src="/snappy-logo.png"
             alt="Snappy Logo"
@@ -39,31 +23,33 @@ function Home() {
           <h1 className="text-3xl font-bold mt-4">Snappy</h1>
           <p className="mt-2">즐거운 모임의 순간들을 스냅피와 포착해보세요</p>
           <div className="mt-8 grid grid-cols-2 gap-4">
-            <button className="bg-gray-200 p-4 rounded-lg">
+            <button className="bg-gray-200 p-4 rounded-lg transition duration-300 hover:bg-gray-300">
               내 모임 앨범
               <br />
               참여하기
             </button>
-            <button className="bg-gray-200 p-4 rounded-lg">
+            <button className="bg-gray-200 p-4 rounded-lg transition duration-300 hover:bg-gray-300">
               새로운 모임 앨범
               <br />
               만들기
             </button>
           </div>
-          <p className="mt-8">둘러서 설명보기</p>
-          <div className="mt-2">↓</div>
-        </motion.div>
+          <button
+            onClick={scrollToSection2}
+            className="mt-8 flex flex-col items-center transition duration-300 hover:text-blue-500 cursor-pointer"
+          >
+            <p>눌러서 설명보기</p>
+            <div className="mt-2 animate-bounce">↓</div>
+          </button>
+        </div>
       </section>
 
       {/* Section 2 */}
-      <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <motion.div
-          ref={ref}
-          animate={controls}
-          initial="hidden"
-          variants={fadeInUp}
-          className="text-center"
-        >
+      <section
+        ref={section2Ref}
+        className="h-screen flex flex-col items-center justify-center bg-black text-white snap-start"
+      >
+        <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Snappy는?</h2>
           <p className="mb-8">
             스냅피는
@@ -80,18 +66,11 @@ function Home() {
               height={100}
             />
           </div>
-        </motion.div>
+        </div>
       </section>
-
       {/* Section 3 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <motion.div
-          ref={ref}
-          animate={controls}
-          initial="hidden"
-          variants={fadeInUp}
-          className="text-center"
-        >
+        <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
           <h2 className="text-2xl font-bold mb-4">모임앨범</h2>
           <p className="mb-8">
             우리 모임만의
@@ -100,22 +79,16 @@ function Home() {
           </p>
           <p className="text-sm text-gray-400">자유롭게 사진을 찍고 공유해요</p>
           <div className="mt-8 flex justify-center space-x-4">
-            <div className="w-20 h-20 bg-yellow-400" />
-            <div className="w-20 h-20 bg-blue-600" />
-            <div className="w-20 h-20 bg-yellow-400" />
+            <div className="w-20 h-20 bg-yellow-400 transition duration-300 hover:scale-110" />
+            <div className="w-20 h-20 bg-blue-600 transition duration-300 hover:scale-110" />
+            <div className="w-20 h-20 bg-yellow-400 transition duration-300 hover:scale-110" />
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Section 4 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <motion.div
-          ref={ref}
-          animate={controls}
-          initial="hidden"
-          variants={fadeInUp}
-          className="text-center"
-        >
+        <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
           <Image
             src="/lock-icon.png"
             alt="Lock Icon"
@@ -166,18 +139,12 @@ function Home() {
             <br />
             더욱 재미있는 추억을 남길 수 있을 거예요.
           </p>
-        </motion.div>
+        </div>
       </section>
 
       {/* Section 5 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-        <motion.div
-          ref={ref}
-          animate={controls}
-          initial="hidden"
-          variants={fadeInUp}
-          className="text-center"
-        >
+        <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
           <Image
             src="/snappy-logo.png"
             alt="Snappy Logo"
@@ -190,7 +157,7 @@ function Home() {
             <br />
             모임의 순간을 포착해보세요!
           </h2>
-          <button className="bg-yellow-400 text-black font-bold py-3 px-8 rounded-full mt-8">
+          <button className="bg-yellow-400 text-black font-bold py-3 px-8 rounded-full mt-8 transition duration-300 hover:bg-yellow-500">
             새로운 모임 앨범 만들어보기
           </button>
           <p className="mt-8 text-sm">
@@ -198,7 +165,10 @@ function Home() {
             <br />
             여러분의 소중한 의견을 바탕으로 더 나아질 수 있어요.
           </p>
-          <a href="#" className="text-yellow-400 underline mt-2 inline-block">
+          <a
+            href="#"
+            className="text-yellow-400 underline mt-2 inline-block hover:text-yellow-500 transition duration-300"
+          >
             google form link
           </a>
           <div className="mt-8">
@@ -219,7 +189,7 @@ function Home() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   )

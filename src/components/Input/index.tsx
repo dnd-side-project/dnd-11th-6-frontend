@@ -41,7 +41,7 @@ export function Input<T extends FieldValues>({
       className: as === 'checkbox' ? 'mr-2' : inputClassName,
     }
 
-    if (as === 'textarea') return <textarea {...props} />
+    if (as === 'textarea') return <textarea rows={3} {...props} />
     if (as === 'checkbox') {
       return (
         <label htmlFor={name} className="flex items-center">

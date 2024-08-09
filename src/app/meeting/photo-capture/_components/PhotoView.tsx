@@ -32,7 +32,7 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
       <div className="h-11 rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] mt-6">
         모임에서 가장 뫄뫄한 사람 찍기
       </div>
-      <img
+      <Image
         src={photo}
         alt="찍은 사진"
         className="w-[360px] h-[480px] rounded-[14px] mt-3"

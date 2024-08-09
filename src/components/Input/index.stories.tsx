@@ -1,6 +1,6 @@
 import React from 'react'
-import { StoryFn, Meta } from '@storybook/react'
 import { useForm, FieldValues } from 'react-hook-form'
+import { StoryFn, Meta } from '@storybook/react'
 import { Input, InputProps } from '.'
 
 export default {

@@ -62,7 +62,11 @@ function MeetingTheme() {
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (isView && !event.target.closest('.photo-options')) {
+      if (
+        isView &&
+        event.target instanceof Element &&
+        !event.target.closest('.photo-options')
+      ) {
         setIsView(false)
       }
     }

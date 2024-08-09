@@ -165,12 +165,9 @@ function Home() {
             <br />
             여러분의 소중한 의견을 바탕으로 더 나아질 수 있어요.
           </p>
-          <a
-            href="#"
-            className="text-yellow-400 underline mt-2 inline-block hover:text-yellow-500 transition duration-300"
-          >
+          <button className="text-yellow-400 underline mt-2 inline-block hover:text-yellow-500 transition duration-300">
             google form link
-          </a>
+          </button>
           <div className="mt-8">
             <h3 className="font-bold mb-2">스냅피를 만든 사람들</h3>
             <p>DND 11기 6조</p>

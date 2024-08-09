@@ -32,7 +32,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.config.ts",
-    "jest.setup.js"
+    "jest.setup.js",
+    "src",
+    "next.config.mjs"
   ],
   "exclude": ["node_modules"]
 }

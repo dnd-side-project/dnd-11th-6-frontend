@@ -22,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className="flex items-center min-h-screen justify-center bg-white p-4">
+          <div className="w-full max-w-md">{children}</div>
+        </div>
+      </body>
     </html>
   )
 }

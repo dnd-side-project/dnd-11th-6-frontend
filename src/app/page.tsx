@@ -15,13 +15,16 @@ function Home() {
       <section className="h-screen flex flex-col items-center justify-center bg-white snap-start">
         <div className="text-center">
           <Image
-            src="/snappy-logo.png"
+            src="/logo.svg"
             alt="Snappy Logo"
-            width={100}
-            height={100}
+            width={50}
+            height={50}
+            className="m-auto"
           />
-          <h1 className="text-3xl font-bold mt-4">Snappy</h1>
-          <p className="mt-2">즐거운 모임의 순간들을 스냅피와 포착해보세요</p>
+          <h1 className="text-4xl font-bold my-4">Snappy</h1>
+          <p className="mt-2 font-normal text-lg text-gray-700">
+            즐거운 모임의 순간들을 <br /> 스냅피와 포착해보세요
+          </p>
           <div className="mt-8 grid grid-cols-2 gap-4">
             <button className="bg-gray-200 p-4 rounded-lg transition duration-300 hover:bg-gray-300">
               내 모임 앨범
@@ -36,7 +39,7 @@ function Home() {
           </div>
           <button
             onClick={scrollToSection2}
-            className="mt-8 flex flex-col items-center transition duration-300 hover:text-blue-500 cursor-pointer"
+            className=" mt-24 m-auto flex flex-col items-center transition duration-300 hover:text-blue-500 cursor-pointer"
           >
             <p>눌러서 설명보기</p>
             <div className="mt-2 animate-bounce">↓</div>
@@ -49,96 +52,93 @@ function Home() {
         ref={section2Ref}
         className="h-screen flex flex-col items-center justify-center bg-black text-white snap-start"
       >
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Snappy는?</h2>
-          <p className="mb-8">
+        <div className="text-left px-4">
+          <h2 className="text-sm font-medium mb-2 text-yellow-400">
+            Snappy는?
+          </h2>
+          <p className="mb-8 ">
             스냅피는
             <br />
             모임의 시간을 재밌게 즐길 수 있는
             <br />
             사진 앨범 서비스에요
           </p>
-          <div className="bg-yellow-400 rounded-full p-8 inline-block">
-            <Image
-              src="/flags-icon.png"
-              alt="Flags Icon"
-              width={100}
-              height={100}
-            />
-          </div>
         </div>
+        <Image src="/image1.svg" alt="Flags Icon" width={500} height={500} />
       </section>
       {/* Section 3 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
-          <h2 className="text-2xl font-bold mb-4">모임앨범</h2>
-          <p className="mb-8">
+        <div className="text-left opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
+          <h2 className="text-sm font-medium mb-2 text-yellow-400">모임앨범</h2>
+          <p className="mb-2 text-xl font-bold">
             우리 모임만의
             <br />
             프라이빗한 앨범을 만들 수 있어요
           </p>
           <p className="text-sm text-gray-400">자유롭게 사진을 찍고 공유해요</p>
-          <div className="mt-8 flex justify-center space-x-4">
-            <div className="w-20 h-20 bg-yellow-400 transition duration-300 hover:scale-110" />
-            <div className="w-20 h-20 bg-blue-600 transition duration-300 hover:scale-110" />
-            <div className="w-20 h-20 bg-yellow-400 transition duration-300 hover:scale-110" />
-          </div>
         </div>
+        <Image src="/image2.svg" alt="Flags Icon" width={500} height={500} />
       </section>
 
       {/* Section 4 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
-          <Image
-            src="/lock-icon.png"
-            alt="Lock Icon"
-            width={50}
-            height={50}
-            className="mx-auto mb-4"
-          />
-          <h2 className="text-2xl font-bold mb-4">
-            귀찮은 회원가입 없이
-            <br />
-            누구나 간단하게 만들 수 있어요.
-          </h2>
-          <p className="mb-4">
-            모임 링크를 통해 간단하게 참여할 수 있어요.
-            <br />
-            보안을 위한 모임 암호만 입력하면 끝!
-          </p>
-          <Image
-            src="/photo-icon.png"
-            alt="Photo Icon"
-            width={50}
-            height={50}
-            className="mx-auto mb-4"
-          />
-          <h2 className="text-2xl font-bold mb-4">
-            모임의 순간을
-            <br />딱 10장만 찍을 수 있어요!
-          </h2>
-          <p className="mb-4">
-            예쁜 사진을 위해 많은 시간을 쓰지마세요.
-            <br />
-            더욱 현장감 있는 사진으로 모임을 추억해보세요!
-          </p>
-          <Image
-            src="/star-icon.png"
-            alt="Star Icon"
-            width={50}
-            height={50}
-            className="mx-auto mb-4"
-          />
-          <h2 className="text-2xl font-bold mb-4">
-            재밌게 사진을 찍을 수 있는
-            <br />
-            랜덤미션을 제공해요.
-          </h2>
-          <p>
-            낯선 사람과도 어색함 없이
-            <br />
-            더욱 재미있는 추억을 남길 수 있을 거예요.
-          </p>
+        <div className="text-left flex flex-col gap-10  opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
+          <div>
+            <Image
+              src="/lock-slash.svg"
+              alt="Lock Icon"
+              width={50}
+              height={50}
+              className=" mb-2"
+            />
+            <h2 className="text-xl font-bold mb-2">
+              귀찮은 회원가입 없이
+              <br />
+              누구나 간단하게 만들 수 있어요.
+            </h2>
+            <p className="mb-2 text-sm text-gray-400">
+              모임 링크를 통해 간단하게 참여할 수 있어요.
+              <br />
+              보안을 위한 모임 암호만 입력하면 끝!
+            </p>
+          </div>
+          <div>
+            <Image
+              src="/image.svg"
+              alt="Photo Icon"
+              width={50}
+              height={50}
+              className=" mb-2"
+            />
+            <h2 className="text-xl font-bold mb-2">
+              모임의 순간을
+              <br />딱 10장만 찍을 수 있어요!
+            </h2>
+            <p className="mb-2 text-sm text-gray-400">
+              예쁜 사진을 위해 많은 시간을 쓰지마세요.
+              <br />
+              더욱 현장감 있는 사진으로 모임을 추억해보세요!
+            </p>
+          </div>
+          <div>
+            <Image
+              src="/image3.svg"
+              alt="Star Icon"
+              width={50}
+              height={50}
+              className=" mb-2"
+            />
+            <h2 className="text-xl font-bold mb-2">
+              재밌게 사진을 찍을 수 있는
+              <br />
+              랜덤미션을 제공해요.
+            </h2>
+            <p className=" text-sm text-gray-400">
+              낯선 사람과도 어색함 없이
+              <br />
+              더욱 재미있는 추억을 남길 수 있을 거예요.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -146,13 +146,13 @@ function Home() {
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
         <div className="text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
           <Image
-            src="/snappy-logo.png"
+            src="/logo.svg"
             alt="Snappy Logo"
             width={100}
             height={100}
             className="mx-auto mb-4"
           />
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="text-xl font-bold mb-4 text-heading1">
             스냅피와 함께
             <br />
             모임의 순간을 포착해보세요!

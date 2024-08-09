@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Controller } from 'react-hook-form'
+import Image from 'next/image'
 import useMeetingForm from '../_hooks/useMeetingForm'
 
 function MeetingTheme() {
@@ -10,42 +11,122 @@ function MeetingTheme() {
     handleSubmit,
   } = themeForm
   const [isView, setIsView] = useState<boolean>(false)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const openImagePicker = async () => {
+    if ('showOpenFilePicker' in window) {
+      try {
+        const [handle] = await (window as any).showOpenFilePicker({
+          types: [
+            {
+              description: 'Images',
+              accept: {
+                'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
+              },
+            },
+          ],
+          multiple: false,
+        })
+        const file = await handle.getFile()
+        handleFileChange({ target: { files: [file] } } as any)
+      } catch (error) {
+        console.error('Error picking the file:', error)
+        // Fallback to traditional file input
+        fileInputRef.current?.click()
+      }
+    } else {
+      // Fallback for browsers that don't support the File System Access API
+      fileInputRef.current?.click()
+    }
+  }
+
+  const openCamera = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = 'image/*'
+      fileInputRef.current.capture = 'environment'
+      fileInputRef.current.click()
+    }
+  }
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (isView && !event.target.closest('.photo-options')) {
+        setIsView(false)
+      }
+    }
+
+    document.addEventListener('click', handleOutsideClick)
+    return () => {
+      document.removeEventListener('click', handleOutsideClick)
+    }
+  }, [isView])
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="p-4 max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">모임 대표사진 등록</h2>
       <div className="mb-4">
         <Controller
           name="photo"
           control={control}
           render={({ field }) => (
-            <div>
+            <div className="relative">
               <button
                 type="button"
-                className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mb-2 cursor-pointer"
+                className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mb-2 cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onClick={() => setIsView((prev) => !prev)}
               >
-                <span className="text-4xl text-gray-400">+</span>
+                {previewImage ? (
+                  <Image
+                    src={previewImage}
+                    alt="Selected"
+                    width={128}
+                    height={128}
+                    objectFit="cover"
+                  />
+                ) : (
+                  <span className="text-4xl text-gray-400">+</span>
+                )}
               </button>
               {isView && (
-                <div className="bg-gray-700 text-white p-2 rounded-md text-center">
+                <div className="absolute left-0 mt-2 bg-white shadow-lg rounded-md overflow-hidden photo-options">
                   <button
                     type="button"
-                    className="w-full text-left"
-                    onClick={() => alert('사진 보관함')}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                    onClick={openImagePicker}
                   >
                     사진 보관함
                   </button>
                   <button
                     type="button"
-                    className="w-full text-left"
-                    onClick={() => alert('사진찍기')}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                    onClick={openCamera}
                   >
                     사진찍기
                   </button>
-                  <input type="hidden" {...field} />
                 </div>
               )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  handleFileChange(e)
+                  field.onChange(e.target.files?.[0])
+                }}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
             </div>
           )}
         />
@@ -88,7 +169,7 @@ function MeetingTheme() {
 
       <button
         type="submit"
-        className="w-full p-3 rounded-md bg-black text-white"
+        className="w-full p-3 rounded-md bg-black text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
       >
         다음
       </button>

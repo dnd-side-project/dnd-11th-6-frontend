@@ -91,8 +91,13 @@ const config: Config = {
     },
     animation: {
       fadeIn: 'fadeIn 1s ease-in-out forwards',
+      'move-up-down': 'move-up-down 2s ease-in-out infinite',
     },
     keyframes: {
+      'move-up-down': {
+        '0%, 100%': { transform: 'translateY(0)' },
+        '50%': { transform: 'translateY(-10px)' },
+      },
       fadeIn: {
         '0%': { opacity: '0', transform: 'translateY(10px)' },
         '100%': { opacity: '1', transform: 'translateY(0)' },

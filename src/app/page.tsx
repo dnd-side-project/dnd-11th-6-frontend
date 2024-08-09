@@ -39,10 +39,10 @@ function Home() {
           </div>
           <button
             onClick={scrollToSection2}
-            className=" mt-24 m-auto flex flex-col items-center transition duration-300 hover:text-blue-500 cursor-pointer"
+            className="mt-24 m-auto flex flex-col items-center transition duration-300 hover:text-blue-500 cursor-pointer animate-move-up-down"
           >
-            <p>눌러서 설명보기</p>
-            <div className="mt-2 animate-bounce">↓</div>
+            <p className="mb-2">눌러서 설명보기</p>
+            <div className="animate-bounce">↓</div>
           </button>
         </div>
       </section>

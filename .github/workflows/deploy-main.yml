@@ -22,8 +22,8 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker build -t $DOCKERHUB_USERNAME/snappy:latest .
-          docker push $DOCKERHUB_USERNAME/snappy:latest
+          docker build -t jihoonyhoon/snappy:latest .
+          docker push jihoonyhoon/snappy:latest
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master

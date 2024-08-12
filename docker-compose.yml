@@ -1,7 +1,7 @@
 version: '3'
 services:
   nextjs-app:
-    image: ${DOCKERHUB_USERNAME}/nextjs-app:latest
+    image: ${DOCKERHUB_USERNAME}/snappy:latest
     ports:
       - '3000:3000'
     restart: always

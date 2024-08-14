@@ -9,7 +9,7 @@ export default {
     variant: {
       control: {
         type: 'select',
-        options: ['primary', 'light'],
+        options: ['primary', 'light', 'outline'],
       },
     },
     width: {
@@ -37,6 +37,12 @@ export const Light = Template.bind({})
 Light.args = {
   children: 'light button',
   variant: 'light',
+}
+
+export const Outline = Template.bind({})
+Outline.args = {
+  children: 'outline button',
+  variant: 'outline',
 }
 
 export const Short = Template.bind({})

@@ -11,7 +11,7 @@ function Home() {
     section2Ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
   return (
-    <div className="h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
+    <div className=" h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
       {/* Section 1 */}
       <section className="h-screen flex flex-col items-center justify-center bg-white snap-start">
         <div className="text-center">
@@ -83,13 +83,11 @@ function Home() {
       {/* Section 2 */}
       <section
         ref={section2Ref}
-        className="h-screen flex flex-col items-center justify-center bg-black text-white snap-start"
+        className=" h-screen flex flex-col items-center justify-center bg-gray-900 text-white snap-start"
       >
-        <div className="text-left px-4">
-          <h2 className="text-sm font-medium mb-2 text-yellow-400">
-            Snappy는?
-          </h2>
-          <p className="mb-8 ">
+        <div className="text-left mb-6 px-4 w-full">
+          <p className="text-sm font-medium mb-2 text-yellow-400">Snappy는?</p>
+          <p className="text-[22px] font-bold line leading-[30px]">
             스냅피는
             <br />
             모임의 시간을 재밌게 즐길 수 있는
@@ -97,7 +95,7 @@ function Home() {
             사진 앨범 서비스에요
           </p>
         </div>
-        <Image src="/image1.svg" alt="Flags Icon" width={500} height={500} />
+        <Image src="/image1.svg" alt="Flags Icon" width={800} height={800} />
       </section>
       {/* Section 3 */}
       <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">

@@ -26,9 +26,7 @@ function Callout({
     setIsExpanded(!isExpanded)
   }
   return (
-    <div
-      className={`bg-gray-50 rounded-lg shadow-md overflow-hidden ${className}`}
-    >
+    <div className={`bg-gray-50 rounded-lg overflow-hidden ${className}`}>
       <div
         className="flex items-center justify-between p-4 cursor-pointer"
         onClick={toggleExpand}

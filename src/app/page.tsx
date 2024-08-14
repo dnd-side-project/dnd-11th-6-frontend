@@ -112,15 +112,15 @@ function Home() {
       </section>
 
       {/* Section 4 */}
-      <section className="snap-start h-screen flex flex-col items-center justify-center bg-black text-white">
-        <div className="text-left flex flex-col gap-10  opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
+      <section className="h-screen flex flex-col items-center justify-center bg-gray-900 text-white snap-start">
+        <div className="w-full px-4 text-left flex flex-col gap-8  opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
           <div>
             <Image
-              src="/lock-slash.svg"
+              src="./icons/lock-slash.svg"
               alt="Lock Icon"
-              width={50}
-              height={50}
-              className=" mb-2"
+              width={60}
+              height={60}
+              className=" mb-4"
             />
             <h2 className="text-xl font-bold mb-2">
               귀찮은 회원가입 없이
@@ -135,11 +135,11 @@ function Home() {
           </div>
           <div>
             <Image
-              src="/image.svg"
+              src="./icons/photo.svg"
               alt="Photo Icon"
-              width={50}
-              height={50}
-              className=" mb-2"
+              width={60}
+              height={60}
+              className=" mb-4"
             />
             <h2 className="text-xl font-bold mb-2">
               모임의 순간을
@@ -151,13 +151,13 @@ function Home() {
               더욱 현장감 있는 사진으로 모임을 추억해보세요!
             </p>
           </div>
-          <div>
+          <div className=" mb-24">
             <Image
-              src="/image3.svg"
+              src="./icons/magic-wand.svg"
               alt="Star Icon"
-              width={50}
-              height={50}
-              className=" mb-2"
+              width={60}
+              height={60}
+              className=" mb-4"
             />
             <h2 className="text-xl font-bold mb-2">
               재밌게 사진을 찍을 수 있는

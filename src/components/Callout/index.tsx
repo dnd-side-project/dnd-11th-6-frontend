@@ -45,9 +45,9 @@ function Callout({
           <span className="text-gray-700 font-medium text-sm">{title}</span>
         </div>
         {isExpanded ? (
-          <Image src={DownIcon} alt="DownIcon" />
-        ) : (
           <Image src={UpIcon} alt="UpIcon" />
+        ) : (
+          <Image src={DownIcon} alt="DownIcon" />
         )}
       </div>
       <div

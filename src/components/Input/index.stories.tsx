@@ -14,6 +14,10 @@ export default {
       control: 'select',
       options: ['text', 'password', 'email', 'number'],
     },
+    error: { control: 'text' },
+    success: { control: 'boolean' },
+    checking: { control: 'boolean' },
+    description: { control: 'text' },
   },
 } as Meta<typeof Input>
 
@@ -44,6 +48,24 @@ WithError.args = {
   error: 'This field has an error',
 }
 
+export const WithSuccess = Template.bind({})
+WithSuccess.args = {
+  name: 'withSuccess',
+  label: 'Input with Success',
+  placeholder: 'Enter text...',
+  success: true,
+  successMessage: '알맞는 링크를 찾았어요!',
+}
+
+export const Checking = Template.bind({})
+Checking.args = {
+  name: 'checking',
+  label: 'Input while Checking',
+  placeholder: 'Enter text...',
+  checking: true,
+  checkingMessage: '확인 중...',
+}
+
 export const Password = Template.bind({})
 Password.args = {
   name: 'password',
@@ -59,4 +81,18 @@ WithoutReactHookForm.args = {
   name: 'withoutReactHookForm',
   label: 'Regular Input',
   placeholder: 'Enter text...',
+}
+
+export const AllFeatures = Template.bind({})
+AllFeatures.args = {
+  name: 'allFeatures',
+  label: 'Input with All Features',
+  placeholder: 'Enter text...',
+  description: '(description)',
+  error: 'This is an error message',
+  errorMessage: '유효하지 않은 입력입니다',
+  success: false,
+  successMessage: '올바른 입력입니다',
+  checking: false,
+  checkingMessage: '입력 확인 중...',
 }

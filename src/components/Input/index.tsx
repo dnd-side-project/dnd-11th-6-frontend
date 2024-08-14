@@ -7,6 +7,8 @@ import {
   RegisterOptions,
   FieldError,
 } from 'react-hook-form'
+import Image from 'next/image'
+import Check from 'public/icons/check.svg'
 
 export interface InputProps<T extends FieldValues> {
   name: Path<T>
@@ -95,7 +97,11 @@ export function Input<T extends FieldValues>({
         </p>
       )}
       {success && (
-        <p className="text-green-600 text-sm mt-1">{successMessage}</p>
+        <div className="flex">
+          {' '}
+          <Image src={Check} alt="Check" className="mt-1" />{' '}
+          <p className="text-green-600 text-sm mt-1 ml-1">{successMessage}</p>{' '}
+        </div>
       )}
       {checking && (
         <p className="text-gray-500 text-sm mt-1">{checkingMessage}</p>

@@ -103,6 +103,12 @@ const config: Config = {
         '100%': { opacity: '1', transform: 'translateY(0)' },
       },
     },
+    height: {
+      screen: '100dvh',
+    },
+    minHeight: {
+      screen: '100dvh',
+    },
   },
   plugins: [],
 }

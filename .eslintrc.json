@@ -84,7 +84,12 @@
       }
     ]
   },
-  "ignorePatterns": ["public/**/*.js", "jest.config.js", "jest.setup.js"],
+  "ignorePatterns": [
+    "public/**/*.js",
+    "jest.config.js",
+    "jest.setup.js",
+    "scripts/dev.js"
+  ],
   "overrides": [
     {
       "files": ["*.stories.tsx", "*.stories.jsx"],

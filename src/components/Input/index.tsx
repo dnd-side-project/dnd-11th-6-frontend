@@ -9,6 +9,7 @@ import {
 } from 'react-hook-form'
 import Image from 'next/image'
 import Check from 'public/icons/check.svg'
+import Meatballs from 'public/icons/meatballs.svg'
 
 export interface InputProps<T extends FieldValues> {
   name: Path<T>
@@ -17,7 +18,7 @@ export interface InputProps<T extends FieldValues> {
   label?: string
   type?: string
   placeholder?: string
-  error?: string | FieldError
+  error?: string | FieldError | null
   success?: boolean
   checking?: boolean
   className?: string
@@ -34,7 +35,7 @@ export function Input<T extends FieldValues>({
   label,
   type = 'text',
   placeholder,
-  error,
+  error = null,
   success,
   checking,
   className = '',
@@ -91,7 +92,7 @@ export function Input<T extends FieldValues>({
       ) : (
         renderInput({ name })
       )}
-      {error && (
+      {error && error !== '' && (
         <p className="text-red-600 text-sm mt-1">
           {typeof error === 'string' ? error : error.message}
         </p>
@@ -104,7 +105,11 @@ export function Input<T extends FieldValues>({
         </div>
       )}
       {checking && (
-        <p className="text-gray-500 text-sm mt-1">{checkingMessage}</p>
+        <div className="flex">
+          {' '}
+          <Image src={Meatballs} alt="Meatballs" className="mt-1" />{' '}
+          <p className="text-gray-700 text-sm mt-1 ml-1">{checkingMessage}</p>
+        </div>
       )}
     </div>
   )

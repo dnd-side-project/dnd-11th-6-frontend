@@ -279,21 +279,21 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
             checking={isCheckingLeaderAuthKey}
           />
         )}
-        <Button
-          onClick={onEnterClick}
-          type="submit"
-          fullWidth
-          variant="primary"
-          className="mt-6"
-          disabled={
-            isLeader
-              ? !(isSuccessPassword && isSuccessLeaderAuthKey)
-              : !isSuccessPassword
-          }
-        >
-          완료
-        </Button>
       </div>
+      <Button
+        onClick={onEnterClick}
+        type="submit"
+        fullWidth
+        variant="primary"
+        className="mt-auto mb-5"
+        disabled={
+          isLeader
+            ? !(isSuccessPassword && isSuccessLeaderAuthKey)
+            : !isSuccessPassword
+        }
+      >
+        완료
+      </Button>
     </div>
   )
 }

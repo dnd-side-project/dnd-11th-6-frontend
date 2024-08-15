@@ -53,7 +53,7 @@ function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
           </div>
         </div>
         <div className="flex justify-between mt-4">
-          <div className="bg-[#F2F5F54D] text-gray-100 text-sm font-semibold px-2 py-1 rounded-[4px]">
+          <div className="bg-gray-100 bg-opacity-30 text-gray-100 text-sm font-semibold px-2 py-1 rounded-[4px]">
             모임 진행 중
           </div>
           <div className="text-gray-400 text-sm font-normal">

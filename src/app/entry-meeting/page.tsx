@@ -30,10 +30,22 @@ function EntryMeeting() {
         )
       case 1:
         return meetingData ? (
-          <MeetingInfo onEnterClick={() => setPage(page + 1)} />
+          <MeetingInfo
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
         ) : null
       case 2:
-        return <PasswordInput onPasswordSubmit={() => setPage(page + 1)} />
+        return (
+          <PasswordInput
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        )
       case 3:
         return (
           <NicknameInput

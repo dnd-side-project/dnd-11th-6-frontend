@@ -148,56 +148,30 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
   )
 
   useEffect(() => {
-    if (passwordValue && passwordValue.length >= 6) {
-      fetchPasswordValidation(passwordValue)
-    } else {
-      setIsCheckingPassword(false)
-      setIsSuccessPassword(false)
-      setErrorMessagePassword(null)
-    }
+    fetchPasswordValidation(passwordValue)
   }, [passwordValue, fetchPasswordValidation])
 
   useEffect(() => {
-    if (leaderAuthKeyValue && leaderAuthKeyValue.length === 4) {
+    if (leaderAuthKeyValue !== undefined) {
       fetchLeaderAuthKeyValidation(leaderAuthKeyValue)
-    } else {
-      setIsCheckingLeaderAuthKey(false)
-      setIsSuccessLeaderAuthKey(false)
-      setErrorMessageLeaderAuthKey(null)
     }
   }, [leaderAuthKeyValue, fetchLeaderAuthKeyValidation])
 
-  // Debugging
-  useEffect(() => {
-    console.log('isCheckingPassword:', isCheckingPassword)
-    console.log('isSuccessPassword:', isSuccessPassword)
-    console.log('errorMessagePassword:', errorMessagePassword)
+  // ======== DEBUGGING CODE START ========
+  console.log('isCheckingPassword:', isCheckingPassword)
+  console.log('isSuccessPassword:', isSuccessPassword)
+  console.log('errorMessagePassword:', errorMessagePassword)
 
-    console.log('passwordValue:', passwordValue)
-    console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
-  }, [
-    isCheckingPassword,
-    isSuccessPassword,
-    errorMessagePassword,
-    passwordValue,
-    leaderAuthKeyValue,
-  ])
+  console.log('passwordValue:', passwordValue)
+  console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
 
-  // Debugging
-  useEffect(() => {
-    console.log('isCheckingLeaderAuthKey:', isCheckingLeaderAuthKey)
-    console.log('isSuccessLeaderAuthKey:', isSuccessLeaderAuthKey)
-    console.log('errorMessageLeaderAuthKey:', errorMessageLeaderAuthKey)
+  console.log('isCheckingLeaderAuthKey:', isCheckingLeaderAuthKey)
+  console.log('isSuccessLeaderAuthKey:', isSuccessLeaderAuthKey)
+  console.log('errorMessageLeaderAuthKey:', errorMessageLeaderAuthKey)
 
-    console.log('passwordValue:', passwordValue)
-    console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
-  }, [
-    isCheckingLeaderAuthKey,
-    isSuccessLeaderAuthKey,
-    errorMessageLeaderAuthKey,
-    passwordValue,
-    leaderAuthKeyValue,
-  ])
+  console.log('passwordValue:', passwordValue)
+  console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
+  // ======== DEBUGGING CODE END ========
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">

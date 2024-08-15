@@ -10,20 +10,22 @@ interface MeetingInfoProps {
 
 function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
   const maxLength = 75
+  // ======== TODO: FUTURE FEATURE START ========
   // const meetingData = useMeetingStore((state) => state.meetingData)
   // const shortDescription =
   // meetingData.description.length > maxLength
   //   ? `${meetingData.description.substring(0, maxLength)}...`
   //   : meetingData.description
+  // ======== TODO: FUTURE FEATURE END ========
 
-  // below is for testing
+  // ======== DEBUGGING CODE START ========
   const meetingDataDescription: string =
     'DND는 개발자와 디자이너를 위한 계속해서 성장하는 IT비영리단체입니다.DND는 개발자와 디자이너를 위한 계속해서 성장하는 IT비영리이고 여기는 생략되는 부분 여기는 생략되는 부분'
   const shortDescription =
     meetingDataDescription.length > maxLength
       ? `${meetingDataDescription.substring(0, maxLength)}...`
       : meetingDataDescription
-  // above is for testing
+  // ======== DEBUGGING CODE END ========
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">

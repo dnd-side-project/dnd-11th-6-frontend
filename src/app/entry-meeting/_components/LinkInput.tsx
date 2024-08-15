@@ -72,12 +72,12 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
     }
   }, [linkValue, fetchMeeting])
 
-  useEffect(() => {
-    console.log('checking:', isChecking)
-    console.log('isSuccess:', isSuccess)
-    console.log('errorMessage:', errorMessage)
-    console.log('linkValue:', linkValue)
-  }, [isChecking, isSuccess, errorMessage, linkValue])
+  // ======== DEBUGGING CODE START ========
+  console.log('checking:', isChecking)
+  console.log('isSuccess:', isSuccess)
+  console.log('errorMessage:', errorMessage)
+  console.log('linkValue:', linkValue)
+  // ======== DEBUGGING CODE END ========
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">

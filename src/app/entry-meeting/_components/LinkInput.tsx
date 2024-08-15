@@ -14,13 +14,13 @@ interface LinkInputProps {
   onBackClick?: () => void
 }
 
-interface FormValues {
+interface LinkFormData {
   link: string
 }
 
 function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
   const router = useRouter()
-  const { control, watch } = useForm<FormValues>({
+  const { control, watch } = useForm<LinkFormData>({
     defaultValues: {
       link: '',
     },
@@ -79,12 +79,6 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
     console.log('linkValue:', linkValue)
   }, [isChecking, isSuccess, errorMessage, linkValue])
 
-  const handleEnterClick = () => {
-    if (isSuccess) {
-      onEnterClick()
-    }
-  }
-
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
@@ -122,7 +116,7 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
       />
 
       <Button
-        onClick={handleEnterClick}
+        onClick={onEnterClick}
         variant="primary"
         className="mt-auto mb-5"
         disabled={!isSuccess}

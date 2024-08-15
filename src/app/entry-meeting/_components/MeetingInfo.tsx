@@ -46,7 +46,6 @@ function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
           <div className="flex flex-col">
             <div className="text-gray-400 text-sm">나의 모임</div>
             <div className="text-gray-100 text-lg font-bold ">
-              {' '}
               DND 네트워킹
               {/* {meetingData?.name} */}
             </div>

@@ -44,7 +44,7 @@ export function Input<T extends FieldValues>({
   checkingMessage = '확인중',
   description,
 }: InputProps<T>) {
-  const inputClassName = `w-full py-4 px-[18px] border rounded-[14px] text-[18px] focus:border-gray-900 focus:outline-none focus:ring-0 ${className} ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-500'}`
+  const inputClassName = `w-full h-[54px] py-4 px-[18px] border rounded-[14px] text-[18px] focus:border-gray-900 focus:outline-none focus:ring-0 ${className} ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-500'}`
 
   const renderInput = (field: any) => {
     const props = {

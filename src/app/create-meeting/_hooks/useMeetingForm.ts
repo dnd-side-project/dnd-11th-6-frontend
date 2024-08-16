@@ -1,6 +1,8 @@
 import { useCallback } from 'react'
 import useZodForm from '@/hooks/useZodForm'
 import {
+  MeetingDateFormModel,
+  MeetingDateSchema,
   MeetingFormModel,
   MeetingSchema,
   PasswordFormModel,
@@ -16,6 +18,11 @@ function useMeetingForm() {
   const meetingForm = useZodForm<MeetingFormModel>(MeetingSchema, {
     mode: 'onChange',
     defaultValues: formData.meeting,
+  })
+
+  const meetingDateForm = useZodForm<MeetingDateFormModel>(MeetingDateSchema, {
+    mode: 'onChange',
+    defaultValues: formData.meetingDate,
   })
 
   const themeForm = useZodForm<ThemeFormModel>(ThemeSchema, {
@@ -38,23 +45,22 @@ function useMeetingForm() {
 
   const onSubmit = async () => {
     if (step === 1) {
-      const isStep1Valid = await meetingForm.trigger([
-        'name',
-        'description',
-        // 'date',
-        // 'isRecurring',
-        // 'endDate',
-      ])
+      const isStep1Valid = await meetingForm.trigger(['name', 'description'])
       if (isStep1Valid) {
         updateFormData()
         setStep(2)
       }
     } else if (step === 2) {
-      const isStep2Valid = await themeForm.trigger(['photo', 'color'])
+      const isStep2Valid = await meetingDateForm.trigger(['date', 'endDate'])
       if (isStep2Valid) {
         updateFormData()
         setStep(3)
       }
+      // const isStep2Valid = await themeForm.trigger(['photo', 'color'])
+      // if (isStep2Valid) {
+      //   updateFormData()
+      //   setStep(3)
+      // }
     } else if (step === 3) {
       updateFormData()
       const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
@@ -68,6 +74,7 @@ function useMeetingForm() {
 
   return {
     meetingForm,
+    meetingDateForm,
     themeForm,
     passwordForm,
     onSubmit,

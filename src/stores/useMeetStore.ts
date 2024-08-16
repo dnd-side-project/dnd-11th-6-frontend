@@ -3,10 +3,12 @@ import {
   MeetingFormModel,
   ThemeFormModel,
   PasswordFormModel,
+  MeetingDateFormModel,
 } from '@/lib/meetingSchema'
 
 interface FormData {
   meeting: Partial<MeetingFormModel>
+  meetingDate: Partial<MeetingDateFormModel>
   theme: Partial<ThemeFormModel>
   password: Partial<PasswordFormModel>
 }
@@ -30,9 +32,10 @@ const initialFormData: FormData = {
   meeting: {
     name: '',
     description: '',
-    // date: '',
-    // isRecurring: false,
-    // endDate: '',
+  },
+  meetingDate: {
+    date: '',
+    endDate: '',
   },
   theme: {
     photo: '',

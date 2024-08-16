@@ -19,13 +19,15 @@ export interface InputProps<T extends FieldValues> {
   success?: boolean
   checking?: boolean
   className?: string
-  as?: 'input' | 'textarea' | 'checkbox'
+  as?: 'input' | 'textarea' | 'checkbox' | 'date' | 'datetime'
   errorMessage?: string
   successMessage?: string
   checkingMessage?: string
   description?: string
   maxLength?: number
   showCharCount?: boolean
+  min?: string // for date and datetime inputs
+  max?: string // for date and datetime inputs
 }
 
 export function Input<T extends FieldValues>({
@@ -44,6 +46,8 @@ export function Input<T extends FieldValues>({
   description,
   maxLength,
   showCharCount,
+  min,
+  max,
 }: InputProps<T>) {
   const inputClassName = `w-full py-4 px-[18px] border rounded-[14px] text-[18px] focus:outline-none focus:ring-0 ${className} ${
     error ? 'border-red-500' : 'border-gray-600'
@@ -53,13 +57,44 @@ export function Input<T extends FieldValues>({
     const props = {
       ...field,
       id: name,
-      type,
+      type:
+        as === 'date' ? 'date' : as === 'datetime' ? 'datetime-local' : type,
       placeholder,
       className: as === 'checkbox' ? 'mr-2' : inputClassName,
       maxLength,
+      min,
+      max,
     }
 
     const charCount = field.value?.length || 0
+
+    const inputElement = () => {
+      switch (as) {
+        case 'textarea':
+          return <textarea rows={3} {...props} />
+        case 'checkbox':
+          return (
+            <label htmlFor={name} className="flex items-center">
+              <input {...props} />
+              <span>{label}</span>
+            </label>
+          )
+        case 'date':
+        case 'datetime':
+          return <input {...props} />
+        default:
+          return (
+            <div className="relative">
+              <input {...props} />
+              {description && (
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm">
+                  {description}
+                </span>
+              )}
+            </div>
+          )
+      }
+    }
 
     return (
       <div className="mb-6">
@@ -69,27 +104,11 @@ export function Input<T extends FieldValues>({
               {label}
             </label>
           </div>
-          {as === 'textarea' ? (
-            <textarea rows={3} {...props} />
-          ) : as === 'checkbox' ? (
-            <label htmlFor={name} className="flex items-center">
-              <input {...props} />
-              <span>{label}</span>
-            </label>
-          ) : (
-            <div className="relative">
-              <input {...props} />
-              {description && (
-                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm">
-                  {description}
-                </span>
-              )}
-            </div>
-          )}
+          {inputElement()}
         </div>
-        <div className={` ${error ? 'flex justify-between' : 'w-full'}`}>
+        <div className={`${error ? 'flex justify-between' : 'w-full'}`}>
           {error && (
-            <p className="text-red-600 text-sm ">
+            <p className="text-red-600 text-sm">
               {typeof error === 'string' ? error : error.message}
             </p>
           )}
@@ -99,12 +118,10 @@ export function Input<T extends FieldValues>({
             </div>
           )}
           {checking && (
-            <p className="text-gray-600 text-sm ">{checkingMessage}</p>
+            <p className="text-gray-600 text-sm">{checkingMessage}</p>
           )}
           {showCharCount && maxLength && (
-            <span
-              className={`text-sm text-gray-600 ${error ? 'flex justify-end' : 'flex justify-end'}`}
-            >
+            <span className="text-sm text-gray-600 flex justify-end">
               {charCount}/{maxLength}
             </span>
           )}

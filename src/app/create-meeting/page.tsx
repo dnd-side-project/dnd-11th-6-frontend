@@ -6,16 +6,16 @@ import Image from 'next/image'
 import useMeetStore from '@/stores/useMeetStore'
 import {
   MeetingAdminPin,
+  MeetingDate,
   MeetingInfo,
   MeetingPassword,
   MeetingShare,
-  MeetingTheme,
 } from './_components'
 import ProgressBar from './_components/ProgressBar'
 
 const stepTitles = {
   1: '모임 생성',
-  2: '모임 테마',
+  2: '모임 생성',
   3: '비밀번호 설정',
   4: '관리자 PIN 안내',
   5: '',
@@ -37,7 +37,7 @@ function CreateMeetingPage() {
       case 1:
         return <MeetingInfo />
       case 2:
-        return <MeetingTheme />
+        return <MeetingDate />
       case 3:
         return <MeetingPassword />
       case 4:

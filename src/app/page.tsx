@@ -1,9 +1,13 @@
 'use client'
 
 import { useRef } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/Button'
+import {
+  Section1,
+  Section2,
+  Section3,
+  Section4,
+  Section5,
+} from './_components/sections'
 
 function Home() {
   const section2Ref = useRef<HTMLElement>(null)
@@ -11,235 +15,14 @@ function Home() {
   const scrollToSection2 = () => {
     section2Ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
   return (
-    <div className=" h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
-      {/* Section 1 */}
-      <section className="h-screen flex flex-col items-center justify-center bg-white snap-start">
-        <div className="text-center">
-          <Image
-            src="/logo.svg"
-            alt="Snappy Logo"
-            width={50}
-            height={50}
-            className="m-auto"
-          />
-          <h1 className="text-4xl font-bold my-2">Snappy</h1>
-          <p className="mt-2 font-normal text-lg text-gray-700">
-            즐거운 모임의 순간들을 <br /> 스냅피와 포착해보세요
-          </p>
-          <div className="mt-16 grid grid-cols-2 gap-4">
-            <Link
-              href="/create-meeting"
-              className="flex items-center justify-center flex-col bg-gray-900 text-white p-9 rounded-2xl transition duration-300 "
-            >
-              <Image
-                className="mb-3"
-                src="./icons/plus.svg"
-                alt="Plus Icon"
-                width={44}
-                height={44}
-              />
-              <span>
-                새로운 모임 앨범
-                <br />
-                만들기
-              </span>
-            </Link>
-            <Link
-              href="/entry-meeting"
-              className="flex items-center justify-center flex-col bg-gray-900 text-white p-9 rounded-2xl transition duration-300 "
-            >
-              <Image
-                className="mb-3"
-                src="./icons/snap.svg"
-                alt="Snap Icon"
-                width={61.85}
-                height={45.58}
-              />
-              <span className="text-white">
-                내 모임 앨범
-                <br />
-                참여하기
-              </span>
-            </Link>
-          </div>
-          <button
-            onClick={scrollToSection2}
-            className="mt-20 m-auto flex flex-col items-center transition duration-300 cursor-pointer animate-move-up-down"
-          >
-            <p className="mb-2 font-bold text-gray-700 text-lg">
-              눌러서 설명보기
-            </p>
-            <Image
-              className="mb-3"
-              src="./icons/double-down.svg"
-              alt="DoubleDown Icon"
-              width={24}
-              height={24}
-            />
-          </button>
-        </div>
-      </section>
-
-      {/* Section 2 */}
-      <section
-        ref={section2Ref}
-        className=" h-screen flex flex-col items-center justify-center bg-gray-900 text-white snap-start"
-      >
-        <div className="text-left mb-6 px-4 w-full">
-          <p className="text-sm font-medium mb-2 text-yellow-400">Snappy는?</p>
-          <p className="text-[22px] font-bold line leading-[30px]">
-            스냅피는
-            <br />
-            모임의 시간을 재밌게 즐길 수 있는
-            <br />
-            사진 앨범 서비스에요
-          </p>
-        </div>
-        <Image src="/image1.svg" alt="Flags Icon" width={800} height={800} />
-      </section>
-      {/* Section 3 */}
-      <section className=" h-screen flex flex-col items-center justify-center bg-gray-900 text-white snap-start">
-        <div className="w-full px-4 text-left opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
-          <h2 className="text-sm font-medium mb-2 text-yellow-400">모임앨범</h2>
-          <p className="text-[22px] font-bold line leading-[30px] mb-[6px]">
-            우리 모임만의
-            <br />
-            프라이빗한 앨범을 만들 수 있어요
-          </p>
-          <p className="text-sm text-gray-400">자유롭게 사진을 찍고 공유해요</p>
-        </div>
-        <Image src="/image2.svg" alt="Flags Icon" width={400} height={400} />
-      </section>
-
-      {/* Section 4 */}
-      <section className="h-screen flex flex-col items-center justify-center bg-gray-900 text-white snap-start">
-        <div className="w-full px-4 text-left flex flex-col gap-8  opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
-          <div>
-            <Image
-              src="./icons/lock-slash.svg"
-              alt="Lock Icon"
-              width={60}
-              height={60}
-              className=" mb-4"
-            />
-            <h2 className="text-xl font-bold mb-2">
-              귀찮은 회원가입 없이
-              <br />
-              누구나 간단하게 만들 수 있어요.
-            </h2>
-            <p className="mb-2 text-sm text-gray-400">
-              모임 링크를 통해 간단하게 참여할 수 있어요.
-              <br />
-              보안을 위한 모임 암호만 입력하면 끝!
-            </p>
-          </div>
-          <div>
-            <Image
-              src="./icons/photo.svg"
-              alt="Photo Icon"
-              width={60}
-              height={60}
-              className=" mb-4"
-            />
-            <h2 className="text-xl font-bold mb-2">
-              모임의 순간을
-              <br />딱 10장만 찍을 수 있어요!
-            </h2>
-            <p className="mb-2 text-sm text-gray-400">
-              예쁜 사진을 위해 많은 시간을 쓰지마세요.
-              <br />
-              더욱 현장감 있는 사진으로 모임을 추억해보세요!
-            </p>
-          </div>
-          <div className=" mb-24">
-            <Image
-              src="./icons/magic-wand.svg"
-              alt="Star Icon"
-              width={60}
-              height={60}
-              className=" mb-4"
-            />
-            <h2 className="text-xl font-bold mb-2">
-              재밌게 사진을 찍을 수 있는
-              <br />
-              랜덤미션을 제공해요.
-            </h2>
-            <p className=" text-sm text-gray-400">
-              낯선 사람과도 어색함 없이
-              <br />
-              더욱 재미있는 추억을 남길 수 있을 거예요.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 5 */}
-      <section className="snap-start h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-        <div className="w-full text-center opacity-0 transform translate-y-4 transition duration-1000 ease-in-out animate-fadeIn">
-          <div className="bg-gray-800  flex flex-col justify-center items-center py-6">
-            <Image
-              src="./icons/logo-white.svg"
-              alt="White Logo Icon"
-              width={39}
-              height={39}
-              className=" mb-4"
-            />
-            <h2 className="text-[22px] font-bold mb-4 leading-[30px]">
-              스냅피와 함께
-              <br />
-              모임의 순간을 포착해보세요!
-            </h2>
-            <Button
-              className="bg-yellow-400 text-black font-bold"
-              type="submit"
-              fullWidth
-              variant="primary"
-            >
-              새로운 모임 앨범 만들어보기
-            </Button>
-          </div>
-          <div className="border-t border-gray-700 mt-16 mx-auto w-[360px]" />
-          <div className="flex flex-col text-gray-500 text-left px-4">
-            <p className="mt-8 text-lg font-bold mb-1">
-              스냅피에 대해서 다양한 의견을 주세요.
-            </p>
-
-            <p className="text-sm">
-              여러분의 소중한 의견을 바탕으로 더 나아질 수 있어요.
-            </p>
-            <div>
-              <button className=" underline mt-2 mr-2 transition duration-300">
-                google
-              </button>
-              <button className=" underline mt-2 mr-2 transition duration-300">
-                form
-              </button>
-              <button className=" underline mt-2 transition duration-300">
-                link
-              </button>
-            </div>
-            <div className="my-6">
-              <h3 className="font-bold mb-1">스냅피를 만든 사람들</h3>
-              <p className="text-sm">DND 11기 6조</p>
-              <div className="flex flex-col mt-2">
-                <div className="flex justify-between w-[45%] text-sm">
-                  <p>Design</p>
-                  <p>박서현 | 윤조현</p>
-                </div>
-                <div className="flex justify-between w-[45%] text-sm">
-                  <p>Frontend</p>
-                  <p>서다원 | 이지훈</p>
-                </div>
-                <div className="flex justify-between w-[45%] text-sm">
-                  <p>Backend</p>
-                  <p>박채원 | 이재훈</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
+      <Section1 scrollToSection2={scrollToSection2} />
+      <Section2 ref={section2Ref} />
+      <Section3 />
+      <Section4 />
+      <Section5 />
     </div>
   )
 }

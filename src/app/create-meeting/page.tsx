@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import Image from 'next/image'
 import useMeetStore from '@/stores/useMeetStore'
 import {
   MeetingAdminPin,
@@ -10,9 +11,10 @@ import {
   MeetingShare,
   MeetingTheme,
 } from './_components'
+import ProgressBar from './_components/ProgressBar'
 
 const stepTitles = {
-  1: '모임 정보 입력하기',
+  1: '모임 생성',
   2: '모임 테마',
   3: '비밀번호 설정',
   4: '관리자 PIN 안내',
@@ -20,7 +22,7 @@ const stepTitles = {
 }
 
 function CreateMeetingPage() {
-  const { step, setStep } = useMeetStore()
+  const { step } = useMeetStore()
 
   const handleShareMeeting = () => {
     console.log('Share meeting')
@@ -28,12 +30,6 @@ function CreateMeetingPage() {
 
   const handleGoToMyMeeting = () => {
     console.log('Go to my meeting')
-  }
-
-  const handleGoBack = () => {
-    if (step > 1 && step < 5) {
-      setStep(step - 1)
-    }
   }
 
   const renderStep = () => {
@@ -59,27 +55,22 @@ function CreateMeetingPage() {
   }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <div className="flex gap-4 ">
-        {step === 1 || step === 5 ? (
-          ''
-        ) : (
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="text-2xl mr-4 bg-white"
-            disabled={step === 1 || step === 5}
-          >
-            &gt;
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className=" px-4 py-3">
+        <div className="flex items-center justify-between mb-6">
+          <button className="p-1">
+            <Image src="/icons/close.svg" width={24} height={24} alt="close" />
           </button>
-        )}
+          <h1 className="text-xl font-bold flex-grow text-center">
+            {' '}
+            {stepTitles[step as keyof typeof stepTitles]}
+          </h1>
+          <div className="w-6" /> {/* 오른쪽 여백을 위한 빈 div */}
+        </div>
+        <ProgressBar currentStep={step} totalSteps={5} />
 
-        <h1 className="text-2xl font-bold mb-4 m-auto">
-          {stepTitles[step as keyof typeof stepTitles]}
-        </h1>
+        {renderStep()}
       </div>
-
-      {renderStep()}
     </div>
   )
 }

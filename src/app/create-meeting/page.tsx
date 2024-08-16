@@ -56,13 +56,12 @@ function CreateMeetingPage() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div className=" px-4 py-3">
+      <div className="px-4">
         <div className="flex items-center justify-between mb-6">
           <button className="p-1">
             <Image src="/icons/close.svg" width={24} height={24} alt="close" />
           </button>
           <h1 className="text-xl font-bold flex-grow text-center">
-            {' '}
             {stepTitles[step as keyof typeof stepTitles]}
           </h1>
           <div className="w-6" /> {/* 오른쪽 여백을 위한 빈 div */}

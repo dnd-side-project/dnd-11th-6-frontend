@@ -30,9 +30,9 @@ const initialFormData: FormData = {
   meeting: {
     name: '',
     description: '',
-    date: '',
-    isRecurring: false,
-    endDate: '',
+    // date: '',
+    // isRecurring: false,
+    // endDate: '',
   },
   theme: {
     photo: '',

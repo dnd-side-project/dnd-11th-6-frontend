@@ -12,74 +12,47 @@ function MeetingInfo() {
   } = meetingForm
 
   return (
-    <>
-      <div className=" mb-11">
-        <p className="text-[22px] font-bold mb-[6px]">
+    <div className="flex flex-col h-full">
+      <div className="mb-[42px]">
+        <h2 className="text-xl font-bold mb-2">
           생성하려는 모임의 정보를 알려주세요.
-        </p>
-        <p className=" text-sm">
+        </h2>
+        <p className="text-sm text-gray-600">
           다른 참여자들이 알 수 있도록 모임을 설명해주세요.
         </p>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          name="name"
-          control={control}
-          label="모임 이름"
-          placeholder="이름 입력"
-          error={errors.name?.message}
-        />
-
-        <Input
-          name="description"
-          control={control}
-          label="모임 설명"
-          placeholder="최대 150자까지 입력 가능해요"
-          as="textarea"
-          error={errors.description?.message}
-        />
-
-        {/* <div className="mb-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex-grow flex flex-col"
+      >
+        <div className="flex-grow">
           <Input
-            label="모임 시작일"
-            name="date"
+            name="name"
             control={control}
-            type="datetime-local"
-            className="w-1/2"
+            label="모임 이름"
+            placeholder="이름 입력"
+            error={errors.name?.message}
+            maxLength={15}
+            showCharCount
           />
-          {errors.date && (
-            <p className="text-red-500">날짜와 시간을 선택해주세요.</p>
-          )}
+
+          <Input
+            name="description"
+            control={control}
+            label="모임 설명"
+            placeholder="최대 150자까지 입력 가능해요"
+            as="textarea"
+            error={errors.description?.message}
+            maxLength={150}
+            showCharCount
+          />
         </div>
-
-        {isRecurring && (
-          <Input
-            name="endDate"
-            control={control}
-            label="종료일"
-            type="date"
-            error={errors.endDate?.message}
-          />
-        )}
-
-        <Input
-          name="isRecurring"
-          control={control}
-          label="종료일 설정하기"
-          type="checkbox"
-          as="checkbox"
-        />
-
-        <p className="text-sm text-gray-500 mb-4">
-          링크는 {isRecurring ? watch('endDate') : '24시간 이내'} 까지
-          유효합니다.
-        </p> */}
 
         <Button type="submit" disabled={!isValid} fullWidth variant="primary">
           다음
         </Button>
       </form>
-    </>
+    </div>
   )
 }
 

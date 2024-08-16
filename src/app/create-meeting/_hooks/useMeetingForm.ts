@@ -41,9 +41,9 @@ function useMeetingForm() {
       const isStep1Valid = await meetingForm.trigger([
         'name',
         'description',
-        'date',
-        'isRecurring',
-        'endDate',
+        // 'date',
+        // 'isRecurring',
+        // 'endDate',
       ])
       if (isStep1Valid) {
         updateFormData()

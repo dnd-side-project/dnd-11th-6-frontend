@@ -20,12 +20,26 @@ function CameraView({
   goBack,
 }: CameraViewProps) {
   return (
-    <>
+    <div className="min-h-screen w-full p-4">
       <div className="flex justify-between items-center h-12 w-full">
         <Link href="/create-mission">
-          <div className="flex justify-between items-center px-4 py-3 w-44 h-12 rounded-[14px] border border-black">
-            미션 뽑으러가기
-            <div>&gt;</div>
+          <div className="flex justify-between items-center px-3 py-2 rounded-[14px] bg-gray-200">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="mr-1"
+            >
+              <path
+                d="M6.0002 1.19995L6.0002 10.8M10.8002 5.99995L1.2002 5.99995"
+                stroke="#AAAFB3"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            미션 추가하기
           </div>
         </Link>
         <div className="flex-1">{} </div>
@@ -53,6 +67,13 @@ function CameraView({
         }}
         className="mt-8"
       />
+      <div className="flex justify-center">
+        {' '}
+        <div className="flex justify-center text-gray-500 bg-gray-200 px-3 py-2 mt-4 w-44 rounded-[14px] text-sm">
+          모임의 순간을 담아주세요!
+        </div>
+      </div>
+
       <div className="flex items-center justify-center w-full mt-10">
         <button
           type="button"
@@ -74,9 +95,9 @@ function CameraView({
             />
           </button>
         </div>
-        <div className="w-1/3">{}</div>
+        <div className="w-1/3" />
       </div>
-    </>
+    </div>
   )
 }
 

@@ -8,6 +8,7 @@ import {
   MeetingInfo,
   NicknameInput,
   PasswordInput,
+  Welcome,
 } from './_components'
 
 function EntryMeeting() {
@@ -49,7 +50,21 @@ function EntryMeeting() {
       case 3:
         return (
           <NicknameInput
-            onNicknameSubmit={() => console.log('닉네임 제출 완료. 모임 입장')}
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        )
+      case 4:
+        return (
+          <Welcome
+            onEnterClick={() => {
+              router.back()
+            }}
+            onBackClick={() => {
+              router.back()
+            }}
           />
         )
       default:

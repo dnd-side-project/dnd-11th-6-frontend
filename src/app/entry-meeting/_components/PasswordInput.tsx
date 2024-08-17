@@ -1,18 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-import debounce from '@/utils/debounce'
+import useDebounce from '@/hooks/useDeboune'
 import BackIcon from 'public/icons/back.svg'
 
 const passwordSchema = z.object({
   password: z
     .string()
     .min(1, '암호를 입력해주세요.')
-    .min(6, '암호는 최소 6자 이상이어야 합니다.'),
+    .min(6, '암호는 최소 6자 이상이어야 해요. :(')
+    .max(20, '비밀번호는 최대 20자까지 입력 가능해요. :('),
   leaderAuthKey: z
     .string()
     .min(4, '관리자 인증키는 4자리여야 합니다.')
@@ -43,134 +45,158 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
     mode: 'onChange',
   })
 
-  const [isCheckingPassword, setIsCheckingPassword] = useState(false)
-  const [isSuccessPassword, setIsSuccessPassword] = useState(false)
-  const [errorMessagePassword, setErrorMessagePassword] = useState<
+  const [apiErrorMessagePassword, setApiErrorMessagePassword] = useState<
     string | null
   >(null)
-
-  const [isCheckingLeaderAuthKey, setIsCheckingLeaderAuthKey] = useState(false)
-  const [isSuccessLeaderAuthKey, setIsSuccessLeaderAuthKey] = useState(false)
-  const [errorMessageLeaderAuthKey, setErrorMessageLeaderAuthKey] = useState<
-    string | null
-  >(null)
+  const [apiErrorMessageLeaderAuthKey, setApiErrorMessageLeaderAuthKey] =
+    useState<string | null>(null)
 
   const passwordValue = watch('password')
   const leaderAuthKeyValue = watch('leaderAuthKey')
 
-  useEffect(() => {
-    reset({
-      password: '',
-      leaderAuthKey: '',
-    })
+  const debouncedPassword = useDebounce(passwordValue, 500)
+  const debouncedLeaderAuthKey = useDebounce(leaderAuthKeyValue, 500)
 
-    setIsCheckingPassword(false)
-    setIsSuccessPassword(false)
-    setErrorMessagePassword(null)
-    setIsCheckingLeaderAuthKey(false)
-    setIsSuccessLeaderAuthKey(false)
-    setErrorMessageLeaderAuthKey(null)
+  const validatePassword = useMutation<
+    { status: number; data: any },
+    { status: number; error: { code: string; message: string } },
+    string
+  >({
+    mutationFn: async (password: string) => {
+      if (!password || password.length < 6) return null
+
+      // TODO: Replace this with the actual meeting ID
+      const meetingId = '6'
+      const endpoint = isLeader
+        ? `/api/v1/meetings/${meetingId}/validate-password/leader`
+        : `/api/v1/meetings/${meetingId}/validate-password`
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error.message)
+      }
+      return response.json()
+    },
+    retry: false,
+  })
+
+  const validateLeaderAuthKey = useMutation<
+    { status: number; data: any },
+    { status: number; error: { code: string; message: string } },
+    string
+  >({
+    mutationFn: async (leaderAuthKey: string) => {
+      if (!leaderAuthKey || leaderAuthKey.length !== 4) return null
+
+      // TODO: Replace this with the actual meeting ID
+      const meetingId = '9'
+      const response = await fetch(
+        `/api/v1/meetings/${meetingId}/validate-password/leader`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leaderAuthKey),
+        },
+      )
+      const result = await response.json()
+      if (!response.ok) throw result
+      return result
+    },
+    retry: false,
+  })
+
+  useEffect(() => {
+    if (debouncedPassword && debouncedPassword.length >= 6) {
+      validatePassword.mutate(debouncedPassword)
+    } else {
+      setApiErrorMessagePassword(null)
+    }
+  }, [debouncedPassword])
+
+  useEffect(() => {
+    if (
+      isLeader &&
+      debouncedLeaderAuthKey &&
+      debouncedLeaderAuthKey.length === 4
+    ) {
+      validateLeaderAuthKey.mutate(debouncedLeaderAuthKey)
+    } else {
+      setApiErrorMessageLeaderAuthKey(null)
+    }
+  }, [isLeader, debouncedLeaderAuthKey])
+
+  useEffect(() => {
+    if (validatePassword.isError) {
+      if (
+        validatePassword.error.error?.code === 'MEETING_INVALIDATE_PASSWORD'
+      ) {
+        setApiErrorMessagePassword('암호가 일치하지 않습니다.')
+      } else {
+        setApiErrorMessagePassword('오류가 발생했습니다. 다시 시도해주세요.')
+      }
+    } else if (validatePassword.isSuccess) {
+      setApiErrorMessagePassword(null)
+    }
+  }, [
+    validatePassword.isError,
+    validatePassword.isSuccess,
+    validatePassword.error,
+  ])
+
+  useEffect(() => {
+    if (validateLeaderAuthKey.isError) {
+      if (
+        validateLeaderAuthKey.error.error?.code ===
+        'MEETING_INVALIDATE_PASSWORD'
+      ) {
+        setApiErrorMessageLeaderAuthKey('암호가 일치하지 않습니다.')
+      } else {
+        setApiErrorMessageLeaderAuthKey(
+          '오류가 발생했습니다. 다시 시도해주세요.',
+        )
+      }
+    } else if (validateLeaderAuthKey.isSuccess) {
+      setApiErrorMessageLeaderAuthKey(null)
+    }
+  }, [
+    validateLeaderAuthKey.isError,
+    validateLeaderAuthKey.isSuccess,
+    validateLeaderAuthKey.error,
+  ])
+
+  const errorMessagePassword =
+    apiErrorMessagePassword || errors.password?.message || null
+  const errorMessageLeaderAuthKey =
+    apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message || null
+
+  useEffect(() => {
+    reset({ password: '', leaderAuthKey: '' })
+    validatePassword.reset()
+    validateLeaderAuthKey.reset()
   }, [isLeader, reset])
 
-  const fetchPasswordValidation = useCallback(
-    debounce(async (password: string) => {
-      if (!password || password.length < 6) return
-      setIsCheckingPassword(true)
-      setIsSuccessPassword(false)
-      setErrorMessagePassword(null)
-
-      try {
-        const endpoint = isLeader
-          ? `/api/v1/meetings/validate-password/leader`
-          : `/api/v1/meetings/validate-password`
-
-        const bodyData = password
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(bodyData),
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setIsSuccessPassword(true)
-          setErrorMessagePassword(null)
-        } else {
-          setErrorMessagePassword(data.error.message)
-        }
-      } catch (error) {
-        setErrorMessagePassword('네트워크 오류가 발생했습니다.')
-      } finally {
-        setIsCheckingPassword(false)
-      }
-    }, 500),
-    [isLeader],
-  )
-
-  const fetchLeaderAuthKeyValidation = useCallback(
-    debounce(async (leaderAuthKey: string) => {
-      if (!leaderAuthKey || leaderAuthKey.length !== 4) return
-      setIsCheckingLeaderAuthKey(true)
-      setIsSuccessLeaderAuthKey(false)
-      setErrorMessageLeaderAuthKey(null)
-
-      try {
-        const response = await fetch(
-          `/api/v1/meetings/validate-password/leader`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(leaderAuthKey),
-          },
-        )
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setIsSuccessLeaderAuthKey(true)
-          setErrorMessageLeaderAuthKey(null)
-        } else {
-          setErrorMessageLeaderAuthKey(data.error.message)
-        }
-      } catch (error) {
-        setErrorMessageLeaderAuthKey('네트워크 오류가 발생했습니다.')
-      } finally {
-        setIsCheckingLeaderAuthKey(false)
-      }
-    }, 500),
-    [],
-  )
-
-  useEffect(() => {
-    fetchPasswordValidation(passwordValue)
-  }, [passwordValue, fetchPasswordValidation])
-
-  useEffect(() => {
-    if (leaderAuthKeyValue !== undefined) {
-      fetchLeaderAuthKeyValidation(leaderAuthKeyValue)
-    }
-  }, [leaderAuthKeyValue, fetchLeaderAuthKeyValidation])
+  const isPasswordValid = validatePassword.isSuccess
+  const isLeaderAuthKeyValid = validateLeaderAuthKey.isSuccess
 
   // ======== DEBUGGING CODE START ========
-  console.log('isCheckingPassword:', isCheckingPassword)
-  console.log('isSuccessPassword:', isSuccessPassword)
-  console.log('errorMessagePassword:', errorMessagePassword)
+  console.log('isCheckingPassword:', validatePassword.isPending)
+  console.log('isSuccessPassword:', validatePassword.isSuccess)
+  console.log('errorMessagePassword:', validatePassword.error?.error?.message)
 
   console.log('passwordValue:', passwordValue)
   console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
 
-  console.log('isCheckingLeaderAuthKey:', isCheckingLeaderAuthKey)
-  console.log('isSuccessLeaderAuthKey:', isSuccessLeaderAuthKey)
-  console.log('errorMessageLeaderAuthKey:', errorMessageLeaderAuthKey)
-
-  console.log('passwordValue:', passwordValue)
-  console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
+  console.log('isCheckingLeaderAuthKey:', validateLeaderAuthKey.isPending)
+  console.log('isSuccessLeaderAuthKey:', validateLeaderAuthKey.isSuccess)
+  console.log(
+    'errorMessageLeaderAuthKey:',
+    validateLeaderAuthKey.error?.error?.message,
+  )
   // ======== DEBUGGING CODE END ========
 
   return (
@@ -237,9 +263,9 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
           type="password"
           label="모임 암호"
           placeholder="암호를 입력해주세요"
-          success={isSuccessPassword}
-          error={errors.password?.message || errorMessagePassword}
-          checking={isCheckingPassword}
+          success={isPasswordValid}
+          error={errorMessagePassword}
+          checking={validatePassword.isPending}
         />
         {isLeader && (
           <Input
@@ -248,9 +274,9 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
             type="password"
             label="관리자 인증키"
             placeholder="관리자 인증키 4자리를 입력해주세요."
-            success={isSuccessLeaderAuthKey}
-            error={errors.leaderAuthKey?.message || errorMessageLeaderAuthKey}
-            checking={isCheckingLeaderAuthKey}
+            success={isLeaderAuthKeyValid}
+            error={errorMessageLeaderAuthKey}
+            checking={validateLeaderAuthKey.isPending}
           />
         )}
       </div>
@@ -262,8 +288,8 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
         className="mt-auto mb-5"
         disabled={
           isLeader
-            ? !(isSuccessPassword && isSuccessLeaderAuthKey)
-            : !isSuccessPassword
+            ? !(isPasswordValid && isLeaderAuthKeyValid)
+            : !isPasswordValid
         }
       >
         완료

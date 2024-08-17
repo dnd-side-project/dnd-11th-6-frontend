@@ -1,79 +1,94 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { z } from 'zod'
 import { Button } from '@/components/Button'
 import Callout from '@/components/Callout'
 import { Input } from '@/components/Input'
-import useMeetingStore from '@/stores/useMeetingStore'
-import debounce from '@/utils/debounce'
+import useDebounce from '@/hooks/useDeboune'
+import useMeetingStore, { MeetingData } from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
+
+const LinkSchema = z.object({
+  link: z.string().url('올바른 주소를 입력해주세요'),
+})
 
 interface LinkInputProps {
   onEnterClick: () => void
   onBackClick?: () => void
 }
 
-interface LinkFormData {
-  link: string
-}
+type LinkFormData = z.infer<typeof LinkSchema>
 
 function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
   const router = useRouter()
-  const { control, watch } = useForm<LinkFormData>({
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<LinkFormData>({
     defaultValues: {
       link: '',
     },
     mode: 'onChange',
   })
-
-  const [isChecking, setIsChecking] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
   const setMeetingData = useMeetingStore((state) => state.setMeetingData)
-
   const linkValue = watch('link')
+  const debouncedLink = useDebounce(linkValue, 500)
 
-  const fetchMeeting = useCallback(
-    debounce(async (link: string) => {
-      if (!link) return
-      setIsChecking(true)
-      setIsSuccess(false)
-      setErrorMessage(null)
-
-      try {
-        const response = await fetch(`/api/v1/meetings?meetingLink=${link}`)
-        if (response.ok) {
-          const data = await response.json()
-          setMeetingData(data.data)
-          setIsSuccess(true)
-          setErrorMessage(null)
-        } else if (response.status === 404) {
-          setErrorMessage('이 링크에 해당하는 모임이 없어요. :(')
-        } else {
-          setErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
-        }
-      } catch (error) {
-        setErrorMessage('네트워크 오류가 발생했습니다.')
-      } finally {
-        setIsChecking(false)
-      }
-    }, 500),
-    [setMeetingData],
-  )
+  const { data, isLoading, isSuccess, isError, error } = useQuery<
+    {
+      data: MeetingData
+      status: number
+      error: { code: string; message: string }
+    },
+    {
+      data: MeetingData
+      status: number
+      error: { code: string; message: string }
+    }
+  >({
+    queryKey: ['meeting', debouncedLink],
+    queryFn: async () => {
+      if (!debouncedLink) return null
+      const response = await fetch(
+        `/api/v1/meetings?meetingLink=${debouncedLink}`,
+      )
+      const result = await response.json()
+      if (!response.ok) throw result
+      return result
+    },
+    enabled: !!debouncedLink,
+    retry: false,
+  })
 
   useEffect(() => {
-    if (linkValue && linkValue.trim() !== '') {
-      fetchMeeting(linkValue)
-    } else {
-      setIsChecking(false)
-      setIsSuccess(false)
-      setErrorMessage(null)
+    if (data) {
+      setMeetingData(data.data)
     }
-  }, [linkValue, fetchMeeting])
+  }, [data, setMeetingData])
+
+  useEffect(() => {
+    if (isError) {
+      if (error.error.code === 'MEETING_LINK_NOT_FOUND') {
+        setApiErrorMessage('이 링크에 해당되는 모임이 없어요:(')
+      } else if (error?.error?.code === 'MEETING_EXPIRED') {
+        setApiErrorMessage('이미 만료된 모임이에요.')
+      } else {
+        setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
+      }
+    } else {
+      setApiErrorMessage(null)
+    }
+  }, [isError, error])
+
+  const errorMessage = apiErrorMessage || errors.link?.message || null
 
   // ======== DEBUGGING CODE START ========
-  console.log('checking:', isChecking)
+  console.log('checking:', isLoading)
   console.log('isSuccess:', isSuccess)
   console.log('errorMessage:', errorMessage)
   console.log('linkValue:', linkValue)
@@ -102,7 +117,7 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
         className="mt-10"
         success={isSuccess}
         error={errorMessage}
-        checking={isChecking}
+        checking={isLoading}
       />
 
       <Callout

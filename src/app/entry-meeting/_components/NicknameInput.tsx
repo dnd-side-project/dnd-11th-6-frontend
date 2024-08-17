@@ -1,95 +1,132 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
+import useDebounce from '@/hooks/useDeboune'
+import BackIcon from 'public/icons/back.svg'
 
 const nicknameSchema = z.object({
-  nickname: z.string().min(2, '닉네임은 최소 2글자 이상이어야 합니다.'),
-  isAdmin: z.boolean(),
-  adminKey: z
+  nickname: z
     .string()
-    .optional()
-    .refine((val) => {
-      if (val === undefined) return true
-      return val.length > 0
-    }, '관리자 인증키를 입력해주세요.'),
+    .min(2, '최소 2자부터 입력 가능해요. :(')
+    .max(8, '최대 8자까지 입력 가능해요. :(')
+    .regex(/^[a-zA-Z0-9가-힣]+$/, '특수문자 및 공백은 사용할 수 없어요. :('),
+
+  isAdmin: z.boolean(),
 })
 
 type NicknameFormData = z.infer<typeof nicknameSchema>
 
 interface NicknameInputProps {
-  onNicknameSubmit: (data: NicknameFormData) => void
+  onEnterClick: () => void
+  onBackClick?: () => void
 }
 
-function NicknameInput({ onNicknameSubmit }: NicknameInputProps) {
+function NicknameInput({ onEnterClick, onBackClick }: NicknameInputProps) {
   const {
     control,
-    handleSubmit,
     watch,
+    handleSubmit,
     formState: { errors },
   } = useForm<NicknameFormData>({
     resolver: zodResolver(nicknameSchema),
     defaultValues: {
       nickname: '',
       isAdmin: false,
-      adminKey: '',
     },
+    mode: 'onChange',
   })
 
-  const isAdmin = watch('isAdmin')
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
 
-  const onSubmit = (data: NicknameFormData) => {
-    onNicknameSubmit(data)
-  }
+  const nicknameValue = watch('nickname')
+  const debouncedNickname = useDebounce(nicknameValue, 500)
+
+  const { isLoading, isSuccess, isError, error } = useQuery<
+    {
+      data: any
+      status: number
+      error: { code: string; message: string }
+    },
+    { data: any; status: number; error: { code: string; message: string } }
+  >({
+    queryKey: ['nickname', debouncedNickname],
+    queryFn: async () => {
+      if (!debouncedNickname) return null
+      const response = await fetch(
+        `/api/v1/meetings?nickname=${debouncedNickname}`,
+      )
+      const result = await response.json()
+      if (!response.ok) throw result
+      return result
+    },
+    enabled:
+      !!debouncedNickname &&
+      nicknameSchema.shape.nickname.safeParse(debouncedNickname).success,
+    retry: false,
+  })
+
+  useEffect(() => {
+    if (isError) {
+      if (error.error.code === 'VALIDATION_ERROR') {
+        setApiErrorMessage('이미 사용중인 닉네임이에요. :(')
+      } else {
+        setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
+      }
+    } else {
+      setApiErrorMessage(null)
+    }
+  }, [isError, error])
+
+  const errorMessage = apiErrorMessage || errors.nickname?.message || null
+
+  const onSubmit = handleSubmit((data) => {
+    console.log(data)
+    onEnterClick()
+  })
 
   return (
-    <div className="w-full">
-      <div className="flex justify-center">
-        <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mb-12">
-          <Image src="/favicon.ico" alt="Logo" width={40} height={40} />
-        </div>
+    <form onSubmit={onSubmit} className="flex flex-col min-h-screen w-full p-4">
+      <div className="flex items-start">
+        <button type="button" onClick={onBackClick} className="">
+          <Image src={BackIcon} alt="back" />
+        </button>
+      </div>
+      <div className="text-gray-900 font-bold text-[22px] mt-9">
+        [모임 이름] 앨범에서
+      </div>
+      <div className="text-gray-900 font-bold text-[22px]">
+        어떤 닉네임으로 불리고 싶나요?
+      </div>
+      <div className="text-gray-700 font-normal text-sm mt-2">
+        특수문자, 공백은 사용할 수 없어요.
       </div>
 
-      <div className="flex justify-center mb-16">모임 이름</div>
-      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
-        <Input
-          name="nickname"
-          control={control}
-          label="사용할 닉네임을 입력해주세요."
-          placeholder="닉네임을 입력하세요"
-          error={errors.nickname?.message}
-        />
+      <Input
+        name="nickname"
+        control={control}
+        rules={{ required: '닉네임을 입력해주세요' }}
+        placeholder="나의 닉네임 입력"
+        wrapperClassName="mt-10"
+        success={isSuccess}
+        error={errorMessage}
+        checking={isLoading}
+        description="(최대8자)"
+      />
 
-        <div className="flex justify-end mt-4 mb-4">
-          <Input
-            name="isAdmin"
-            control={control}
-            type="checkbox"
-            as="checkbox"
-            label="관리자 인증을 하시겠어요?"
-            className="flex-row-reverse"
-          />
-        </div>
-
-        {isAdmin && (
-          <Input
-            name="adminKey"
-            control={control}
-            label="관리자 인증키를 입력해주세요."
-            type="password"
-            placeholder="관리자 인증키를 입력하세요"
-            error={errors.adminKey?.message}
-          />
-        )}
-
-        <Button type="submit" fullWidth variant="primary">
-          완료
-        </Button>
-      </form>
-    </div>
+      <Button
+        type="submit"
+        variant="primary"
+        className="mt-auto mb-5"
+        disabled={!isSuccess || !!errorMessage || nicknameValue === ''}
+      >
+        완료
+      </Button>
+    </form>
   )
 }
 

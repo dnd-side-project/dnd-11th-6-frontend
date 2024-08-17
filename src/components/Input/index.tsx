@@ -27,6 +27,7 @@ export interface InputProps<T extends FieldValues> {
   successMessage?: string
   checkingMessage?: string
   description?: string
+  wrapperClassName?: string
 }
 
 export function Input<T extends FieldValues>({
@@ -43,6 +44,7 @@ export function Input<T extends FieldValues>({
   successMessage = '알맞은 링크를 찾았어요!',
   checkingMessage = '확인중',
   description,
+  wrapperClassName = '',
 }: InputProps<T>) {
   const inputClassName = `w-full h-[54px] py-4 px-[18px] border rounded-[14px] text-[18px] focus:border-gray-900 focus:outline-none focus:ring-0 ${className} ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-500'}`
 
@@ -77,7 +79,7 @@ export function Input<T extends FieldValues>({
   }
 
   return (
-    <div className="mb-4">
+    <div className={`mb-4 ${wrapperClassName}`}>
       {as !== 'checkbox' && (
         <label htmlFor={name} className="block mb-2 text-gray-600 text-sm">
           {label}

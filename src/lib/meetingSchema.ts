@@ -24,8 +24,10 @@ export const MeetingDateSchema = z
   )
 
 export const ThemeSchema = z.object({
-  photo: z.string().optional(),
-  color: z.string().optional(),
+  photo: z
+    .instanceof(File, { message: '사진을 선택해주세요.' })
+    .refine((file) => file.size <= 5000000, '파일 크기는 5MB 이하여야 합니다.'),
+  color: z.string().min(1, { message: '색상을 선택해주세요.' }),
 })
 
 export const PasswordSchema = z.object({

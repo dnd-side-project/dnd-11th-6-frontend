@@ -3,10 +3,12 @@ import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
+import useMeetStore from '@/stores/useMeetStore'
 import useMeetingForm from '../_hooks/useMeetingForm'
 
 function MeetingDate() {
   const { meetingDateForm, onSubmit } = useMeetingForm()
+  const { setStep } = useMeetStore()
   const {
     control,
     formState: { errors, isValid },
@@ -59,11 +61,23 @@ function MeetingDate() {
           </div>
         </div>
         <span className="bg-gray-50 text-sm font-semibold mb-3 p-[10px] rounded text-center text-gray-700">
-          {`링크는 ${dayjs(getValues('endDate').toString()).format('YYYY-MM-DD')} 까지 유효합니다.`}
+          {`링크는 ${getValues('endDate') ? dayjs(getValues('endDate').toString()).format('YYYY-MM-DD') : '모집 종료 설정 시간'} 까지 유효합니다.`}
         </span>
-        <Button type="submit" disabled={!isValid} fullWidth variant="primary">
-          다음
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            className=" text-gray-700"
+            onClick={() => setStep(1)}
+            type="button"
+            variant="light"
+            fullWidth={false}
+            width="40%"
+          >
+            이전
+          </Button>
+          <Button type="submit" disabled={!isValid} fullWidth variant="primary">
+            다음
+          </Button>
+        </div>
       </form>
     </div>
   )

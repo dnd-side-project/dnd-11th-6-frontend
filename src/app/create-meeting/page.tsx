@@ -10,13 +10,14 @@ import {
   MeetingInfo,
   MeetingPassword,
   MeetingShare,
+  MeetingTheme,
 } from './_components'
 import ProgressBar from './_components/ProgressBar'
 
 const stepTitles = {
   1: '모임 생성',
   2: '모임 생성',
-  3: '비밀번호 설정',
+  3: '모임 생성',
   4: '관리자 PIN 안내',
   5: '',
 }
@@ -38,11 +39,14 @@ function CreateMeetingPage() {
         return <MeetingInfo />
       case 2:
         return <MeetingDate />
+
       case 3:
-        return <MeetingPassword />
+        return <MeetingTheme />
       case 4:
-        return <MeetingAdminPin />
+        return <MeetingPassword />
       case 5:
+        return <MeetingAdminPin />
+      case 6:
         return (
           <MeetingShare
             onShareMeeting={handleShareMeeting}

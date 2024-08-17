@@ -38,10 +38,11 @@ function useMeetingForm() {
   const updateFormData = useCallback(() => {
     setFormData({
       meeting: meetingForm.getValues(),
+      meetingDate: meetingDateForm.getValues(),
       theme: themeForm.getValues(),
       password: passwordForm.getValues(),
     })
-  }, [meetingForm, themeForm, passwordForm, setFormData])
+  }, [meetingForm, meetingDateForm, themeForm, passwordForm, setFormData])
 
   const onSubmit = async () => {
     if (step === 1) {
@@ -56,19 +57,21 @@ function useMeetingForm() {
         updateFormData()
         setStep(3)
       }
-      // const isStep2Valid = await themeForm.trigger(['photo', 'color'])
-      // if (isStep2Valid) {
-      //   updateFormData()
-      //   setStep(3)
-      // }
     } else if (step === 3) {
+      const isStep3Valid = await themeForm.trigger(['photo', 'color'])
+      console.log(isStep3Valid)
+      if (isStep3Valid) {
+        updateFormData()
+        setStep(4)
+      }
+    } else if (step === 4) {
       updateFormData()
       const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
       setPin(generatedPin)
-      setStep(4)
-      console.log(formData)
-    } else if (step === 4) {
       setStep(5)
+      console.log(formData)
+    } else if (step === 5) {
+      setStep(6)
     }
   }
 

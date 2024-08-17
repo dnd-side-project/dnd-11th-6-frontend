@@ -1,25 +1,74 @@
 'use client'
 
 import { useState } from 'react'
-import { MeetingInfo, NicknameInput, PasswordInput } from './_components'
+import { useRouter } from 'next/navigation'
+import useMeetingStore from '@/stores/useMeetingStore'
+import {
+  LinkInput,
+  MeetingInfo,
+  NicknameInput,
+  PasswordInput,
+  Welcome,
+} from './_components'
 
 function EntryMeeting() {
-  const [page, setPage] = useState('info')
+  const router = useRouter()
+  const [page, setPage] = useState(0)
+  const meetingData = useMeetingStore((state) => state.meetingData)
 
   const renderPage = () => {
     switch (page) {
-      case 'info':
-        return <MeetingInfo onEnterClick={() => setPage('password')} />
-      case 'password':
-        return <PasswordInput onPasswordSubmit={() => setPage('nickname')} />
-      case 'nickname':
+      case 0:
+        return (
+          <LinkInput
+            onEnterClick={() => {
+              setPage(page + 1)
+            }}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        )
+      case 1:
+        return meetingData ? (
+          <MeetingInfo
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        ) : null
+      case 2:
+        return (
+          <PasswordInput
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        )
+      case 3:
         return (
           <NicknameInput
-            onNicknameSubmit={() => console.log('닉네임 제출 완료. 모임 입장')}
+            onEnterClick={() => setPage(page + 1)}
+            onBackClick={() => {
+              router.back()
+            }}
+          />
+        )
+      case 4:
+        return (
+          <Welcome
+            onEnterClick={() => {
+              router.back()
+            }}
+            onBackClick={() => {
+              router.back()
+            }}
           />
         )
       default:
-        return <MeetingInfo onEnterClick={() => setPage('password')} />
+        return <LinkInput onEnterClick={() => setPage(page + 1)} />
     }
   }
 

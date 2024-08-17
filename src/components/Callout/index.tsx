@@ -9,17 +9,24 @@ interface CalloutProps {
   title: string
   content: string
   buttonText: string
+  className?: string
   onButtonClick: () => void
 }
 
-function Callout({ title, content, buttonText, onButtonClick }: CalloutProps) {
+function Callout({
+  title,
+  content,
+  buttonText,
+  className,
+  onButtonClick,
+}: CalloutProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   function toggleExpand() {
     setIsExpanded(!isExpanded)
   }
   return (
-    <div className="bg-gray-50 rounded-lg shadow-md overflow-hidden">
+    <div className={`bg-gray-50 rounded-lg overflow-hidden ${className}`}>
       <div
         className="flex items-center justify-between p-4 cursor-pointer"
         onClick={toggleExpand}
@@ -36,9 +43,9 @@ function Callout({ title, content, buttonText, onButtonClick }: CalloutProps) {
           <span className="text-gray-700 font-medium text-sm">{title}</span>
         </div>
         {isExpanded ? (
-          <Image src={DownIcon} alt="DownIcon" />
-        ) : (
           <Image src={UpIcon} alt="UpIcon" />
+        ) : (
+          <Image src={DownIcon} alt="DownIcon" />
         )}
       </div>
       <div

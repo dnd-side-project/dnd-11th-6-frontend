@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '../styles/globals.css'
+import Providers from './providers'
 
 export const metadata: Metadata = {
   title: 'Snappy',
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-white">
         <div className="flex justify-center">
-          <div className="w-full max-w-md">{children}</div>
+          <div className="w-full max-w-md">
+            <Providers>{children}</Providers>
+          </div>
         </div>
       </body>
     </html>

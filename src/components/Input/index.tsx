@@ -9,6 +9,7 @@ import {
 } from 'react-hook-form'
 import Image from 'next/image'
 import Check from 'public/icons/check.svg'
+import Meatballs from 'public/icons/meatballs.svg'
 
 export interface InputProps<T extends FieldValues> {
   name: Path<T>
@@ -17,7 +18,7 @@ export interface InputProps<T extends FieldValues> {
   label?: string
   type?: string
   placeholder?: string
-  error?: string | FieldError
+  error?: string | FieldError | null
   success?: boolean
   checking?: boolean
   className?: string
@@ -26,6 +27,7 @@ export interface InputProps<T extends FieldValues> {
   successMessage?: string
   checkingMessage?: string
   description?: string
+  wrapperClassName?: string
 }
 
 export function Input<T extends FieldValues>({
@@ -34,7 +36,7 @@ export function Input<T extends FieldValues>({
   label,
   type = 'text',
   placeholder,
-  error,
+  error = null,
   success,
   checking,
   className = '',
@@ -42,8 +44,9 @@ export function Input<T extends FieldValues>({
   successMessage = '알맞은 링크를 찾았어요!',
   checkingMessage = '확인중',
   description,
+  wrapperClassName = '',
 }: InputProps<T>) {
-  const inputClassName = `w-full py-4 px-[18px] border rounded-[14px] text-[18px] focus:outline-none focus:ring-0 ${className} ${error ? 'border-red-500' : 'border-gray-300'}`
+  const inputClassName = `w-full h-[54px] py-4 px-[18px] border rounded-[14px] text-[18px] focus:border-gray-900 focus:outline-none focus:ring-0 ${className} ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-500'}`
 
   const renderInput = (field: any) => {
     const props = {
@@ -76,7 +79,7 @@ export function Input<T extends FieldValues>({
   }
 
   return (
-    <div className="mb-4">
+    <div className={`mb-4 ${wrapperClassName}`}>
       {as !== 'checkbox' && (
         <label htmlFor={name} className="block mb-2 text-gray-600 text-sm">
           {label}
@@ -91,7 +94,7 @@ export function Input<T extends FieldValues>({
       ) : (
         renderInput({ name })
       )}
-      {error && (
+      {error && error !== '' && (
         <p className="text-red-600 text-sm mt-1">
           {typeof error === 'string' ? error : error.message}
         </p>
@@ -104,7 +107,11 @@ export function Input<T extends FieldValues>({
         </div>
       )}
       {checking && (
-        <p className="text-gray-500 text-sm mt-1">{checkingMessage}</p>
+        <div className="flex">
+          {' '}
+          <Image src={Meatballs} alt="Meatballs" className="mt-1" />{' '}
+          <p className="text-gray-700 text-sm mt-1 ml-1">{checkingMessage}</p>
+        </div>
       )}
     </div>
   )

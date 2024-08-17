@@ -31,7 +31,10 @@ export const ThemeSchema = z.object({
 })
 
 export const PasswordSchema = z.object({
-  password: z.string().min(6, '비밀번호는 최소 6자리 이상이어야 합니다.'),
+  password: z
+    .string()
+    .length(4, '비밀번호는 4자리여야 합니다.')
+    .regex(/^\d{4}$/, '비밀번호는 4자리 숫자여야 합니다.'),
 })
 
 export type MeetingFormModel = z.infer<typeof MeetingSchema>

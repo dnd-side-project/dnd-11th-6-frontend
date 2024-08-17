@@ -59,19 +59,18 @@ function useMeetingForm() {
       }
     } else if (step === 3) {
       const isStep3Valid = await themeForm.trigger(['photo', 'color'])
-      console.log(isStep3Valid)
       if (isStep3Valid) {
         updateFormData()
         setStep(4)
       }
     } else if (step === 4) {
       updateFormData()
-      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
-      setPin(generatedPin)
-      setStep(5)
-      console.log(formData)
-    } else if (step === 5) {
-      setStep(6)
+      const isStep4Valid = await passwordForm.trigger(['password'])
+      if (isStep4Valid) {
+        const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
+        setPin(generatedPin)
+        setStep(5)
+      }
     }
   }
 

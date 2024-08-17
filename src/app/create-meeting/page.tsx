@@ -5,7 +5,6 @@ import React from 'react'
 import Image from 'next/image'
 import useMeetStore from '@/stores/useMeetStore'
 import {
-  MeetingAdminPin,
   MeetingDate,
   MeetingInfo,
   MeetingPassword,
@@ -18,7 +17,7 @@ const stepTitles = {
   1: '모임 생성',
   2: '모임 생성',
   3: '모임 생성',
-  4: '관리자 PIN 안내',
+  4: '모임 생성',
   5: '',
 }
 
@@ -45,8 +44,6 @@ function CreateMeetingPage() {
       case 4:
         return <MeetingPassword />
       case 5:
-        return <MeetingAdminPin />
-      case 6:
         return (
           <MeetingShare
             onShareMeeting={handleShareMeeting}
@@ -68,9 +65,9 @@ function CreateMeetingPage() {
           <h1 className="text-xl font-bold flex-grow text-center">
             {stepTitles[step as keyof typeof stepTitles]}
           </h1>
-          <div className="w-6" /> {/* 오른쪽 여백을 위한 빈 div */}
+          <div className="w-6" />
         </div>
-        <ProgressBar currentStep={step} totalSteps={5} />
+        {step !== 5 ? <ProgressBar currentStep={step} totalSteps={4} /> : ''}
 
         {renderStep()}
       </div>

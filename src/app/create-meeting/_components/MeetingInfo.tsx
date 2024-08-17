@@ -71,7 +71,7 @@ function MeetingInfo() {
         type="submit"
         disabled={!isValid}
         fullWidth
-        variant={isValid ? 'primary' : 'secondary'}
+        variant={isValid ? 'primary' : 'light'}
       >
         다음
       </Button>

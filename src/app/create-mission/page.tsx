@@ -7,6 +7,7 @@ import { Button } from '@/components/Button'
 import useMissionStore from '@/stores/useMissionStore'
 import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
+import Twinkle from 'public/icons/twinkle.svg'
 
 const missions = [
   '여기에서 제일 연장자 찾기',
@@ -109,8 +110,8 @@ function MissionCreationPage() {
         </div>
       </div>
 
-      <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-300">
-        {missionType === 'random' ? (
+      {missionType === 'random' ? (
+        <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-100">
           <div className="w-64 h-64 mb-8 overflow-hidden">
             <div
               className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
@@ -125,21 +126,44 @@ function MissionCreationPage() {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="w-full max-w-md">
-            {missions.map((mission, index) => (
-              <button
+        </div>
+      ) : (
+        <div className="flex-grow p-4 w-full max-w-md">
+          {['DND 로고와 함께 사진찍기', '가장 연장자와 함께 사진찍기'].map(
+            (mission, index) => (
+              <Button
                 type="button"
+                variant="outline"
                 key={index}
-                className={`w-full p-4 bg-white mb-2 rounded-lg cursor-pointer ${selectedMission === mission ? ' cursor-pointer bg-red-200' : ''}`}
+                padding="p-6"
+                className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${selectedMission === mission ? 'border-[3px]' : ''}`}
                 onClick={() => selectMission(mission)}
               >
-                {mission}
-              </button>
-            ))}
+                <div className="w-full flex justify-start">{mission}</div>
+              </Button>
+            ),
+          )}
+          <div className="text-gray-700 text-sm font-normal mt-5 mb-3">
+            총 3개의 미션을 완료했어요!
           </div>
-        )}
-      </div>
+          {[
+            'DND 로고와 함께 사진찍기',
+            'DND 로고와 함께 사진찍기',
+            'DND 로고와 함께 사진찍기',
+          ].map((mission, index) => (
+            <Button
+              type="button"
+              variant="light"
+              key={index}
+              padding="p-6"
+              className="flex justify-between items-center w-full border-none text-gray-900 font-semibold text-base mb-3 cursor-pointer"
+            >
+              {mission}
+              <Image src={Twinkle} alt="twinkle" />
+            </Button>
+          ))}
+        </div>
+      )}
 
       <div className="flex justify-center space-x-4 p-4">
         {missionType === 'random' ? (
@@ -149,7 +173,7 @@ function MissionCreationPage() {
               variant={selectedMission ? 'outline' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
-              className={selectedMission ? 'w-20 px-7' : 'w-full text-white'}
+              className={selectedMission ? 'w-20 px-3' : 'w-full text-white'}
             >
               {isSpinning ? (
                 '미션 뽑는 중...'
@@ -171,14 +195,15 @@ function MissionCreationPage() {
             )}
           </>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="primary"
             onClick={performMission}
             disabled={!selectedMission}
-            className="px-6 py-2 bg-green-500 text-white rounded-full disabled:bg-gray-400"
+            className="w-full text-white"
           >
             미션 수행하기
-          </button>
+          </Button>
         )}
       </div>
     </div>

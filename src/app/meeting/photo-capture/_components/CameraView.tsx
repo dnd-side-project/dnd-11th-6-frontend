@@ -22,6 +22,7 @@ function CameraView({
   goBack,
 }: CameraViewProps) {
   const [showTooltip, setShowTooltip] = useState(true)
+  const [isMissionSelected] = useState(false)
 
   return (
     <div className="min-h-screen w-full p-4">
@@ -30,24 +31,30 @@ function CameraView({
           {' '}
           <Link href="/create-mission">
             <div className="flex justify-between items-center px-3 py-2 rounded-[14px] bg-gray-200">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-1"
-              >
-                <path
-                  d="M6.0002 1.19995L6.0002 10.8M10.8002 5.99995L1.2002 5.99995"
-                  stroke="#AAAFB3"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-              미션 추가하기
+              {isMissionSelected ? (
+                <>미션 바꾸기</>
+              ) : (
+                <>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-1"
+                  >
+                    <path
+                      d="M6.0002 1.19995L6.0002 10.8M10.8002 5.99995L1.2002 5.99995"
+                      stroke="#AAAFB3"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  미션 추가하기
+                </>
+              )}
             </div>
-            {showTooltip && (
+            {!isMissionSelected && showTooltip && (
               <Tooltip
                 message="내 사진에 미션을 더 해봐요!"
                 onClose={() => setShowTooltip(false)}
@@ -82,16 +89,21 @@ function CameraView({
           objectFit: 'cover',
           transform: isRearCamera ? 'none' : 'scaleX(-1)',
         }}
-        className="mt-8"
+        className="mt-3"
       />
       <div className="flex justify-center">
-        {' '}
-        <div className="flex justify-center text-gray-500 bg-gray-200 px-3 py-2 mt-4 w-44 rounded-[14px] text-sm">
-          모임의 순간을 담아주세요!
-        </div>
+        {isMissionSelected ? (
+          <div className="flex justify-center text-gray-50 bg-gray-700 px-3 py-2 mt-4 rounded-[14px] text-sm">
+            이래저래이래저래 사진을 찍어보세요
+          </div>
+        ) : (
+          <div className="flex justify-center text-gray-500 bg-gray-200 px-3 py-2 mt-4 rounded-[14px] text-sm">
+            모임의 순간을 담아주세요!
+          </div>
+        )}
       </div>
 
-      <div className="flex items-center justify-center w-full mt-10">
+      <div className="flex items-center justify-center w-full mt-7">
         <button
           type="button"
           onClick={onToggleCamera}

@@ -7,6 +7,7 @@ import {
   RegisterOptions,
   FieldError,
 } from 'react-hook-form'
+import Image from 'next/image'
 import Check from 'public/icons/check.svg'
 import Meatballs from 'public/icons/meatballs.svg'
 
@@ -116,11 +117,17 @@ export function Input<T extends FieldValues>({
           )}
           {success && (
             <div className="flex">
+              <Image src={Check} alt="Check" className="mt-1" />
               <p className="text-green-600 text-sm ml-1">{successMessage}</p>
             </div>
           )}
           {checking && (
-            <p className="text-gray-600 text-sm">{checkingMessage}</p>
+            <div className="flex">
+              <Image src={Meatballs} alt="Meatballs" className="mt-1" />
+              <p className="text-gray-700 text-sm mt-1 ml-1">
+                {checkingMessage}
+              </p>
+            </div>
           )}
           {showCharCount && maxLength && (
             <span className="text-sm text-gray-600 flex justify-end">
@@ -142,27 +149,6 @@ export function Input<T extends FieldValues>({
         />
       ) : (
         renderInput({ name })
-      )}
-      {error && error !== '' && (
-        <p className="text-red-600 text-sm mt-1">
-          {typeof error === 'string' ? error : error.message}
-        </p>
-      )}
-      {success && (
-        <div className="flex">
-          {' '}
-          <Image src={Check} alt="Check" className="mt-1" />
-          <p className="text-green-600 text-sm mt-1 ml-1">
-            {successMessage}
-          </p>{' '}
-        </div>
-      )}
-      {checking && (
-        <div className="flex">
-          {' '}
-          <Image src={Meatballs} alt="Meatballs" className="mt-1" />
-          <p className="text-gray-700 text-sm mt-1 ml-1">{checkingMessage}</p>
-        </div>
       )}
     </div>
   )

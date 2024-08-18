@@ -11,7 +11,7 @@ export interface ButtonProps
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-gray-900  text-lg ',
+  primary: 'bg-gray-900 text-white text-lg ',
   light: 'bg-gray-100 border border-gray-300 text-gray-900 text-lg ',
   outline: 'bg-white border border-gray-700 text-gray-900 text-lg',
 }
@@ -26,7 +26,7 @@ export function Button({
   type = 'button',
   ...props
 }: ButtonProps) {
-  const widthStyle = width ? { width } : fullWidth ? { width: '90%' } : {}
+  const widthStyle = width ? { width } : fullWidth ? { width: '100%' } : {}
   const animationClass = disabled
     ? ''
     : 'transform transition-transform duration-150 active:scale-95'

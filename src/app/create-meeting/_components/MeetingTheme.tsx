@@ -106,8 +106,8 @@ function MeetingTheme() {
                 <button
                   key={color}
                   type="button"
-                  className={`w-12 h-12 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${field.value === color ? 'ring-2 ring-offset-2 ring-black' : ''}`}
-                  style={{ backgroundColor: color }}
+                  className={`w-12 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${field.value === color ? 'ring-2 ring-offset-2 ring-black' : ''}`}
+                  style={{ backgroundColor: color, height: '48px' }}
                   onClick={() => field.onChange(color)}
                   aria-label={`Select ${color} color`}
                 />

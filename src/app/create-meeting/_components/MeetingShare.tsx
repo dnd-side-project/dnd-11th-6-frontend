@@ -8,8 +8,12 @@ interface MeetingShareProps {
 function MeetingShare({ onShareMeeting, onGoToMyMeeting }: MeetingShareProps) {
   return (
     <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-4">모임이 생성되었어요</h2>
-      <p className="text-lg mb-6">미리 공유해볼까요?</p>
+      <div className="mb-[42px] text-center">
+        <h2 className="text-xl font-bold mb-2">모임이 생성되었어요 🎉</h2>
+        <p className="text-sm text-gray-600">
+          생성된 모임 앨범을 친구들에게 알려보세요.
+        </p>
+      </div>
       <div className="bg-gray-100 w-full aspect-square mb-6 flex items-center justify-center">
         <p className="text-gray-400">축하 이미지</p>
       </div>

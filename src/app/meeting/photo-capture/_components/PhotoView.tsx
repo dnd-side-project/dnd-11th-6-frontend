@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
-import downloadPhoto from '@/utils/imageUtils'
-import PhotoViewTooltip from './PhotoViewTooltip'
+import Tooltip from '@/components/Tooltip'
+import usePhoto from '@/hooks/usePhoto'
 
 type PhotoViewProps = {
   photo: string
@@ -15,6 +15,15 @@ type PhotoViewProps = {
 function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
   const [showTooltip, setShowTooltip] = useState(true)
   const [isMeetingMission] = useState(true)
+  const { uploadPhoto, isUploading } = usePhoto()
+
+  const handleUpload = async () => {
+    try {
+      await uploadPhoto(photo)
+    } catch (error) {
+      console.error('Upload failed:', error)
+    }
+  }
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen p-4">
@@ -60,20 +69,28 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
         )}
       </div>
       <div className="button-group flex w-full mt-auto mb-5 ">
-        <Button type="button" onClick={onRetake} variant="outline">
+        <Button
+          type="button"
+          onClick={onRetake}
+          variant="outline"
+          disabled={isUploading}
+        >
           <Image src={Refresh} alt="Retake Button" className="w-8 h-8" />
         </Button>
         <div className="w-3" />
         <Button
           type="button"
-          onClick={() => downloadPhoto(photo)}
+          onClick={() => handleUpload()}
           variant="primary"
           className="text-white w-full relative"
         >
           {showTooltip && (
-            <PhotoViewTooltip
-              message="한 번 업로드된 스냅은 삭제가 어려워요!"
+            <Tooltip
+              message="내 사진에 미션을 더 해봐요!"
               onClose={() => setShowTooltip(false)}
+              position="top"
+              arrowClassName="left-1/2"
+              className="bottom-16 left-1/2"
             />
           )}
           스냅 업로드하기

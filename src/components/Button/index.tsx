@@ -26,7 +26,7 @@ export function Button({
   type = 'button',
   ...props
 }: ButtonProps) {
-  const widthStyle = width ? { width } : fullWidth ? { width: '90%' } : {}
+  const widthStyle = width ? { width } : fullWidth ? { width: '100%' } : {}
   const animationClass = disabled
     ? ''
     : 'transform transition-transform duration-150 active:scale-95'

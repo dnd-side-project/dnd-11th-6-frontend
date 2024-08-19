@@ -1,10 +1,11 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
 import CameraSwitchButton from '@/assets/CameraSwitchButton.svg'
 import Close from '@/assets/close.svg'
 import Tooltip from '@/components/Tooltip'
+import useMissionStore from '@/stores/useMissionStore'
+import useTooltipStore from '@/stores/useTooltipStore'
 
 type CameraViewProps = {
   videoRef: React.RefObject<HTMLVideoElement>
@@ -21,17 +22,17 @@ function CameraView({
   onToggleCamera,
   goBack,
 }: CameraViewProps) {
-  const [showTooltip, setShowTooltip] = useState(true)
-  const [isMissionSelected] = useState(false)
+  const showTooltip = useTooltipStore((state) => state.showTooltip)
+  const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
+  const currentMission = useMissionStore((state) => state.currentMission)
 
   return (
     <div className="min-h-screen w-full p-4">
       <div className="flex justify-between items-center h-12 w-full">
         <div className="relative">
-          {' '}
           <Link href="/create-mission">
             <div className="flex justify-between items-center px-3 py-2 rounded-[14px] bg-gray-200">
-              {isMissionSelected ? (
+              {currentMission ? (
                 <>미션 바꾸기</>
               ) : (
                 <>
@@ -54,7 +55,7 @@ function CameraView({
                 </>
               )}
             </div>
-            {!isMissionSelected && showTooltip && (
+            {!currentMission && showTooltip && (
               <Tooltip
                 message="내 사진에 미션을 더 해봐요!"
                 onClose={() => setShowTooltip(false)}
@@ -92,9 +93,9 @@ function CameraView({
         className="mt-3"
       />
       <div className="flex justify-center">
-        {isMissionSelected ? (
+        {currentMission ? (
           <div className="flex justify-center text-gray-50 bg-gray-700 px-3 py-2 mt-4 rounded-[14px] text-sm">
-            이래저래이래저래 사진을 찍어보세요
+            {currentMission}
           </div>
         ) : (
           <div className="flex justify-center text-gray-500 bg-gray-200 px-3 py-2 mt-4 rounded-[14px] text-sm">

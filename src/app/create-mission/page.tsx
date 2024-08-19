@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import useMissionStore from '@/stores/useMissionStore'
 
 const missions = [
@@ -18,9 +18,11 @@ const missions = [
 ]
 
 function MissionCreationPage() {
+  const router = useRouter()
   const { missionType, setMissionType } = useMissionStore()
   const [isSpinning, setIsSpinning] = useState(false)
-  const [selectedMission, setSelectedMission] = useState<string | null>(null)
+  const selectedMission = useMissionStore((state) => state.currentMission)
+  const setSelectedMission = useMissionStore((state) => state.setCurrentMission)
   const [visibleMissions, setVisibleMissions] = useState<string[]>([
     '?',
     '?',
@@ -53,6 +55,7 @@ function MissionCreationPage() {
   }
 
   const selectMission = (mission: string) => {
+    console.log('selected mission: ', mission)
     setSelectedMission(mission)
   }
 
@@ -64,9 +67,9 @@ function MissionCreationPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="bg-white p-4 flex items-center justify-between ">
-        <Link href="/" className="text-2xl">
+        <button onClick={() => router.back()} className="text-2xl">
           &lt;
-        </Link>
+        </button>
         <h1 className="text-xl font-bold">미션 뽑기</h1>
         <div className="w-6" />
       </header>

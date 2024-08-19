@@ -32,6 +32,7 @@ function MeetingPassword() {
   const renderKeypadButton = (number: number | string) => (
     <button
       type="button"
+      key={`keypad-${number}`}
       className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-semibold focus:outline-none "
       onClick={() => typeof number === 'number' && handleNumberClick(number)}
     >
@@ -56,7 +57,7 @@ function MeetingPassword() {
               <>
                 {[0, 1, 2, 3].map((index) => (
                   <div
-                    key={index}
+                    key={`password-${index}`}
                     style={{ height: '3rem' }}
                     className={`w-12 border-2 rounded-lg flex items-center justify-center text-3xl bg-gray-100
                     }
@@ -72,9 +73,9 @@ function MeetingPassword() {
 
         <div className="grid grid-cols-3 gap-9">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => renderKeypadButton(num))}
-          <div />
           {renderKeypadButton(0)}
           <button
+            key="delete-button"
             type="button"
             className="w-20 h-20 rounded-full  flex items-center justify-center text-[28px] font-semibold focus:outline-none "
             onClick={handleDelete}

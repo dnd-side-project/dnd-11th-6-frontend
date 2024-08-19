@@ -17,4 +17,13 @@ export default withPWA({
     }
     return []
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'dnd-11th-6.s3.ap-northeast-2.amazonaws.com',
+        port: '',
+      },
+    ],
+  },
 })

@@ -1,8 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { Button } from '@/components/Button'
 import useMissionStore from '@/stores/useMissionStore'
+import Back from 'public/icons/back.svg'
+import Refresh from 'public/icons/refresh.svg'
+import Twinkle from 'public/icons/twinkle.svg'
 
 const missions = [
   '여기에서 제일 연장자 찾기',
@@ -65,37 +70,48 @@ function MissionCreationPage() {
     <div className="flex flex-col min-h-screen">
       <header className="bg-white p-4 flex items-center justify-between ">
         <Link href="/" className="text-2xl">
-          &lt;
+          <Image src={Back} alt="back" />
         </Link>
-        <h1 className="text-xl font-bold">미션 뽑기</h1>
+        <h1 className="text-[18px] font-bold">미션 추가하기</h1>
         <div className="w-6" />
       </header>
 
-      <div className="flex justify-center p-4 bg-white">
-        <button
-          type="button"
-          className={`px-4 py-2 rounded-l-full ${missionType === 'random' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          onClick={() => {
-            setMissionType('random')
-            setSelectedMission(null)
-          }}
-        >
-          랜덤 미션
-        </button>
-        <button
-          type="button"
-          className={`px-4 py-2 rounded-r-full ${missionType === 'select' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          onClick={() => {
-            setMissionType('select')
-            setSelectedMission(null)
-          }}
-        >
-          모임 미션
-        </button>
+      <div className="flex justify-center mt-6 mb-4">
+        <div className="relative bg-gray-200 rounded-full p-1 w-[220px]">
+          <div
+            className={`absolute top-[2px] ${
+              missionType === 'select' ? 'left-[calc(50%+2px)]' : 'left-[2px]'
+            } w-[calc(50%-4px)] h-[calc(100%-4px)] bg-white rounded-full transition-all duration-300 z-0`}
+          />
+          <div className="relative z-10 flex">
+            <button
+              onClick={() => {
+                setMissionType('random')
+                setSelectedMission(null)
+              }}
+              className={`w-1/2 py-2 rounded-full transition-all duration-300 ${
+                missionType === 'random' ? 'text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              랜덤
+            </button>
+            <button
+              onClick={() => {
+                setMissionType('select')
+                setSelectedMission(null)
+              }}
+              className={`w-1/2 py-2 rounded-full transition-all duration-300 ${
+                missionType === 'select' ? 'text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              모임
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-300">
-        {missionType === 'random' ? (
+      {missionType === 'random' ? (
+        <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-100">
           <div className="w-64 h-64 mb-8 overflow-hidden">
             <div
               className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
@@ -110,52 +126,84 @@ function MissionCreationPage() {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="w-full max-w-md">
-            {missions.map((mission, index) => (
-              <button
+        </div>
+      ) : (
+        <div className="flex-grow p-4 w-full max-w-md">
+          {['DND 로고와 함께 사진찍기', '가장 연장자와 함께 사진찍기'].map(
+            (mission, index) => (
+              <Button
                 type="button"
+                variant="outline"
                 key={index}
-                className={`w-full p-4 bg-white mb-2 rounded-lg cursor-pointer ${selectedMission === mission ? ' cursor-pointer bg-red-200' : ''}`}
+                padding="p-6"
+                className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${selectedMission === mission ? 'border-[3px]' : ''}`}
                 onClick={() => selectMission(mission)}
               >
-                {mission}
-              </button>
-            ))}
+                <div className="w-full flex justify-start">{mission}</div>
+              </Button>
+            ),
+          )}
+          <div className="text-gray-700 text-sm font-normal mt-5 mb-3">
+            총 3개의 미션을 완료했어요!
           </div>
-        )}
-      </div>
+          {[
+            'DND 로고와 함께 사진찍기',
+            'DND 로고와 함께 사진찍기',
+            'DND 로고와 함께 사진찍기',
+          ].map((mission, index) => (
+            <Button
+              type="button"
+              variant="light"
+              key={index}
+              padding="p-6"
+              className="flex justify-between items-center w-full border-none text-gray-900 font-semibold text-base mb-3 cursor-pointer"
+            >
+              {mission}
+              <Image src={Twinkle} alt="twinkle" />
+            </Button>
+          ))}
+        </div>
+      )}
 
       <div className="flex justify-center space-x-4 p-4">
         {missionType === 'random' ? (
           <>
-            <button
+            <Button
               type="button"
+              variant={selectedMission ? 'outline' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
-              className="px-6 py-2 bg-blue-500 text-white rounded-full disabled:bg-gray-400"
+              className={selectedMission ? 'w-20 px-3' : 'w-full text-white'}
             >
-              {isSpinning ? '돌리는 중...' : '룰렛 돌리기'}
-            </button>
+              {isSpinning ? (
+                '미션 뽑는 중...'
+              ) : selectedMission ? (
+                <Image src={Refresh} alt="refresh" />
+              ) : (
+                '미션 뽑기'
+              )}
+            </Button>
             {selectedMission && (
-              <button
+              <Button
                 type="button"
+                variant="primary"
                 onClick={performMission}
-                className="px-6 py-2 bg-green-500 text-white rounded-full"
+                className="w-full text-white"
               >
                 미션 수행하기
-              </button>
+              </Button>
             )}
           </>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="primary"
             onClick={performMission}
             disabled={!selectedMission}
-            className="px-6 py-2 bg-green-500 text-white rounded-full disabled:bg-gray-400"
+            className="w-full text-white"
           >
             미션 수행하기
-          </button>
+          </Button>
         )}
       </div>
     </div>

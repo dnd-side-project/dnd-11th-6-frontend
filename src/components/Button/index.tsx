@@ -8,6 +8,7 @@ export interface ButtonProps
   variant?: ButtonVariant
   fullWidth?: boolean
   width?: string
+  padding?: string
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -22,6 +23,7 @@ export function Button({
   variant = 'primary',
   fullWidth = false,
   width,
+  padding = 'py-[14px] px-[34px]',
   disabled = false,
   type = 'button',
   ...props
@@ -35,11 +37,12 @@ export function Button({
     <button
       type={type}
       className={`
-        inline-flex py-[14px] px-[34px] items-center justify-center  rounded-xl
+        inline-flex items-center justify-center  rounded-xl
         transition duration-150 ease-in-out
         ${variantStyles[variant]}
         ${fullWidth ? 'w-full' : ''}
         ${disabled ? 'opacity-30 cursor-not-allowed' : animationClass}
+        ${padding}
         ${className}
       `}
       style={widthStyle}

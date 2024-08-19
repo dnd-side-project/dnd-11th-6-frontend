@@ -23,11 +23,7 @@ interface MeetingState {
 
 interface MeetingActions {
   setMeetingData: (meetingData: MeetingData) => void
-  setPhotos: (photo: Photo[]) => void
-}
-
-interface MeetingActions {
-  setMeetingData: (meetingData: MeetingData) => void
+  setMeetingId: (meetingId: number) => void
   setPhotos: (photos: Photo[]) => void
 }
 
@@ -37,6 +33,12 @@ const useMeetingStore = create<MeetingStore>((set) => ({
   meetingData: null,
   photos: [],
   setMeetingData: (meetingData) => set({ meetingData }),
+  setMeetingId: (meetingId) =>
+    set((state) => ({
+      meetingData: state.meetingData
+        ? { ...state.meetingData, meetingId }
+        : null,
+    })),
   setPhotos: (photos) => set({ photos }),
 }))
 

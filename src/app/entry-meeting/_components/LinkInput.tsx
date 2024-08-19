@@ -17,12 +17,12 @@ const LinkSchema = z.object({
 
 interface LinkInputProps {
   onEnterClick: () => void
-  onBackClick?: () => void
+  onHomeClick?: () => void
 }
 
 type LinkFormData = z.infer<typeof LinkSchema>
 
-function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
+function LinkInput({ onEnterClick, onHomeClick }: LinkInputProps) {
   const router = useRouter()
   const {
     control,
@@ -43,7 +43,6 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
     {
       data: MeetingData
       status: number
-      error: { code: string; message: string }
     },
     {
       data: MeetingData
@@ -55,9 +54,10 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
     queryFn: async () => {
       if (!debouncedLink) return null
       const response = await fetch(
-        `/api/v1/meetings?meetingLink=${debouncedLink}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings?meetingLink=${debouncedLink}`,
       )
       const result = await response.json()
+      console.log('result:', result)
       if (!response.ok) throw result
       return result
     },
@@ -73,10 +73,12 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
 
   useEffect(() => {
     if (isError) {
-      if (error.error.code === 'MEETING_LINK_NOT_FOUND') {
-        setApiErrorMessage('이 링크에 해당되는 모임이 없어요:(')
-      } else if (error?.error?.code === 'MEETING_EXPIRED') {
-        setApiErrorMessage('이미 만료된 모임이에요.')
+      if (error.error) {
+        if (error.error.code === 'MEETING_LINK_NOT_FOUND') {
+          setApiErrorMessage('이 링크에 해당되는 모임이 없어요:(')
+        } else if (error?.error?.code === 'MEETING_EXPIRED') {
+          setApiErrorMessage('이미 만료된 모임이에요.')
+        }
       } else {
         setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
       }
@@ -87,17 +89,10 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
 
   const errorMessage = apiErrorMessage || errors.link?.message || null
 
-  // ======== DEBUGGING CODE START ========
-  console.log('checking:', isLoading)
-  console.log('isSuccess:', isSuccess)
-  console.log('errorMessage:', errorMessage)
-  console.log('linkValue:', linkValue)
-  // ======== DEBUGGING CODE END ========
-
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
-        <button type="button" onClick={onBackClick} className="">
+        <button type="button" onClick={onHomeClick} className="">
           <Image src={BackIcon} alt="back" />
         </button>
       </div>
@@ -133,7 +128,7 @@ function LinkInput({ onEnterClick, onBackClick }: LinkInputProps) {
       <Button
         onClick={onEnterClick}
         variant="primary"
-        className="mt-auto mb-5"
+        className="mt-auto mb-5 text-white"
         disabled={!isSuccess}
       >
         완료

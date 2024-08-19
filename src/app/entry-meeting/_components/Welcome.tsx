@@ -1,6 +1,6 @@
-import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
+import useUserStore from '@/stores/useUserStore'
 import Close from 'public/icons/close.svg'
 
 interface WelcomeProps {
@@ -9,6 +9,8 @@ interface WelcomeProps {
 }
 
 function Welcome({ onEnterClick, onBackClick }: WelcomeProps) {
+  const nickname = useUserStore((state) => state.nickname)
+
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex justify-end">
@@ -17,7 +19,7 @@ function Welcome({ onEnterClick, onBackClick }: WelcomeProps) {
         </button>
       </div>
       <div className="text-gray-900 font-bold text-[22px] mt-9">
-        [사용자 닉네임]님!
+        {nickname}님!
       </div>
       <div className="text-gray-900 font-bold text-[22px]">
         모임 앨범에 들어오신걸 환영해요!

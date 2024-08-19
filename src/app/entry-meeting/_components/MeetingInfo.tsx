@@ -1,36 +1,33 @@
 import Image from 'next/image'
 import { Button } from '@/components/Button'
-// import useMeetingStore from '@/stores/useMeetingStore'
+import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
+import Logo from 'public/logo.svg'
 
 interface MeetingInfoProps {
   onEnterClick: () => void
   onBackClick: () => void
+  onHomeClick?: () => void
 }
 
-function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
+function MeetingInfo({
+  onEnterClick,
+  onBackClick,
+  onHomeClick,
+}: MeetingInfoProps) {
   const maxLength = 75
-  // ======== TODO: FUTURE FEATURE START ========
-  // const meetingData = useMeetingStore((state) => state.meetingData)
-  // const shortDescription =
-  // meetingData.description.length > maxLength
-  //   ? `${meetingData.description.substring(0, maxLength)}...`
-  //   : meetingData.description
-  // ======== TODO: FUTURE FEATURE END ========
-
-  // ======== DEBUGGING CODE START ========
-  const meetingDataDescription: string =
-    'DND는 개발자와 디자이너를 위한 계속해서 성장하는 IT비영리단체입니다.DND는 개발자와 디자이너를 위한 계속해서 성장하는 IT비영리이고 여기는 생략되는 부분 여기는 생략되는 부분'
+  const meetingData = useMeetingStore((state) => state.meetingData)
   const shortDescription =
-    meetingDataDescription.length > maxLength
-      ? `${meetingDataDescription.substring(0, maxLength)}...`
-      : meetingDataDescription
-  // ======== DEBUGGING CODE END ========
+    meetingData?.description && meetingData.description.length > maxLength
+      ? `${meetingData?.description.substring(0, maxLength)}...`
+      : meetingData?.description
+
+  console.log('meetingData:', meetingData)
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
-        <button type="button" onClick={onBackClick} className="">
+        <button type="button" onClick={onHomeClick} className="">
           <Image src={BackIcon} alt="back" />
         </button>
       </div>
@@ -42,14 +39,26 @@ function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
       </div>
       <div className="flex flex-col bg-point-blue rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
         <div className="flex w-full">
-          <div className="bg-point-yellow rounded-full w-11 max-h-11 mr-3">
-            {/* <Image src={meetingData?.thumbnailUrl} alt="thumbnail" /> */}
+          <div className="w-11 max-h-11 mr-3">
+            {meetingData?.thumbnailUrl ? (
+              <Image
+                loader={({ src }) => src}
+                src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${meetingData.thumbnailUrl}`}
+                alt="thumbnail"
+                width={44}
+                height={44}
+                layout="responsive"
+                className="rounded-full"
+                unoptimized
+              />
+            ) : (
+              <Image src={Logo} alt="thumbnail" width={44} height={44} />
+            )}
           </div>
           <div className="flex flex-col">
             <div className="text-gray-400 text-sm">나의 모임</div>
             <div className="text-gray-100 text-lg font-bold ">
-              DND 네트워킹
-              {/* {meetingData?.name} */}
+              {meetingData?.name}
             </div>
           </div>
         </div>
@@ -58,20 +67,32 @@ function MeetingInfo({ onEnterClick, onBackClick }: MeetingInfoProps) {
             모임 진행 중
           </div>
           <div className="text-gray-400 text-sm font-normal">
-            2024.08.10
-            {/* {meetingData?.endDate} */}
+            {meetingData?.endDate}
           </div>
         </div>
         <div className="h-[1px] w-full bg-white mt-4" />
-        <div className="text-sm font-normal mt-4">
-          {shortDescription}
-          {/* {meetingData?.description} */}
-        </div>
+        <div className="text-sm font-normal mt-4">{shortDescription}</div>
       </div>
 
-      <Button onClick={onEnterClick} variant="primary" className="mt-auto mb-5">
-        입장하기
-      </Button>
+      <div className="flex mt-auto mb-5">
+        <Button
+          type="button"
+          variant="light"
+          className="mr-2 w-28"
+          padding="px-6"
+          onClick={onBackClick}
+        >
+          이전
+        </Button>
+        <Button
+          onClick={onEnterClick}
+          fullWidth
+          variant="primary"
+          className="text-white"
+        >
+          입장하기
+        </Button>
+      </div>
     </div>
   )
 }

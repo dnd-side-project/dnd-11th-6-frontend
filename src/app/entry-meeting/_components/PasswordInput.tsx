@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
+import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 
 const passwordSchema = z.object({
@@ -26,10 +27,18 @@ type PasswordFormData = z.infer<typeof passwordSchema>
 interface PasswordInputProps {
   onEnterClick: () => void
   onBackClick: () => void
+  onHomeClick?: () => void
 }
 
-function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
+function PasswordInput({
+  onEnterClick,
+  onBackClick,
+  onHomeClick,
+}: PasswordInputProps) {
   const [isLeader, setIsLeader] = useState(false)
+  const currentMeetingId = useMeetingStore(
+    (state) => state.meetingData?.meetingId,
+  )
 
   const {
     control,
@@ -59,17 +68,13 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
 
   const validatePassword = useMutation<
     { status: number; data: any },
-    { status: number; error: { code: string; message: string } },
+    { status: number; data: null; error: { code: string; message: string } },
     string
   >({
     mutationFn: async (password: string) => {
       if (!password || password.length < 6) return null
 
-      // TODO: Replace this with the actual meeting ID
-      const meetingId = '6'
-      const endpoint = isLeader
-        ? `/api/v1/meetings/${meetingId}/validate-password/leader`
-        : `/api/v1/meetings/${meetingId}/validate-password`
+      const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${currentMeetingId}/validate-password`
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -91,14 +96,12 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
     mutationFn: async (leaderAuthKey: string) => {
       if (!leaderAuthKey || leaderAuthKey.length !== 4) return null
 
-      // TODO: Replace this with the actual meeting ID
-      const meetingId = '9'
       const response = await fetch(
-        `/api/v1/meetings/${meetingId}/validate-password/leader`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${currentMeetingId}/validate-leader-key`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(leaderAuthKey),
+          body: JSON.stringify({ leaderAuthKey }),
         },
       )
       const result = await response.json()
@@ -130,10 +133,14 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
 
   useEffect(() => {
     if (validatePassword.isError) {
-      if (
-        validatePassword.error.error?.code === 'MEETING_INVALIDATE_PASSWORD'
-      ) {
-        setApiErrorMessagePassword('암호가 일치하지 않습니다.')
+      if (validatePassword.error) {
+        if (
+          validatePassword.error.error.code === 'MEETING_INVALIDATE_PASSWORD'
+        ) {
+          setApiErrorMessagePassword('암호가 일치하지 않습니다.')
+        } else {
+          setApiErrorMessagePassword(validatePassword.error.error.message)
+        }
       } else {
         setApiErrorMessagePassword('오류가 발생했습니다. 다시 시도해주세요.')
       }
@@ -148,11 +155,17 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
 
   useEffect(() => {
     if (validateLeaderAuthKey.isError) {
-      if (
-        validateLeaderAuthKey.error.error?.code ===
-        'MEETING_INVALIDATE_PASSWORD'
-      ) {
-        setApiErrorMessageLeaderAuthKey('암호가 일치하지 않습니다.')
+      if (validateLeaderAuthKey.error) {
+        if (
+          validateLeaderAuthKey.error.error.code ===
+          'MEETING_INVALIDATE_AUTH_KEY'
+        ) {
+          setApiErrorMessageLeaderAuthKey('암호가 일치하지 않습니다.')
+        } else {
+          setApiErrorMessageLeaderAuthKey(
+            validateLeaderAuthKey.error.error.message,
+          )
+        }
       } else {
         setApiErrorMessageLeaderAuthKey(
           '오류가 발생했습니다. 다시 시도해주세요.',
@@ -181,26 +194,10 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
   const isPasswordValid = validatePassword.isSuccess
   const isLeaderAuthKeyValid = validateLeaderAuthKey.isSuccess
 
-  // ======== DEBUGGING CODE START ========
-  console.log('isCheckingPassword:', validatePassword.isPending)
-  console.log('isSuccessPassword:', validatePassword.isSuccess)
-  console.log('errorMessagePassword:', validatePassword.error?.error?.message)
-
-  console.log('passwordValue:', passwordValue)
-  console.log('leaderAuthKeyValue:', leaderAuthKeyValue)
-
-  console.log('isCheckingLeaderAuthKey:', validateLeaderAuthKey.isPending)
-  console.log('isSuccessLeaderAuthKey:', validateLeaderAuthKey.isSuccess)
-  console.log(
-    'errorMessageLeaderAuthKey:',
-    validateLeaderAuthKey.error?.error?.message,
-  )
-  // ======== DEBUGGING CODE END ========
-
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
-        <button type="button" onClick={onBackClick} className="">
+        <button type="button" onClick={onHomeClick} className="">
           <Image src={BackIcon} alt="back" />
         </button>
       </div>
@@ -278,20 +275,32 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
           />
         )}
       </div>
-      <Button
-        onClick={onEnterClick}
-        type="submit"
-        fullWidth
-        variant="primary"
-        className="mt-auto mb-5"
-        disabled={
-          isLeader
-            ? !(isPasswordValid && isLeaderAuthKeyValid)
-            : !isPasswordValid
-        }
-      >
-        완료
-      </Button>
+
+      <div className="flex mt-auto mb-5">
+        <Button
+          type="button"
+          variant="light"
+          className="mr-2 w-28"
+          padding="px-6"
+          onClick={onBackClick}
+        >
+          이전
+        </Button>
+        <Button
+          onClick={onEnterClick}
+          type="submit"
+          fullWidth
+          variant="primary"
+          className="text-white"
+          disabled={
+            isLeader
+              ? !(isPasswordValid && isLeaderAuthKeyValid)
+              : !isPasswordValid
+          }
+        >
+          완료
+        </Button>
+      </div>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Button } from '@/components/Button'
 import useMissionStore from '@/stores/useMissionStore'
 import Back from 'public/icons/back.svg'
@@ -23,9 +23,11 @@ const missions = [
 ]
 
 function MissionCreationPage() {
+  const router = useRouter()
   const { missionType, setMissionType } = useMissionStore()
   const [isSpinning, setIsSpinning] = useState(false)
-  const [selectedMission, setSelectedMission] = useState<string | null>(null)
+  const selectedMission = useMissionStore((state) => state.currentMission)
+  const setSelectedMission = useMissionStore((state) => state.setCurrentMission)
   const [visibleMissions, setVisibleMissions] = useState<string[]>([
     '?',
     '?',
@@ -58,6 +60,7 @@ function MissionCreationPage() {
   }
 
   const selectMission = (mission: string) => {
+    console.log('selected mission: ', mission)
     setSelectedMission(mission)
   }
 
@@ -69,9 +72,9 @@ function MissionCreationPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="bg-white p-4 flex items-center justify-between ">
-        <Link href="/" className="text-2xl">
+        <button onClick={() => router.back()} className="text-2xl">
           <Image src={Back} alt="back" />
-        </Link>
+        </button>
         <h1 className="text-[18px] font-bold">미션 추가하기</h1>
         <div className="w-6" />
       </header>

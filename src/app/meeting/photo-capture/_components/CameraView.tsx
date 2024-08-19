@@ -3,6 +3,9 @@ import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
 import CameraSwitchButton from '@/assets/CameraSwitchButton.svg'
 import Close from '@/assets/close.svg'
+import Tooltip from '@/components/Tooltip'
+import useMissionStore from '@/stores/useMissionStore'
+import useTooltipStore from '@/stores/useTooltipStore'
 
 type CameraViewProps = {
   videoRef: React.RefObject<HTMLVideoElement>
@@ -19,15 +22,51 @@ function CameraView({
   onToggleCamera,
   goBack,
 }: CameraViewProps) {
+  const showTooltip = useTooltipStore((state) => state.showTooltip)
+  const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
+  const currentMission = useMissionStore((state) => state.currentMission)
+
   return (
-    <>
+    <div className="min-h-screen w-full p-4">
       <div className="flex justify-between items-center h-12 w-full">
-        <Link href="/create-mission">
-          <div className="flex justify-between items-center px-4 py-3 w-44 h-12 rounded-[14px] border border-black">
-            미션 뽑으러가기
-            <div>&gt;</div>
-          </div>
-        </Link>
+        <div className="relative">
+          <Link href="/create-mission">
+            <div className="flex justify-between items-center px-3 py-2 rounded-[14px] bg-gray-200">
+              {currentMission ? (
+                <>미션 바꾸기</>
+              ) : (
+                <>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-1"
+                  >
+                    <path
+                      d="M6.0002 1.19995L6.0002 10.8M10.8002 5.99995L1.2002 5.99995"
+                      stroke="#AAAFB3"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  미션 추가하기
+                </>
+              )}
+            </div>
+            {!currentMission && showTooltip && (
+              <Tooltip
+                message="내 사진에 미션을 더 해봐요!"
+                onClose={() => setShowTooltip(false)}
+                position="bottom"
+                arrowClassName="left-12"
+                className="top-12 left-28"
+              />
+            )}
+          </Link>
+        </div>
+
         <div className="flex-1">{} </div>
         <div
           role="button"
@@ -51,9 +90,21 @@ function CameraView({
           objectFit: 'cover',
           transform: isRearCamera ? 'none' : 'scaleX(-1)',
         }}
-        className="mt-8"
+        className="mt-3"
       />
-      <div className="flex items-center justify-center w-full mt-10">
+      <div className="flex justify-center">
+        {currentMission ? (
+          <div className="flex justify-center text-gray-50 bg-gray-700 px-3 py-2 mt-4 rounded-[14px] text-sm">
+            {currentMission}
+          </div>
+        ) : (
+          <div className="flex justify-center text-gray-500 bg-gray-200 px-3 py-2 mt-4 rounded-[14px] text-sm">
+            모임의 순간을 담아주세요!
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-center w-full mt-7">
         <button
           type="button"
           onClick={onToggleCamera}
@@ -74,9 +125,9 @@ function CameraView({
             />
           </button>
         </div>
-        <div className="w-1/3">{}</div>
+        <div className="w-1/3" />
       </div>
-    </>
+    </div>
   )
 }
 

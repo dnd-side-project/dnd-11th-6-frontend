@@ -76,11 +76,9 @@ function PasswordInput({ onEnterClick, onBackClick }: PasswordInputProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
       })
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error.message)
-      }
-      return response.json()
+      const result = await response.json()
+      if (!response.ok) throw result
+      return result
     },
     retry: false,
   })

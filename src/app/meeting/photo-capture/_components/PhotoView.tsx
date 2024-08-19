@@ -60,7 +60,6 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
         style={{ objectFit: 'cover' }}
       />
       <div className="flex  mt-3">
-        {' '}
         <div className="text-[#888D91] mr-3">2024.08.06 PM 10:08</div>
         {isMeetingMission && (
           <div className="flex items-center bg-gray-100 rounded-[14px] px-[10px] py-1 text-xs text-gray-900">

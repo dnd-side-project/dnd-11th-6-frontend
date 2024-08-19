@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
 import useZodForm from '@/hooks/useZodForm'
 import {
   MeetingDateFormModel,
@@ -46,37 +47,39 @@ function useMeetingForm() {
   }, [meetingForm, meetingDateForm, themeForm, passwordForm, setFormData])
 
   const createMeetingMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async () => {
+      const currentFormData = useMeetStore.getState().formData
       const meetingData = {
-        name: data.meeting.name,
-        description: data.meeting.description,
-        startDate: data.meetingDate.date,
-        endDate: data.meetingDate.endDate,
-        symbolColor: data.theme.color,
-        password: data.password.password,
+        name: currentFormData.meeting.name,
+        description: currentFormData.meeting.description,
+        startDate: currentFormData.meetingDate.date,
+        endDate: currentFormData.meetingDate.endDate,
+        symbolColor: currentFormData.theme.color,
+        password: currentFormData.password.password,
       }
 
       const meetingFormData = new FormData()
-      meetingFormData.append('meeting', JSON.stringify(meetingData))
+      meetingFormData.append(
+        'meeting',
+        new Blob([JSON.stringify(meetingData)], { type: 'application/json' }),
+        'meeting.json',
+      )
 
-      // 파일이 있는 경우에만 추가
-      if (data.theme.photo instanceof File) {
-        meetingFormData.append('thumbnail', data.theme.photo)
+      if (currentFormData.theme.photo instanceof File) {
+        meetingFormData.append('thumbnail', currentFormData.theme.photo)
       }
 
-      const response = await fetch(
+      const response = await axios.post(
         'http://api.get-snappy.co.kr/api/v1/meetings',
+        meetingFormData,
         {
-          method: 'POST',
-          body: meetingFormData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       )
 
-      if (!response.ok) {
-        throw new Error('Failed to create meeting')
-      }
-
-      return response.json()
+      return response.data
     },
   })
 
@@ -100,12 +103,11 @@ function useMeetingForm() {
         setStep(4)
       }
     } else if (step === 4) {
-      updateFormData()
       const isStep4Valid = await passwordForm.trigger(['password'])
       if (isStep4Valid) {
-        // Submit the form data to the API
+        updateFormData()
         try {
-          const result = await createMeetingMutation.mutateAsync(formData)
+          const result = await createMeetingMutation.mutateAsync()
           console.log(result)
           setStep(5)
         } catch (error) {

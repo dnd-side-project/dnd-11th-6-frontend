@@ -6,7 +6,7 @@ interface ProgressBarProps {
 }
 
 const ProgressBar = ({ currentStep, totalSteps }: ProgressBarProps) => (
-  <div className="w-full flex justify-between mb-8 py-2">
+  <div className="w-full flex justify-between mb-4 py-2">
     {[...Array(totalSteps)].map((_, index) => (
       <div key={index} className="flex-1 px-1">
         <div

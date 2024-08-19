@@ -34,7 +34,7 @@ function MeetingTheme() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="mb-[42px]">
+      <div className="mb-8">
         <h2 className="text-xl font-bold mb-2">
           모임의 특색에 맞게 꾸며보세요.
         </h2>
@@ -52,15 +52,15 @@ function MeetingTheme() {
               <div className="relative">
                 <button
                   type="button"
-                  className="w-[164px] h-[164px] mt-3 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-[150px] h-[150px] bg-gray-200 rounded-full flex items-center justify-center cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onClick={openImagePicker}
                 >
                   {previewImage ? (
                     <Image
                       src={previewImage}
                       alt="Selected"
-                      width={164}
-                      height={164}
+                      width={150}
+                      height={150}
                       objectFit="cover"
                     />
                   ) : (
@@ -87,7 +87,7 @@ function MeetingTheme() {
           />
         </div>
 
-        <div className="grid grid-cols-4 gap-[18px] my-12">
+        <div className="grid grid-cols-4 gap-[18px] my-10 place-items-center">
           <Controller
             name="color"
             control={control}

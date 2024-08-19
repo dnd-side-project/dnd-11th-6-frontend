@@ -39,7 +39,6 @@ function CreateMeetingPage() {
         return <MeetingInfo />
       case 2:
         return <MeetingDate />
-
       case 3:
         return <MeetingTheme />
       case 4:
@@ -57,7 +56,7 @@ function CreateMeetingPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col my-10 max-h-screen">
       <div className="px-4">
         <div className="flex items-center justify-between mb-6">
           <button className="p-1">

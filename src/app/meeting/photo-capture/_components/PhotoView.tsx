@@ -1,10 +1,11 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import usePhoto from '@/hooks/usePhoto'
+import useMissionStore from '@/stores/useMissionStore'
+import useTooltipStore from '@/stores/useTooltipStore'
 
 type PhotoViewProps = {
   photo: string
@@ -13,8 +14,10 @@ type PhotoViewProps = {
 }
 
 function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
-  const [showTooltip, setShowTooltip] = useState(true)
-  const [isMeetingMission] = useState(true)
+  const showTooltip = useTooltipStore((state) => state.showTooltip)
+  const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
+  const currentMission = useMissionStore((state) => state.currentMission)
+
   const { uploadPhoto, isUploading } = usePhoto()
 
   const handleUpload = async () => {
@@ -45,9 +48,9 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
         </div>
       </div>
       <div className="h-[60px] mt-6">
-        {isMeetingMission && (
+        {currentMission && (
           <div className=" rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] font-semibold">
-            모임에서 가장 뫄뫄한 사람 찍기
+            {currentMission}
           </div>
         )}
       </div>
@@ -61,7 +64,7 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
       />
       <div className="flex  mt-3">
         <div className="text-[#888D91] mr-3">2024.08.06 PM 10:08</div>
-        {isMeetingMission && (
+        {currentMission && (
           <div className="flex items-center bg-gray-100 rounded-[14px] px-[10px] py-1 text-xs text-gray-900">
             모임미션
           </div>

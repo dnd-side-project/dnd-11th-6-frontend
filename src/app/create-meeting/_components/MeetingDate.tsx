@@ -35,12 +35,14 @@ function MeetingDate() {
             label="모임 시작"
             as="datetime"
             placeholder="시작일 입력"
+            min={dayjs().format('YYYY-MM-DDTHH:mm')}
             error={errors.date?.message}
           />
 
           <Input
             name="endDate"
             control={control}
+            min={dayjs().format('YYYY-MM-DDTHH:mm')}
             label="모집 종료"
             placeholder="종료일 입력"
             as="datetime"

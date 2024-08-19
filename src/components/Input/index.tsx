@@ -84,7 +84,7 @@ export function Input<T extends FieldValues>({
           )
         case 'date':
         case 'datetime':
-          return <input {...props} />
+          return <input {...props} min={min} />
         default:
           return (
             <div className="relative">

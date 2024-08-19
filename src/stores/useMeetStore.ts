@@ -15,13 +15,11 @@ interface FormData {
 
 interface MeetState {
   step: number
-  pin: string
   formData: FormData
 }
 
 interface MeetActions {
   setStep: (step: number) => void
-  setPin: (pin: string) => void
   setFormData: (data: Partial<FormData>) => void
   resetForm: () => void
 }
@@ -38,7 +36,7 @@ const initialFormData: FormData = {
     endDate: '',
   },
   theme: {
-    photo: '',
+    photo: undefined,
     color: '',
   },
   password: {
@@ -48,10 +46,8 @@ const initialFormData: FormData = {
 
 const useMeetStore = create<MeetStore>((set) => ({
   step: 1,
-  pin: '',
   formData: initialFormData,
   setStep: (step: number) => set({ step }),
-  setPin: (pin: string) => set({ pin }),
   setFormData: (data: Partial<FormData>) =>
     set((state) => ({
       formData: {
@@ -59,7 +55,7 @@ const useMeetStore = create<MeetStore>((set) => ({
         ...data,
       },
     })),
-  resetForm: () => set({ formData: initialFormData, step: 1, pin: '' }),
+  resetForm: () => set({ formData: initialFormData, step: 1 }),
 }))
 
 export default useMeetStore

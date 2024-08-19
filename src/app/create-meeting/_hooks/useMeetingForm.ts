@@ -13,7 +13,7 @@ import {
 import useMeetStore from '@/stores/useMeetStore'
 
 function useMeetingForm() {
-  const { step, setStep, setPin, formData, setFormData } = useMeetStore()
+  const { step, setStep, formData, setFormData } = useMeetStore()
 
   const meetingForm = useZodForm<MeetingFormModel>(MeetingSchema, {
     mode: 'onChange',
@@ -67,8 +67,6 @@ function useMeetingForm() {
       updateFormData()
       const isStep4Valid = await passwordForm.trigger(['password'])
       if (isStep4Valid) {
-        const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
-        setPin(generatedPin)
         setStep(5)
       }
     }

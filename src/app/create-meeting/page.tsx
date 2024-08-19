@@ -3,6 +3,7 @@
 import React from 'react'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import useMeetStore from '@/stores/useMeetStore'
 import {
   MeetingDate,
@@ -22,7 +23,7 @@ const stepTitles = {
 }
 
 function CreateMeetingPage() {
-  const { step } = useMeetStore()
+  const { step, resetForm } = useMeetStore()
 
   const handleShareMeeting = () => {
     console.log('Share meeting')
@@ -60,7 +61,14 @@ function CreateMeetingPage() {
       <div className="px-4">
         <div className="flex items-center justify-between mb-6">
           <button className="p-1">
-            <Image src="/icons/close.svg" width={24} height={24} alt="close" />
+            <Link href="/" onClick={() => resetForm()}>
+              <Image
+                src="/icons/close.svg"
+                width={24}
+                height={24}
+                alt="close"
+              />
+            </Link>
           </button>
           <h1 className="text-xl font-bold flex-grow text-center">
             {stepTitles[step as keyof typeof stepTitles]}

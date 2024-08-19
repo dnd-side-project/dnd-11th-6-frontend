@@ -60,7 +60,7 @@ function MeetingDate() {
             </div>
           </div>
         </div>
-        <span className="bg-gray-50 text-sm font-semibold mb-3 p-[10px] rounded text-center text-gray-700">
+        <span className="bg-gray-50 text-sm font-semibold my-3 p-[10px] rounded text-center text-gray-700">
           {`링크는 ${getValues('endDate') ? dayjs(getValues('endDate').toString()).format('YYYY-MM-DD') : '모집 종료 설정 시간'} 까지 유효합니다.`}
         </span>
         <div className="flex gap-2">
@@ -70,7 +70,7 @@ function MeetingDate() {
             type="button"
             variant="light"
             fullWidth={false}
-            width="40%"
+            width="50%"
           >
             이전
           </Button>

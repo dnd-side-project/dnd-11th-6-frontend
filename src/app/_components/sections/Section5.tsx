@@ -20,10 +20,10 @@ function Section5() {
             모임의 순간을 포착해보세요!
           </h2>
           <Button
-            className="bg-yellow-400 text-black font-bold"
+            className="bg-yellow-400 font-bold"
             type="submit"
             fullWidth
-            variant="primary"
+            variant="light"
           >
             새로운 모임 앨범 만들어보기
           </Button>

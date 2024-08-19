@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import useZodForm from '@/hooks/useZodForm'
 import {
   MeetingDateFormModel,
@@ -44,6 +45,41 @@ function useMeetingForm() {
     })
   }, [meetingForm, meetingDateForm, themeForm, passwordForm, setFormData])
 
+  const createMeetingMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const meetingData = {
+        name: data.meeting.name,
+        description: data.meeting.description,
+        startDate: data.meetingDate.date,
+        endDate: data.meetingDate.endDate,
+        symbolColor: data.theme.color,
+        password: data.password.password,
+      }
+
+      const meetingFormData = new FormData()
+      meetingFormData.append('meeting', JSON.stringify(meetingData))
+
+      // 파일이 있는 경우에만 추가
+      if (data.theme.photo instanceof File) {
+        meetingFormData.append('thumbnail', data.theme.photo)
+      }
+
+      const response = await fetch(
+        'http://api.get-snappy.co.kr/api/v1/meetings',
+        {
+          method: 'POST',
+          body: meetingFormData,
+        },
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to create meeting')
+      }
+
+      return response.json()
+    },
+  })
+
   const onSubmit = async () => {
     if (step === 1) {
       const isStep1Valid = await meetingForm.trigger(['name', 'description'])
@@ -67,7 +103,15 @@ function useMeetingForm() {
       updateFormData()
       const isStep4Valid = await passwordForm.trigger(['password'])
       if (isStep4Valid) {
-        setStep(5)
+        // Submit the form data to the API
+        try {
+          const result = await createMeetingMutation.mutateAsync(formData)
+          console.log(result)
+          setStep(5)
+        } catch (error) {
+          console.error('Failed to create meeting:', error)
+          // Handle error (e.g., show error message to user)
+        }
       }
     }
   }
@@ -78,6 +122,9 @@ function useMeetingForm() {
     themeForm,
     passwordForm,
     onSubmit,
+    isLoading: createMeetingMutation.isPending,
+    isError: createMeetingMutation.isError,
+    error: createMeetingMutation.error,
   }
 }
 

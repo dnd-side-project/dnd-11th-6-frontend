@@ -6,6 +6,10 @@ interface TooltipProps {
   position?: 'top' | 'bottom'
   className?: string
   arrowClassName?: string
+  bgColor?: string
+  textColor?: string
+  rounded?: string
+  padding?: string
 }
 
 function Tooltip({
@@ -14,6 +18,10 @@ function Tooltip({
   position = 'bottom',
   className = '',
   arrowClassName = '',
+  bgColor = 'bg-black',
+  textColor = 'text-white',
+  rounded = 'rounded-full',
+  padding = 'py-2 px-4',
 }: TooltipProps) {
   const handleClose = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
@@ -31,8 +39,8 @@ function Tooltip({
 
   const arrowInnerClass =
     position === 'bottom'
-      ? 'border-8 border-transparent border-b-black'
-      : 'border-8 border-transparent border-t-black'
+      ? `border-8 border-transparent border-b-${bgColor.split('-')[1]}`
+      : `border-8 border-transparent border-t-${bgColor.split('-')[1]}`
 
   return (
     <div
@@ -50,7 +58,9 @@ function Tooltip({
           <div className={arrowInnerClass} />
         </div>
       )}
-      <div className="bg-black text-white text-[16px] rounded-full py-2 px-4">
+      <div
+        className={`${bgColor} ${textColor} text-[16px] ${rounded} ${padding}`}
+      >
         <div className="flex items-center justify-between">
           {message}
           <svg
@@ -63,12 +73,12 @@ function Tooltip({
           >
             <path
               d="M10.8337 2.66675L2.16699 11.3334"
-              stroke="white"
+              stroke="currentColor"
               strokeLinecap="round"
             />
             <path
               d="M10.8337 11.3334L2.16699 2.66675"
-              stroke="white"
+              stroke="currentColor"
               strokeLinecap="round"
             />
           </svg>

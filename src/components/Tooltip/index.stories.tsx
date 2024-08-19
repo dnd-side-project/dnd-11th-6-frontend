@@ -17,6 +17,10 @@ const meta: Meta<typeof Tooltip> = {
     },
     className: { control: 'text' },
     arrowClassName: { control: 'text' },
+    bgColor: { control: 'text' },
+    textColor: { control: 'text' },
+    rounded: { control: 'text' },
+    padding: { control: 'text' },
   },
 }
 
@@ -44,6 +48,26 @@ export const BottomPosition: Story = {
     message: 'This tooltip is positioned at the bottom',
     position: 'bottom',
     arrowClassName: 'left-1/2',
+  },
+}
+
+export const CustomColors: Story = {
+  args: {
+    message: 'Custom colored tooltip',
+    position: 'bottom',
+    arrowClassName: 'left-1/2',
+    bgColor: 'bg-blue-500',
+    textColor: 'text-yellow-200',
+  },
+}
+
+export const CustomShape: Story = {
+  args: {
+    message: 'Custom shaped tooltip',
+    position: 'bottom',
+    arrowClassName: 'left-1/2',
+    rounded: 'rounded-lg',
+    padding: 'p-3',
   },
 }
 

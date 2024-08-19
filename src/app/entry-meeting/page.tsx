@@ -24,8 +24,8 @@ function EntryMeeting() {
             onEnterClick={() => {
               setPage(page + 1)
             }}
-            onBackClick={() => {
-              router.back()
+            onHomeClick={() => {
+              router.push('/')
             }}
           />
         )
@@ -36,6 +36,9 @@ function EntryMeeting() {
             onBackClick={() => {
               router.back()
             }}
+            onHomeClick={() => {
+              router.push('/')
+            }}
           />
         ) : null
       case 2:
@@ -45,6 +48,9 @@ function EntryMeeting() {
             onBackClick={() => {
               router.back()
             }}
+            onHomeClick={() => {
+              router.push('/')
+            }}
           />
         )
       case 3:
@@ -53,6 +59,9 @@ function EntryMeeting() {
             onEnterClick={() => setPage(page + 1)}
             onBackClick={() => {
               router.back()
+            }}
+            onHomeClick={() => {
+              router.push('/')
             }}
           />
         )

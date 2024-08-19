@@ -25,14 +25,6 @@ const stepTitles = {
 function CreateMeetingPage() {
   const { step, resetForm } = useMeetStore()
 
-  const handleShareMeeting = () => {
-    console.log('Share meeting')
-  }
-
-  const handleGoToMyMeeting = () => {
-    console.log('Go to my meeting')
-  }
-
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -45,12 +37,7 @@ function CreateMeetingPage() {
       case 4:
         return <MeetingPassword />
       case 5:
-        return (
-          <MeetingShare
-            onShareMeeting={handleShareMeeting}
-            onGoToMyMeeting={handleGoToMyMeeting}
-          />
-        )
+        return <MeetingShare />
       default:
         return null
     }

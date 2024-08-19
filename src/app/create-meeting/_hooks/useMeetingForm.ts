@@ -62,7 +62,6 @@ function useMeetingForm() {
       meetingFormData.append(
         'meeting',
         new Blob([JSON.stringify(meetingData)], { type: 'application/json' }),
-        'meeting.json',
       )
 
       if (currentFormData.theme.photo instanceof File) {

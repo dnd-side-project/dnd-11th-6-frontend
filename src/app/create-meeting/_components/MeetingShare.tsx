@@ -1,36 +1,105 @@
 import React from 'react'
+import Image from 'next/image'
+import { Button } from '@/components/Button'
+import Tooltip from '@/components/Tooltip'
+import useTooltipStore from '@/stores/useTooltipStore'
 
-interface MeetingShareProps {
-  onShareMeeting: () => void
-  onGoToMyMeeting: () => void
-}
+function MeetingShare() {
+  const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()
 
-function MeetingShare({ onShareMeeting, onGoToMyMeeting }: MeetingShareProps) {
   return (
     <div className="flex flex-col items-center">
       <div className="mb-[42px] text-center">
         <h2 className="text-xl font-bold mb-2">모임이 생성되었어요 🎉</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 mb-7">
           생성된 모임 앨범을 친구들에게 알려보세요.
         </p>
+        <Image
+          src="../icons/camera.svg"
+          width={195}
+          height={195}
+          className="mb-4 w-full"
+          alt="camera"
+        />
+        <p className=" text-lg font-medium text-gray-600">DND 네트워킹</p>
       </div>
-      <div className="bg-gray-100 w-full aspect-square mb-6 flex items-center justify-center">
-        <p className="text-gray-400">축하 이미지</p>
+      <div className="bg-gray-100 p-5 rounded-2xl mb-7 w-full">
+        <div className="flex justify-between mb-4">
+          <span className="text-sm text-gray-600">시작 시간</span>
+          <span className="text-sm font-medium">2024/08/09 PM 10:00</span>
+        </div>
+        <div className="flex justify-between mb-4">
+          <span className="text-sm text-gray-600">종료 시간</span>
+          <span className="text-sm font-medium">2024/08/11 PM 10:00</span>
+        </div>
+        <div className="flex justify-between mb-4">
+          <div className="flex justify-center relative">
+            <span className="text-sm font-medium flex items-center text-gray-600">
+              비밀번호
+              <button onClick={() => showTooltip('password')} className="ml-1 ">
+                <Image
+                  src="../icons/info.svg"
+                  width={16}
+                  height={16}
+                  alt="info"
+                />
+              </button>
+              {activeTooltip === 'password' && (
+                <Tooltip
+                  textColor="text-black"
+                  bgColor="bg-white"
+                  arrowClassName="left-12 bg-white"
+                  className="top-[28px] left-[138px] "
+                  message="모임 앨범에 진입할 때 사용해요."
+                  onClose={hideTooltip}
+                  position="bottom"
+                />
+              )}
+            </span>
+          </div>
+          <span className="text-sm font-medium flex items-center">1234</span>
+        </div>
+        <div className="flex justify-between relative">
+          <span className="text-sm text-gray-600 flex justify-center">
+            관리자키
+            <button onClick={() => showTooltip('admin')} className="ml-1 ">
+              <Image
+                src="../icons/info.svg"
+                width={16}
+                height={16}
+                alt="info"
+              />
+            </button>
+            {activeTooltip === 'admin' && (
+              <Tooltip
+                textColor="text-black"
+                bgColor="bg-white"
+                arrowClassName="left-[138px]"
+                className="top-[28px] left-[138px]"
+                message="모임 앨범을 관리할 수 있는 관리자 암호에예요."
+                onClose={hideTooltip}
+                position="top"
+              />
+            )}
+          </span>
+          <div className="flex items-center">
+            <span className="text-sm font-medium mr-2">3234</span>
+            <input
+              type="checkbox"
+              className="form-checkbox h-4 w-4 text-blue-600"
+            />
+            <span className="text-sm text-gray-600 ml-1">함께 공유하기</span>
+          </div>
+        </div>
       </div>
-      <button
-        type="button"
-        onClick={onShareMeeting}
-        className="w-full p-3 mb-3 bg-gray-300 text-black rounded-md"
+      <Button
+        // onClick={}
+        variant="primary"
+        className="mt-auto mb-5"
+        fullWidth
       >
-        만든 모임앨범 공유하기
-      </button>
-      <button
-        type="button"
-        onClick={onGoToMyMeeting}
-        className="w-full p-3 bg-black text-white rounded-md"
-      >
-        내 모임앨범으로 가기
-      </button>
+        앨범 입장하기
+      </Button>
     </div>
   )
 }

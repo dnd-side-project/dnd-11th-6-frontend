@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
+import {
+  useValidateLeaderAuthKey,
+  useValidatePassword,
+} from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
@@ -66,54 +69,15 @@ function PasswordInput({
   const debouncedPassword = useDebounce(passwordValue, 500)
   const debouncedLeaderAuthKey = useDebounce(leaderAuthKeyValue, 500)
 
-  const validatePassword = useMutation<
-    { status: number; data: any },
-    { status: number; data: null; error: { code: string; message: string } },
-    string
-  >({
-    mutationFn: async (password: string) => {
-      if (!password || password.length < 6) return null
-
-      const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${currentMeetingId}/validate-password`
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-    retry: false,
-  })
-
-  const validateLeaderAuthKey = useMutation<
-    { status: number; data: any },
-    { status: number; error: { code: string; message: string } },
-    string
-  >({
-    mutationFn: async (leaderAuthKey: string) => {
-      if (!leaderAuthKey || leaderAuthKey.length !== 4) return null
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${currentMeetingId}/validate-leader-key`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ leaderAuthKey }),
-        },
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-    retry: false,
-  })
+  const validatePassword = useValidatePassword()
+  const validateLeaderAuthKey = useValidateLeaderAuthKey()
 
   useEffect(() => {
     if (debouncedPassword && debouncedPassword.length >= 6) {
-      validatePassword.mutate(debouncedPassword)
+      validatePassword.mutate({
+        meetingId: currentMeetingId!,
+        password: debouncedPassword,
+      })
     } else {
       setApiErrorMessagePassword(null)
     }
@@ -125,7 +89,10 @@ function PasswordInput({
       debouncedLeaderAuthKey &&
       debouncedLeaderAuthKey.length === 4
     ) {
-      validateLeaderAuthKey.mutate(debouncedLeaderAuthKey)
+      validateLeaderAuthKey.mutate({
+        meetingId: currentMeetingId!,
+        leaderAuthKey: debouncedLeaderAuthKey,
+      })
     } else {
       setApiErrorMessageLeaderAuthKey(null)
     }

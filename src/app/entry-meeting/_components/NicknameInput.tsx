@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
+import { useCheckNickname, useJoinMeeting } from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
@@ -64,25 +64,9 @@ function NicknameInput({
     isSuccess,
     isError,
     error: nicknameCheckError,
-  } = useQuery<{
-    status: number
-    data: { isAvailableNickname: boolean }
-  }>({
-    queryKey: ['nickname', debouncedNickname],
-    queryFn: async () => {
-      if (!debouncedNickname) return null
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${meetingId}/participants/check-nickname?nickname=${debouncedNickname}`,
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-    enabled:
-      !!debouncedNickname &&
-      nicknameSchema.shape.nickname.safeParse(debouncedNickname).success,
-    retry: false,
-  })
+  } = useCheckNickname(meetingId!, debouncedNickname)
+
+  const joinMeetingMutation = useJoinMeeting()
 
   useEffect(() => {
     if (isError) {
@@ -101,50 +85,28 @@ function NicknameInput({
 
   const errorMessage = apiErrorMessage || errors.nickname?.message || null
 
-  const joinMeetingMutation = useMutation<
-    { status: number; data: { participantId: number } },
-    {
-      status: number
-      data: null
-      error: {
-        code: string
-        message: string
-      }
-    },
-    NicknameFormData
-  >({
-    mutationFn: async (formData) => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings/${meetingId}/participants`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            nickname: formData.nickname,
-            role: formData.role,
-          }),
-        },
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-    onSuccess: (joinMeetingData, variables) => {
-      setNickname(variables.nickname)
-      setRole(variables.role)
-      setParticipantId(joinMeetingData.data.participantId)
-      onEnterClick()
-    },
-    onError: (joinMeetingError) => {
-      console.error('Error joining meeting:', joinMeetingError)
-      setApiErrorMessage('모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.')
-    },
-  })
-
   const onSubmit = handleSubmit((formData) => {
-    joinMeetingMutation.mutate(formData)
+    joinMeetingMutation.mutate(
+      {
+        meetingId: meetingId!,
+        nickname: formData.nickname,
+        role: formData.role,
+      },
+      {
+        onSuccess: (joinMeetingData) => {
+          setNickname(formData.nickname)
+          setRole(formData.role)
+          setParticipantId(joinMeetingData.data.participantId)
+          onEnterClick()
+        },
+        onError: (joinMeetingError) => {
+          console.error('Error joining meeting:', joinMeetingError)
+          setApiErrorMessage(
+            '모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.',
+          )
+        },
+      },
+    )
   })
 
   return (

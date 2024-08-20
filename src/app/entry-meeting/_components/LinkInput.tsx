@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
+import { useCheckMeetingLink } from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import Callout from '@/components/Callout'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
-import useMeetingStore, { MeetingData } from '@/stores/useMeetingStore'
+import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 
 const LinkSchema = z.object({
@@ -39,31 +39,8 @@ function LinkInput({ onEnterClick, onHomeClick }: LinkInputProps) {
   const linkValue = watch('link')
   const debouncedLink = useDebounce(linkValue, 500)
 
-  const { data, isLoading, isSuccess, isError, error } = useQuery<
-    {
-      data: MeetingData
-      status: number
-    },
-    {
-      data: MeetingData
-      status: number
-      error: { code: string; message: string }
-    }
-  >({
-    queryKey: ['meeting', debouncedLink],
-    queryFn: async () => {
-      if (!debouncedLink) return null
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/meetings?meetingLink=${debouncedLink}`,
-      )
-      const result = await response.json()
-      console.log('result:', result)
-      if (!response.ok) throw result
-      return result
-    },
-    enabled: !!debouncedLink,
-    retry: false,
-  })
+  const { data, isLoading, isSuccess, isError, error } =
+    useCheckMeetingLink(debouncedLink)
 
   useEffect(() => {
     if (data) {

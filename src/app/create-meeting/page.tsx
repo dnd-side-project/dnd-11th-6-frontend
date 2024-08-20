@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-
 import Image from 'next/image'
 import Link from 'next/link'
+import ProgressBar from '@/components/ProgressBar'
 import useMeetStore from '@/stores/useMeetStore'
 import {
   MeetingDate,
@@ -11,17 +11,8 @@ import {
   MeetingPassword,
   MeetingShare,
   MeetingTheme,
-} from './_components'
-import ProgressBar from './_components/ProgressBar'
+} from './_components/index'
 import useMeetingForm from './_hooks/useMeetingForm'
-
-const stepTitles = {
-  1: '모임 생성',
-  2: '모임 생성',
-  3: '모임 생성',
-  4: '모임 생성',
-  5: '',
-}
 
 function CreateMeetingPage() {
   const { step, resetForm } = useMeetStore()
@@ -44,7 +35,6 @@ function CreateMeetingPage() {
     switch (step) {
       case 1:
         return <MeetingInfo />
-
       case 2:
         return <MeetingDate />
       case 3:
@@ -77,7 +67,7 @@ function CreateMeetingPage() {
             </button>
             {step !== 5 ? (
               <h1 className="text-xl font-bold flex-grow text-center">
-                {stepTitles[step as keyof typeof stepTitles]}
+                {step !== 5 && '모임 생성'}
               </h1>
             ) : (
               <button className="p-1">
@@ -96,9 +86,7 @@ function CreateMeetingPage() {
 
         {step !== 5 && !isLoading ? (
           <ProgressBar currentStep={step} totalSteps={4} />
-        ) : (
-          ''
-        )}
+        ) : null}
 
         {renderStep()}
       </div>

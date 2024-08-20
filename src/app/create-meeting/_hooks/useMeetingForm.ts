@@ -109,7 +109,6 @@ function useMeetingForm() {
         setIsSubmitting(true)
         try {
           const result = await createMeetingMutation.mutateAsync()
-          console.log(createMeetingMutation)
           if (result.status === 200) {
             useMeetStore.getState().setMeetingResult(result.data)
             setStep(5)

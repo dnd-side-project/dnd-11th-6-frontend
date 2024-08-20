@@ -10,6 +10,10 @@ function MeetingShare() {
   const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()
   const { meetingResult } = useMeetStore()
 
+  if (!meetingResult) {
+    return null
+  }
+
   return (
     <div className="flex flex-col items-center">
       <div className="mb-[42px] text-center">
@@ -18,34 +22,34 @@ function MeetingShare() {
           생성된 모임 앨범을 친구들에게 알려보세요.
         </p>
         <Image
-          src={meetingResult?.qrCodeUrl || ''}
+          src={meetingResult.qrCodeUrl || ''}
           width={195}
           height={195}
           className="mb-4 w-full"
           alt="qrCode"
         />
-        <p className=" text-lg font-medium text-gray-600">
-          {meetingResult?.name}
+        <p className="text-lg font-medium text-gray-600">
+          {meetingResult.name}
         </p>
       </div>
       <div className="bg-gray-100 p-5 rounded-2xl mb-7 w-full">
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">시작 시간</span>
           <span className="text-sm font-medium">
-            {dayjs(meetingResult?.startDate).format('YYYY/MM/DD A hh:mm')}
+            {dayjs(meetingResult.startDate).format('YYYY/MM/DD A hh:mm')}
           </span>
         </div>
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">종료 시간</span>
           <span className="text-sm font-medium">
-            {dayjs(meetingResult?.endDate).format('YYYY/MM/DD A hh:mm')}
+            {dayjs(meetingResult.endDate).format('YYYY/MM/DD A hh:mm')}
           </span>
         </div>
         <div className="flex justify-between mb-4">
           <div className="flex justify-center relative">
             <span className="text-sm font-medium flex items-center text-gray-600">
               비밀번호
-              <button onClick={() => showTooltip('password')} className="ml-1 ">
+              <button onClick={() => showTooltip('password')} className="ml-1">
                 <Image
                   src="../icons/info.svg"
                   width={16}
@@ -58,7 +62,7 @@ function MeetingShare() {
                   textColor="text-black"
                   bgColor="bg-white"
                   arrowClassName="left-12 bg-white"
-                  className="top-[28px] left-[138px] "
+                  className="top-[28px] left-[138px]"
                   message="모임 앨범에 진입할 때 사용해요."
                   onClose={hideTooltip}
                   position="bottom"
@@ -67,13 +71,13 @@ function MeetingShare() {
             </span>
           </div>
           <span className="text-sm font-medium flex items-center">
-            {meetingResult?.password}
+            {meetingResult.password}
           </span>
         </div>
         <div className="flex justify-between relative">
           <span className="text-sm text-gray-600 flex justify-center">
             관리자키
-            <button onClick={() => showTooltip('admin')} className="ml-1 ">
+            <button onClick={() => showTooltip('admin')} className="ml-1">
               <Image
                 src="../icons/info.svg"
                 width={16}
@@ -95,7 +99,7 @@ function MeetingShare() {
           </span>
           <div className="flex items-center">
             <span className="text-sm font-medium mr-2">
-              {meetingResult?.leaderAuthKey}
+              {meetingResult.leaderAuthKey}
             </span>
             <input
               type="checkbox"
@@ -105,7 +109,6 @@ function MeetingShare() {
           </div>
         </div>
         <Button
-          // onClick={}
           variant="primary"
           className="bg-white text-black mt-5"
           fullWidth
@@ -114,12 +117,7 @@ function MeetingShare() {
           <p className="text-black font-semibold text-base ml-2">공유하기</p>
         </Button>
       </div>
-      <Button
-        // onClick={}
-        variant="primary"
-        className="mt-auto mb-5"
-        fullWidth
-      >
+      <Button variant="primary" className="mt-auto mb-5" fullWidth>
         앨범 입장하기
       </Button>
     </div>

@@ -25,7 +25,11 @@ function Welcome({ onEnterClick, onBackClick }: WelcomeProps) {
         모임 앨범에 들어오신걸 환영해요!
       </div>
 
-      <Button onClick={onEnterClick} variant="primary" className="mt-auto mb-5">
+      <Button
+        onClick={onEnterClick}
+        variant="primary"
+        className="mt-auto mb-5 text-white"
+      >
         앨범 둘러보기
       </Button>
     </div>

@@ -5,7 +5,7 @@ import {
   PasswordFormModel,
 } from './meetingSchema'
 
-export interface FormData {
+export interface MeetingFormData {
   meeting: Partial<MeetingFormModel>
   meetingDate: Partial<MeetingDateFormModel>
   theme: Partial<ThemeFormModel>

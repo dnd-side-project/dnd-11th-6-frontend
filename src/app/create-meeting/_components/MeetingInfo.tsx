@@ -17,6 +17,7 @@ function MeetingInfo() {
       description="다른 참여자들이 알 수 있도록 모임을 설명해주세요."
       onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
+      showBackButton={false}
     >
       <Input
         name="name"

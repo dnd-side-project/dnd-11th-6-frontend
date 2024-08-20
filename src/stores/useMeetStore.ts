@@ -1,23 +1,23 @@
 import { create } from 'zustand'
-import { FormData, MeetingResult } from '@/lib/meetingTypes'
+import { MeetingFormData, MeetingResult } from '@/lib/meetingTypes'
 import generateQRCode from '@/utils/qrCode'
 
 interface MeetState {
   step: number
-  formData: FormData
+  formData: MeetingFormData
   meetingResult: MeetingResult | null
 }
 
 interface MeetActions {
   setStep: (step: number | ((prevStep: number) => number)) => void
-  setFormData: (data: Partial<FormData>) => void
+  setFormData: (data: Partial<MeetingFormData>) => void
   resetForm: () => void
   setMeetingResult: (result: Omit<MeetingResult, 'qrCodeUrl'>) => Promise<void>
 }
 
 interface MeetStore extends MeetState, MeetActions {}
 
-const initialFormData: FormData = {
+const initialFormData: MeetingFormData = {
   meeting: {
     name: '',
     description: '',
@@ -43,7 +43,7 @@ const useMeetStore = create<MeetStore>((set) => ({
     set((state) => ({
       step: typeof step === 'function' ? step(state.step) : step,
     })),
-  setFormData: (data: Partial<FormData>) =>
+  setFormData: (data: Partial<MeetingFormData>) =>
     set((state) => ({
       formData: {
         ...state.formData,

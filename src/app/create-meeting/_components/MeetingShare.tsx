@@ -23,7 +23,9 @@ function MeetingShare() {
           className="mb-4 w-full"
           alt="qrCode"
         />
-        <p className=" text-lg font-medium text-gray-600">{}</p>
+        <p className=" text-lg font-medium text-gray-600">
+          {meetingResult?.name}
+        </p>
       </div>
       <div className="bg-gray-100 p-5 rounded-2xl mb-7 w-full">
         <div className="flex justify-between mb-4">

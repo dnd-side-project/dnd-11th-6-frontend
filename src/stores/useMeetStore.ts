@@ -17,6 +17,7 @@ interface FormData {
 
 interface MeetingResult {
   meetingLink: string
+  name: string
   leaderAuthKey: string
   password: string
   startDate: string

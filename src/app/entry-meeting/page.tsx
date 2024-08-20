@@ -13,7 +13,7 @@ import {
 
 function EntryMeeting() {
   const router = useRouter()
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(3)
   const meetingData = useMeetingStore((state) => state.meetingData)
 
   const renderPage = () => {
@@ -34,7 +34,7 @@ function EntryMeeting() {
           <MeetingInfo
             onEnterClick={() => setPage(page + 1)}
             onBackClick={() => {
-              router.back()
+              setPage(page - 1)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -46,7 +46,7 @@ function EntryMeeting() {
           <PasswordInput
             onEnterClick={() => setPage(page + 1)}
             onBackClick={() => {
-              router.back()
+              setPage(page - 1)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -58,7 +58,7 @@ function EntryMeeting() {
           <NicknameInput
             onEnterClick={() => setPage(page + 1)}
             onBackClick={() => {
-              router.back()
+              setPage(page - 1)
             }}
             onHomeClick={() => {
               router.push('/')

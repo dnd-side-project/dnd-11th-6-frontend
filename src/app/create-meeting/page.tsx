@@ -13,6 +13,7 @@ import {
   MeetingTheme,
 } from './_components'
 import ProgressBar from './_components/ProgressBar'
+import useMeetingForm from './_hooks/useMeetingForm'
 
 const stepTitles = {
   1: '모임 생성',
@@ -24,8 +25,22 @@ const stepTitles = {
 
 function CreateMeetingPage() {
   const { step, resetForm } = useMeetStore()
+  const { isLoading } = useMeetingForm()
 
   const renderStep = () => {
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full">
+          <Image
+            src="/icons/createLoading.svg"
+            width={48}
+            height={48}
+            alt="loading"
+          />
+          <p className="mt-4 text-lg">모임을 생성하고 있습니다...</p>
+        </div>
+      )
+    }
     switch (step) {
       case 1:
         return <MeetingInfo />
@@ -76,7 +91,11 @@ function CreateMeetingPage() {
             </button>
           )}
         </div>
-        {step !== 5 ? <ProgressBar currentStep={step} totalSteps={4} /> : ''}
+        {step !== 5 && !isLoading ? (
+          <ProgressBar currentStep={step} totalSteps={4} />
+        ) : (
+          ''
+        )}
 
         {renderStep()}
       </div>

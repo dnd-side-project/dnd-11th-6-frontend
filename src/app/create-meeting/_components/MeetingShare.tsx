@@ -2,10 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
+import useMeetStore from '@/stores/useMeetStore'
 import useTooltipStore from '@/stores/useTooltipStore'
 
 function MeetingShare() {
   const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()
+  const { meetingResult } = useMeetStore()
 
   return (
     <div className="flex flex-col items-center">
@@ -15,22 +17,24 @@ function MeetingShare() {
           생성된 모임 앨범을 친구들에게 알려보세요.
         </p>
         <Image
-          src="../icons/camera.svg"
+          src={meetingResult?.qrCodeUrl || ''}
           width={195}
           height={195}
           className="mb-4 w-full"
-          alt="camera"
+          alt="qrCode"
         />
-        <p className=" text-lg font-medium text-gray-600">DND 네트워킹</p>
+        <p className=" text-lg font-medium text-gray-600">{}</p>
       </div>
       <div className="bg-gray-100 p-5 rounded-2xl mb-7 w-full">
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">시작 시간</span>
-          <span className="text-sm font-medium">2024/08/09 PM 10:00</span>
+          <span className="text-sm font-medium">
+            {meetingResult?.startDate}
+          </span>
         </div>
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">종료 시간</span>
-          <span className="text-sm font-medium">2024/08/11 PM 10:00</span>
+          <span className="text-sm font-medium">{meetingResult?.endDate}</span>
         </div>
         <div className="flex justify-between mb-4">
           <div className="flex justify-center relative">
@@ -57,7 +61,9 @@ function MeetingShare() {
               )}
             </span>
           </div>
-          <span className="text-sm font-medium flex items-center">1234</span>
+          <span className="text-sm font-medium flex items-center">
+            {meetingResult?.password}
+          </span>
         </div>
         <div className="flex justify-between relative">
           <span className="text-sm text-gray-600 flex justify-center">
@@ -83,7 +89,9 @@ function MeetingShare() {
             )}
           </span>
           <div className="flex items-center">
-            <span className="text-sm font-medium mr-2">3234</span>
+            <span className="text-sm font-medium mr-2">
+              {meetingResult?.leaderAuthKey}
+            </span>
             <input
               type="checkbox"
               className="form-checkbox h-4 w-4 text-blue-600"
@@ -91,6 +99,15 @@ function MeetingShare() {
             <span className="text-sm text-gray-600 ml-1">함께 공유하기</span>
           </div>
         </div>
+        <Button
+          // onClick={}
+          variant="primary"
+          className="mt-auto mb-5"
+          fullWidth
+        >
+          <Image src="../icons/share.svg" width={20} height={20} alt="share" />
+          공유하기
+        </Button>
       </div>
       <Button
         // onClick={}

@@ -107,8 +107,10 @@ function useMeetingForm() {
         updateFormData()
         try {
           const result = await createMeetingMutation.mutateAsync()
-          console.log(result)
-          setStep(5)
+          if (result.status === 200) {
+            useMeetStore.getState().setMeetingResult(result.data)
+            setStep(5)
+          }
         } catch (error) {
           console.error('Failed to create meeting:', error)
           // Handle error (e.g., show error message to user)

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import useZodForm from '@/hooks/useZodForm'
@@ -16,6 +16,7 @@ import useMeetStore from '@/stores/useMeetStore'
 
 function useMeetingForm() {
   const { step, setStep, formData, setFormData } = useMeetStore()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const meetingForm = useZodForm<MeetingFormModel>(MeetingSchema, {
     mode: 'onChange',
@@ -105,15 +106,18 @@ function useMeetingForm() {
       const isStep4Valid = await passwordForm.trigger(['password'])
       if (isStep4Valid) {
         updateFormData()
+        setIsSubmitting(true)
         try {
           const result = await createMeetingMutation.mutateAsync()
+          console.log(createMeetingMutation)
           if (result.status === 200) {
             useMeetStore.getState().setMeetingResult(result.data)
             setStep(5)
           }
         } catch (error) {
           console.error('Failed to create meeting:', error)
-          // Handle error (e.g., show error message to user)
+        } finally {
+          setIsSubmitting(false)
         }
       }
     }
@@ -125,7 +129,7 @@ function useMeetingForm() {
     themeForm,
     passwordForm,
     onSubmit,
-    isLoading: createMeetingMutation.isPending,
+    isLoading: createMeetingMutation.isPending || isSubmitting,
     isError: createMeetingMutation.isError,
     error: createMeetingMutation.error,
   }

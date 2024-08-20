@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
@@ -31,12 +32,14 @@ function MeetingShare() {
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">시작 시간</span>
           <span className="text-sm font-medium">
-            {meetingResult?.startDate}
+            {dayjs(meetingResult?.startDate).format('YYYY/MM/DD A hh:mm')}
           </span>
         </div>
         <div className="flex justify-between mb-4">
           <span className="text-sm text-gray-600">종료 시간</span>
-          <span className="text-sm font-medium">{meetingResult?.endDate}</span>
+          <span className="text-sm font-medium">
+            {dayjs(meetingResult?.endDate).format('YYYY/MM/DD A hh:mm')}
+          </span>
         </div>
         <div className="flex justify-between mb-4">
           <div className="flex justify-center relative">
@@ -104,11 +107,11 @@ function MeetingShare() {
         <Button
           // onClick={}
           variant="primary"
-          className="mt-auto mb-5"
+          className="bg-white text-black mt-5"
           fullWidth
         >
           <Image src="../icons/share.svg" width={20} height={20} alt="share" />
-          공유하기
+          <p className="text-black font-semibold text-base ml-2">공유하기</p>
         </Button>
       </div>
       <Button

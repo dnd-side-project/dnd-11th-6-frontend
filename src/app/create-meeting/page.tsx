@@ -61,36 +61,39 @@ function CreateMeetingPage() {
   return (
     <div className="flex flex-col my-10 max-h-screen">
       <div className="px-4">
-        <div
-          className={`${step !== 5 ? 'items-center' : ''} flex  justify-between mb-6`}
-        >
-          <button className="p-1">
-            <Link href="/" onClick={() => resetForm()}>
-              <Image
-                src="/icons/close.svg"
-                width={24}
-                height={24}
-                alt="close"
-              />
-            </Link>
-          </button>
-          {step !== 5 ? (
-            <h1 className="text-xl font-bold flex-grow text-center">
-              {stepTitles[step as keyof typeof stepTitles]}
-            </h1>
-          ) : (
+        {!isLoading && (
+          <div
+            className={`${step !== 5 ? 'items-center' : ''} flex  justify-between mb-6`}
+          >
             <button className="p-1">
               <Link href="/" onClick={() => resetForm()}>
                 <Image
-                  src="/icons/home.svg"
+                  src="/icons/close.svg"
                   width={24}
                   height={24}
-                  alt="home"
+                  alt="close"
                 />
               </Link>
             </button>
-          )}
-        </div>
+            {step !== 5 ? (
+              <h1 className="text-xl font-bold flex-grow text-center">
+                {stepTitles[step as keyof typeof stepTitles]}
+              </h1>
+            ) : (
+              <button className="p-1">
+                <Link href="/" onClick={() => resetForm()}>
+                  <Image
+                    src="/icons/home.svg"
+                    width={24}
+                    height={24}
+                    alt="home"
+                  />
+                </Link>
+              </button>
+            )}
+          </div>
+        )}
+
         {step !== 5 && !isLoading ? (
           <ProgressBar currentStep={step} totalSteps={4} />
         ) : (

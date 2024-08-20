@@ -2,26 +2,22 @@ import React from 'react'
 
 interface TooltipProps {
   message: string
+  textColor?: string
+  bgColor?: string
   onClose: () => void
   position?: 'top' | 'bottom'
   className?: string
   arrowClassName?: string
-  bgColor?: string
-  textColor?: string
-  rounded?: string
-  padding?: string
 }
 
 function Tooltip({
   message = 'tooltip message',
   onClose,
   position = 'bottom',
+  textColor = 'text-white',
+  bgColor = 'bg-black',
   className = '',
   arrowClassName = '',
-  bgColor = 'bg-black',
-  textColor = 'text-white',
-  rounded = 'rounded-full',
-  padding = 'py-2 px-4',
 }: TooltipProps) {
   const handleClose = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault()
@@ -59,7 +55,7 @@ function Tooltip({
         </div>
       )}
       <div
-        className={`${bgColor} ${textColor} text-[16px] ${rounded} ${padding}`}
+        className={`${textColor} ${bgColor} text-[16px] rounded-full py-2 px-4`}
       >
         <div className="flex items-center justify-between">
           {message}
@@ -73,12 +69,12 @@ function Tooltip({
           >
             <path
               d="M10.8337 2.66675L2.16699 11.3334"
-              stroke="currentColor"
+              stroke="white"
               strokeLinecap="round"
             />
             <path
               d="M10.8337 11.3334L2.16699 2.66675"
-              stroke="currentColor"
+              stroke="white"
               strokeLinecap="round"
             />
           </svg>

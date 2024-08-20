@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
@@ -13,8 +13,18 @@ function MeetingDate() {
     control,
     formState: { errors, isValid },
     handleSubmit,
+    watch,
     getValues,
   } = meetingDateForm
+
+  const startDate = watch('date')
+
+  const maxEndDate = useMemo(() => {
+    if (startDate) {
+      return dayjs(startDate).add(7, 'day').format('YYYY-MM-DDTHH:mm')
+    }
+    return undefined
+  }, [startDate])
 
   return (
     <div className="flex flex-col h-full">
@@ -43,6 +53,7 @@ function MeetingDate() {
             name="endDate"
             control={control}
             min={dayjs().format('YYYY-MM-DDTHH:mm')}
+            max={maxEndDate}
             label="모집 종료"
             placeholder="종료일 입력"
             as="datetime"

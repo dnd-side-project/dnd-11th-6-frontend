@@ -73,6 +73,7 @@ function MeetingPassword() {
 
         <div className="grid grid-cols-3 gap-9">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => renderKeypadButton(num))}
+          <div />
           {renderKeypadButton(0)}
           <button
             key="delete-button"

@@ -12,6 +12,7 @@ import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
+import useUserStore from '@/stores/useUserStore'
 
 const passwordSchema = z.object({
   password: z
@@ -42,6 +43,16 @@ function PasswordInput({
   const currentMeetingId = useMeetingStore(
     (state) => state.meetingData?.meetingId,
   )
+  const setUserRole = useUserStore((state) => state.setRole)
+
+  const handleEnterClick = () => {
+    if (isLeader && isPasswordValid && isLeaderAuthKeyValid) {
+      setUserRole('LEADER')
+    } else if (!isLeader && isPasswordValid) {
+      setUserRole('PARTICIPANT')
+    }
+    onEnterClick()
+  }
 
   const {
     control,
@@ -263,7 +274,7 @@ function PasswordInput({
           이전
         </Button>
         <Button
-          onClick={onEnterClick}
+          onClick={handleEnterClick}
           type="submit"
           fullWidth
           variant="primary"

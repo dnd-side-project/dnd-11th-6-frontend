@@ -49,8 +49,8 @@ function NicknameInput({
   })
 
   const setNickname = useUserStore((state) => state.setNickname)
-  const setRole = useUserStore((state) => state.setRole)
   const setParticipantId = useUserStore((state) => state.setParticipantId)
+  const userRole = useUserStore((state) => state.role)
   const meetingName = useMeetingStore((state) => state.meetingData?.name)
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
@@ -90,12 +90,11 @@ function NicknameInput({
       {
         meetingId: meetingId!,
         nickname: formData.nickname,
-        role: formData.role,
+        role: userRole,
       },
       {
         onSuccess: (joinMeetingData) => {
           setNickname(formData.nickname)
-          setRole(formData.role)
           setParticipantId(joinMeetingData.data.participantId)
           onEnterClick()
         },

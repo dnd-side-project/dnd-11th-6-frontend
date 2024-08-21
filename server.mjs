@@ -1,10 +1,14 @@
-const fs = require('fs')
-const { createServer: createHttpServer } = require('http')
-const { createServer: createHttpsServer } = require('https')
-const os = require('os')
-const path = require('path')
-const { parse } = require('url')
-const next = require('next')
+import fs from 'fs'
+import { createServer as createHttpServer } from 'http'
+import { createServer as createHttpsServer } from 'https'
+import os from 'os'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { parse } from 'url'
+import next from 'next'
+
+const currentFilename = fileURLToPath(import.meta.url)
+const currentDirname = path.dirname(currentFilename)
 
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -30,10 +34,10 @@ const port = process.env.PORT || (dev ? '3000' : '80')
 const httpsOptions = useHttps
   ? {
       key: fs.readFileSync(
-        path.join(process.cwd(), '_wildcard.get-snappy.co.kr+5-key.pem'),
+        path.join(currentDirname, '_wildcard.get-snappy.co.kr+5-key.pem'),
       ),
       cert: fs.readFileSync(
-        path.join(process.cwd(), '_wildcard.get-snappy.co.kr+5.pem'),
+        path.join(currentDirname, '_wildcard.get-snappy.co.kr+5.pem'),
       ),
     }
   : {}

@@ -35,7 +35,7 @@
     "jest.setup.js",
     "src",
     "next.config.mjs",
-    "server.js"
+    "server.mjs"
   ],
   "exclude": ["node_modules"]
 }

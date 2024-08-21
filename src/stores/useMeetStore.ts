@@ -1,41 +1,33 @@
 import { create } from 'zustand'
-import {
-  MeetingFormModel,
-  ThemeFormModel,
-  PasswordFormModel,
-} from '@/lib/meetingSchema'
-
-interface FormData {
-  meeting: Partial<MeetingFormModel>
-  theme: Partial<ThemeFormModel>
-  password: Partial<PasswordFormModel>
-}
+import { MeetingFormData, MeetingResult } from '@/lib/meetingTypes'
+import generateQRCode from '@/utils/qrCode'
 
 interface MeetState {
   step: number
-  pin: string
-  formData: FormData
+  formData: MeetingFormData
+  meetingResult: MeetingResult | null
 }
 
 interface MeetActions {
-  setStep: (step: number) => void
-  setPin: (pin: string) => void
-  setFormData: (data: Partial<FormData>) => void
+  setStep: (step: number | ((prevStep: number) => number)) => void
+  setFormData: (data: Partial<MeetingFormData>) => void
   resetForm: () => void
+  setMeetingResult: (result: Omit<MeetingResult, 'qrCodeUrl'>) => Promise<void>
 }
 
 interface MeetStore extends MeetState, MeetActions {}
 
-const initialFormData: FormData = {
+const initialFormData: MeetingFormData = {
   meeting: {
     name: '',
     description: '',
+  },
+  meetingDate: {
     date: '',
-    isRecurring: false,
     endDate: '',
   },
   theme: {
-    photo: '',
+    photo: undefined,
     color: '',
   },
   password: {
@@ -45,18 +37,37 @@ const initialFormData: FormData = {
 
 const useMeetStore = create<MeetStore>((set) => ({
   step: 1,
-  pin: '',
   formData: initialFormData,
-  setStep: (step: number) => set({ step }),
-  setPin: (pin: string) => set({ pin }),
-  setFormData: (data: Partial<FormData>) =>
+  meetingResult: null,
+  setStep: (step) =>
+    set((state) => ({
+      step: typeof step === 'function' ? step(state.step) : step,
+    })),
+  setFormData: (data: Partial<MeetingFormData>) =>
     set((state) => ({
       formData: {
         ...state.formData,
         ...data,
       },
     })),
-  resetForm: () => set({ formData: initialFormData, step: 1, pin: '' }),
+  resetForm: () =>
+    set({ formData: initialFormData, step: 1, meetingResult: null }),
+  setMeetingResult: async (result: Omit<MeetingResult, 'qrCodeUrl'>) => {
+    try {
+      const qrCodeUrl = await generateQRCode(
+        `http://get-snappy.co.kr:3000/${result.meetingLink}`,
+      )
+      set({
+        meetingResult: {
+          ...result,
+          qrCodeUrl,
+        },
+      })
+    } catch (error) {
+      console.error('Failed to generate QR code:', error)
+      set({ meetingResult: result })
+    }
+  },
 }))
 
 export default useMeetStore

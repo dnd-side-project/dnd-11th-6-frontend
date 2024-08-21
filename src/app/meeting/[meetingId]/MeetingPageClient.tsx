@@ -7,7 +7,7 @@ import useMeetingStore, { Photo } from '@/stores/useMeetingStore'
 import MeetingInfo from './_components/MeetingInfo'
 
 interface MeetingPageClientProps {
-  initialMeetingId: string
+  initialMeetingId: number
   initialPhotos: Photo[]
 }
 
@@ -15,22 +15,20 @@ function MeetingPageClient({
   initialMeetingId,
   initialPhotos,
 }: MeetingPageClientProps) {
-  const { setMeetingId, setPhotos } = useMeetingStore()
+  const { setMeetingId, setPhotos, meetingData, photos } = useMeetingStore()
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   useEffect(() => {
     setMeetingId(initialMeetingId)
     setPhotos(initialPhotos)
-  }, [initialMeetingId, initialPhotos])
-
-  const { meetingId, photos } = useMeetingStore()
+  }, [initialMeetingId, initialPhotos, setMeetingId, setPhotos])
 
   const toggleDrawer = (): void => setIsVisible(!isVisible)
   const closeDrawer = (): void => setIsVisible(false)
 
   return (
     <div className="flex flex-col">
-      <div>meeting: {meetingId}</div>
+      <div>meeting: {meetingData?.meetingId}</div>
       <div className="flex justify-between items-center mb-3">
         <div className="text-xl">LOGO</div>
         <div
@@ -70,7 +68,7 @@ function MeetingPageClient({
             type="button"
             className="w-52 h-12 bg-black text-white rounded-full"
           >
-            📷 사진 찍기 {meetingId}
+            📷 사진 찍기 {meetingData?.meetingId}
           </button>
         </Link>
       </div>

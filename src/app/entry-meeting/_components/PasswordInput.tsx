@@ -1,62 +1,128 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller } from 'react-hook-form'
 import Image from 'next/image'
-import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-
-const passwordSchema = z.object({
-  password: z
-    .string()
-    .min(1, '암호를 입력해주세요.')
-    .min(6, '암호는 최소 6자 이상이어야 합니다.'),
-})
-
-type PasswordFormData = z.infer<typeof passwordSchema>
+import ToggleSwitch from '@/components/ToogleSwitch'
+import useMeetingStore from '@/stores/useMeetingStore'
+import CrownSvg from 'public/icons/CrownSvg'
+import BackIcon from 'public/icons/back.svg'
+import usePasswordValidation from '../_hooks/usePasswordValidation'
 
 interface PasswordInputProps {
-  onPasswordSubmit: (password: string) => void
+  onEnterClick: () => void
+  onBackClick: () => void
+  onHomeClick: () => void
 }
 
-function PasswordInput({ onPasswordSubmit }: PasswordInputProps) {
+const CrownIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
+  <CrownSvg isLeader={isActive} />
+)
+
+function PasswordInput({
+  onEnterClick,
+  onBackClick,
+  onHomeClick,
+}: PasswordInputProps) {
+  const { meetingData } = useMeetingStore()
   const {
     control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<PasswordFormData>({
-    resolver: zodResolver(passwordSchema),
-    defaultValues: {
-      password: '',
-    },
-  })
+    errors,
+    isLeader,
+    setIsLeader,
+    apiErrorMessagePassword,
+    apiErrorMessageLeaderAuthKey,
+    validatePassword,
+    validateLeaderAuthKey,
+  } = usePasswordValidation(meetingData?.meetingId!)
 
-  const onSubmit = (data: PasswordFormData) => {
-    onPasswordSubmit(data.password)
-  }
+  const isPasswordValid = validatePassword.isSuccess
+  const isLeaderAuthKeyValid = validateLeaderAuthKey.isSuccess
 
   return (
-    <div className="w-full">
-      <div className="flex justify-center">
-        <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center mb-12">
-          <Image src="/favicon.ico" alt="Logo" width={40} height={40} />
-        </div>
+    <div className="flex flex-col min-h-screen w-full p-4">
+      <div className="flex items-start">
+        <button type="button" onClick={onHomeClick} className="">
+          <Image src={BackIcon} alt="back" />
+        </button>
+      </div>
+      <div className="text-gray-900 font-bold text-[22px] mt-9">
+        모임 앨범의 암호를 입력해주세요
+      </div>
+      <div className="text-gray-700 font-normal text-sm mt-2">
+        재밌고 안전한 모임 앨범을 위해 입력이 필요해요.
       </div>
 
-      <div className="flex justify-center mb-16">모임 이름</div>
-      <form onSubmit={handleSubmit(onSubmit)} className="mb-8">
-        <Input
+      <ToggleSwitch
+        leftOption="멤버"
+        rightOption="모임장"
+        value={isLeader}
+        onChange={setIsLeader}
+        RightIcon={CrownIcon}
+      />
+
+      <div className="mt-6">
+        <Controller
           name="password"
           control={control}
-          type="password"
-          label="모임의 암호를 입력하세요."
-          placeholder="암호를 입력하세요"
-          error={errors.password?.message}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="password"
+              label="모임 암호"
+              placeholder="암호를 입력해주세요"
+              success={isPasswordValid}
+              error={apiErrorMessagePassword || errors.password?.message}
+              checking={validatePassword.isPending}
+            />
+          )}
         />
-        <Button type="submit" fullWidth variant="primary">
-          입력하기
+        {isLeader && (
+          <Controller
+            name="leaderAuthKey"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                label="관리자 인증키"
+                placeholder="관리자 인증키 4자리를 입력해주세요."
+                success={isLeaderAuthKeyValid}
+                error={
+                  apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message
+                }
+                checking={validateLeaderAuthKey.isPending}
+              />
+            )}
+          />
+        )}
+      </div>
+
+      <div className="flex mt-auto mb-5">
+        <Button
+          type="button"
+          variant="light"
+          className="mr-2 w-28"
+          padding="px-6"
+          onClick={onBackClick}
+        >
+          이전
         </Button>
-      </form>
+        <Button
+          onClick={onEnterClick}
+          type="submit"
+          fullWidth
+          variant="primary"
+          className="text-white"
+          disabled={
+            isLeader
+              ? !(isPasswordValid && isLeaderAuthKeyValid)
+              : !isPasswordValid
+          }
+        >
+          완료
+        </Button>
+      </div>
     </div>
   )
 }

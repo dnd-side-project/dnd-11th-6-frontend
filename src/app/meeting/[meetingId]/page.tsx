@@ -15,7 +15,7 @@ async function getPhotos() {
   ]
 }
 
-async function MeetingPage({ params }: { params: { meetingId: string } }) {
+async function MeetingPage({ params }: { params: { meetingId: number } }) {
   const photos = await getPhotos()
   return (
     <MeetingPageClient

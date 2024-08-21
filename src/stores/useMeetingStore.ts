@@ -5,22 +5,40 @@ export interface Photo {
   url: string
 }
 
+export interface MeetingData {
+  meetingId: number
+  name: string
+  description: string
+  thumbnailUrl: string
+  symbolColor: string
+  startDate: string
+  endDate: string
+  status: string
+}
+
 interface MeetingState {
-  meetingId: string
+  meetingData: MeetingData | null
   photos: Photo[]
 }
 
 interface MeetingActions {
-  setMeetingId: (meetingId: string) => void
-  setPhotos: (photo: Photo[]) => void
+  setMeetingData: (meetingData: MeetingData) => void
+  setMeetingId: (meetingId: number) => void
+  setPhotos: (photos: Photo[]) => void
 }
 
 interface MeetingStore extends MeetingState, MeetingActions {}
 
 const useMeetingStore = create<MeetingStore>((set) => ({
-  meetingId: '',
+  meetingData: null,
   photos: [],
-  setMeetingId: (meetingId) => set({ meetingId }),
+  setMeetingData: (meetingData) => set({ meetingData }),
+  setMeetingId: (meetingId) =>
+    set((state) => ({
+      meetingData: state.meetingData
+        ? { ...state.meetingData, meetingId }
+        : null,
+    })),
   setPhotos: (photos) => set({ photos }),
 }))
 

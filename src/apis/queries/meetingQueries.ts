@@ -5,20 +5,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { MeetingData } from '@/stores/useMeetingStore'
-
-interface ApiResponse<T = null> {
-  status: number
-  data: T
-}
-
-interface ApiError {
-  status: number
-  data: null
-  error: {
-    code: string
-    message: string
-  }
-}
+import { apiCall, ApiResponse, ApiError } from '../apiUtils'
 
 type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>
 type JoinMeetingResponse = ApiResponse<{ participantId: number }>
@@ -26,26 +13,7 @@ type CheckMeetIdResponse = ApiResponse<MeetingData>
 type CheckMeetLinkResponse = ApiResponse<MeetingData>
 type ValidatePasswordResponse = ApiResponse
 type ValidateLeaderAuthKeyResponse = ApiResponse
-
-const apiCall = async <T>(
-  endpoint: string,
-  method: 'GET' | 'POST' = 'GET',
-  body?: object,
-): Promise<T> => {
-  const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
-  const response = await fetch(url, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    credentials: 'include',
-  })
-
-  const result = await response.json()
-  if (!response.ok) throw result
-  return result
-}
+type shareMeetingResponse = ApiResponse<{ meetingLink: string }>
 
 export const useCheckNickname = (
   meetingId: number,
@@ -140,5 +108,17 @@ export const useValidateLeaderAuthKey = (
       apiCall(`/meetings/${meetingId}/validate-leader-key`, 'POST', {
         leaderAuthKey,
       }),
+    ...options,
+  })
+
+export const useShareMeeting = (
+  meetingId: number,
+  options?: UseQueryOptions<shareMeetingResponse, ApiError>,
+) =>
+  useQuery<shareMeetingResponse, ApiError>({
+    queryKey: ['meeting', meetingId],
+    queryFn: () => apiCall(`/meetings/${meetingId}/share`),
+    enabled: !!meetingId,
+    retry: false,
     ...options,
   })

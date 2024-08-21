@@ -22,6 +22,7 @@ interface ApiError {
 
 type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>
 type JoinMeetingResponse = ApiResponse<{ participantId: number }>
+type CheckMeetIdResponse = ApiResponse<MeetingData>
 type CheckMeetLinkResponse = ApiResponse<MeetingData>
 type ValidatePasswordResponse = ApiResponse
 type ValidateLeaderAuthKeyResponse = ApiResponse
@@ -38,6 +39,7 @@ const apiCall = async <T>(
       'Content-Type': 'application/json',
     },
     body: body ? JSON.stringify(body) : undefined,
+    credentials: 'include',
   })
 
   const result = await response.json()
@@ -89,6 +91,18 @@ export const useCheckMeetingLink = (
     queryKey: ['meeting', link],
     queryFn: () => apiCall(`/meetings?meetingLink=${link}`),
     enabled: !!link,
+    retry: false,
+    ...options,
+  })
+
+export const useCheckMeetingId = (
+  meetingId: number,
+  options?: UseQueryOptions<CheckMeetIdResponse, ApiError>,
+) =>
+  useQuery<CheckMeetIdResponse, ApiError>({
+    queryKey: ['meeting', meetingId],
+    queryFn: () => apiCall(`/meetings/${meetingId}`),
+    enabled: !!meetingId,
     retry: false,
     ...options,
   })

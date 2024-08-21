@@ -91,7 +91,7 @@ function MeetingShare() {
                 bgColor="bg-white"
                 arrowClassName="left-[138px]"
                 className="top-[28px] left-[138px]"
-                message="모임 앨범을 관리할 수 있는 관리자 암호에예요."
+                message="모임 앨범을 관리할 수 있는 관리자 암호에요."
                 onClose={hideTooltip}
                 position="top"
               />

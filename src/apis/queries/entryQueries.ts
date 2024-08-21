@@ -31,7 +31,8 @@ const apiCall = async <T>(
   method: 'GET' | 'POST' = 'GET',
   body?: object,
 ): Promise<T> => {
-  const response = await fetch(`${endpoint}`, {
+  const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
+  const response = await fetch(url, {
     method,
     headers: {
       'Content-Type': 'application/json',

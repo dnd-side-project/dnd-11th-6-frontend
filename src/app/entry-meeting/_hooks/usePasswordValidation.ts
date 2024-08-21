@@ -1,11 +1,11 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
   useValidateLeaderAuthKey,
   useValidatePassword,
-} from '@/apis/queries/entryQueries'
+} from '@/apis/queries/meetingQueries'
 import useDebounce from '@/hooks/useDeboune'
 
 const passwordSchema = z.object({
@@ -19,12 +19,12 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 export const usePasswordValidation = (currentMeetingId: number) => {
-  const [isLeader, setIsLeader] = React.useState(false)
-  const [apiErrorMessagePassword, setApiErrorMessagePassword] = React.useState<
+  const [isLeader, setIsLeader] = useState(false)
+  const [apiErrorMessagePassword, setApiErrorMessagePassword] = useState<
     string | null
   >(null)
   const [apiErrorMessageLeaderAuthKey, setApiErrorMessageLeaderAuthKey] =
-    React.useState<string | null>(null)
+    useState<string | null>(null)
 
   const {
     control,
@@ -44,7 +44,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
   const validatePassword = useValidatePassword()
   const validateLeaderAuthKey = useValidateLeaderAuthKey()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (debouncedPassword && debouncedPassword.length >= 6) {
       validatePassword.mutate({
         meetingId: currentMeetingId,
@@ -55,7 +55,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
     }
   }, [debouncedPassword, currentMeetingId])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       isLeader &&
       debouncedLeaderAuthKey &&
@@ -70,7 +70,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
     }
   }, [isLeader, debouncedLeaderAuthKey, currentMeetingId])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (validatePassword.isError) {
       setApiErrorMessagePassword(
         validatePassword.error?.error?.code === 'MEETING_INVALIDATE_PASSWORD'
@@ -87,7 +87,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
     validatePassword.error,
   ])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (validateLeaderAuthKey.isError) {
       setApiErrorMessageLeaderAuthKey(
         validateLeaderAuthKey.error?.error?.code ===
@@ -105,7 +105,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
     validateLeaderAuthKey.error,
   ])
 
-  React.useEffect(() => {
+  useEffect(() => {
     reset({ password: '', leaderAuthKey: '' })
     validatePassword.reset()
     validateLeaderAuthKey.reset()

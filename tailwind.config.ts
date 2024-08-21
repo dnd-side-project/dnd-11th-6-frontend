@@ -76,6 +76,7 @@ const config: Config = {
         point: {
           blue: '#0101FF',
           yellow: '#FFCD32',
+          mint: '#5ED1EE',
         },
         success: {
           '500': '#76E8AD',

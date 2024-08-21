@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { z } from 'zod'
-import { useCheckNickname, useJoinMeeting } from '@/apis/queries/entryQueries'
+import { useCheckNickname, useJoinMeeting } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
@@ -131,7 +131,7 @@ function NicknameInput({
         control={control}
         rules={{ required: '닉네임을 입력해주세요' }}
         placeholder="나의 닉네임 입력"
-        wrapperClassName="mt-10"
+        // wrapperClassName="mt-10"
         success={isSuccess}
         error={errorMessage}
         checking={isLoading}

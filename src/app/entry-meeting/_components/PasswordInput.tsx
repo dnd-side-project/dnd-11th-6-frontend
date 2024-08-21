@@ -9,6 +9,7 @@ import {
 } from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
+import ToggleSwitch from '@/components/ToogleSwitch'
 import useDebounce from '@/hooks/useDeboune'
 import useMeetingStore from '@/stores/useMeetingStore'
 import CrownSvg from 'public/icons/CrownSvg'
@@ -135,39 +136,8 @@ const usePasswordValidation = (currentMeetingId: number) => {
   }
 }
 
-const RoleToggle = ({
-  isLeader,
-  setIsLeader,
-}: {
-  isLeader: boolean
-  setIsLeader: (value: boolean) => void
-}) => (
-  <div className="flex justify-center mt-6 mb-4">
-    <div className="relative bg-gray-200 rounded-full p-1 w-[260px]">
-      <div
-        className={`absolute top-[2px] ${
-          isLeader ? 'left-[calc(50%+2px)]' : 'left-[2px]'
-        } w-[calc(50%-4px)] h-[calc(100%-4px)] bg-black rounded-full transition-all duration-300 z-0`}
-      />
-      <button
-        onClick={() => setIsLeader(false)}
-        className={`relative z-10 w-1/2 py-2 rounded-full transition-all duration-300 ${
-          !isLeader ? 'text-white' : 'text-gray-700'
-        }`}
-      >
-        멤버
-      </button>
-      <button
-        onClick={() => setIsLeader(true)}
-        className={`relative z-10 w-1/2 py-2 rounded-full transition-all duration-300 ${
-          isLeader ? 'text-white' : 'text-gray-700'
-        }`}
-      >
-        <CrownSvg isLeader={isLeader} />
-        모임장
-      </button>
-    </div>
-  </div>
+const CrownIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
+  <CrownSvg isLeader={isActive} />
 )
 
 function PasswordInput({
@@ -204,7 +174,13 @@ function PasswordInput({
         재밌고 안전한 모임 앨범을 위해 입력이 필요해요.
       </div>
 
-      <RoleToggle isLeader={isLeader} setIsLeader={setIsLeader} />
+      <ToggleSwitch
+        leftOption="멤버"
+        rightOption="모임장"
+        value={isLeader}
+        onChange={setIsLeader}
+        RightIcon={CrownIcon}
+      />
 
       <div className="mt-6">
         <Controller

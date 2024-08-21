@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/Button'
+import ToggleSwitch from '@/components/ToogleSwitch'
 import useMissionStore from '@/stores/useMissionStore'
 import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
@@ -79,39 +80,20 @@ function MissionCreationPage() {
         <div className="w-6" />
       </header>
 
-      <div className="flex justify-center mt-6 mb-4">
-        <div className="relative bg-gray-200 rounded-full p-1 w-[220px]">
-          <div
-            className={`absolute top-[2px] ${
-              missionType === 'select' ? 'left-[calc(50%+2px)]' : 'left-[2px]'
-            } w-[calc(50%-4px)] h-[calc(100%-4px)] bg-white rounded-full transition-all duration-300 z-0`}
-          />
-          <div className="relative z-10 flex">
-            <button
-              onClick={() => {
-                setMissionType('random')
-                setSelectedMission(null)
-              }}
-              className={`w-1/2 py-2 rounded-full transition-all duration-300 ${
-                missionType === 'random' ? 'text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              랜덤
-            </button>
-            <button
-              onClick={() => {
-                setMissionType('select')
-                setSelectedMission(null)
-              }}
-              className={`w-1/2 py-2 rounded-full transition-all duration-300 ${
-                missionType === 'select' ? 'text-gray-900' : 'text-gray-500'
-              }`}
-            >
-              모임
-            </button>
-          </div>
-        </div>
-      </div>
+      <ToggleSwitch
+        leftOption="랜덤"
+        rightOption="모임"
+        value={missionType === 'select'}
+        onChange={(value) => {
+          setMissionType(value ? 'select' : 'random')
+          setSelectedMission(null)
+        }}
+        width="220px"
+        activeColor="bg-white"
+        inactiveColor="bg-gray-200"
+        activeTextColor="text-gray-900"
+        inactiveTextColor="text-gray-500"
+      />
 
       {missionType === 'random' ? (
         <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-100">

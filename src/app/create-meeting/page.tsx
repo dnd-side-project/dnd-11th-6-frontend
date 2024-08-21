@@ -1,85 +1,95 @@
 'use client'
 
 import React from 'react'
-
+import Image from 'next/image'
+import Link from 'next/link'
+import ProgressBar from '@/components/ProgressBar'
 import useMeetStore from '@/stores/useMeetStore'
 import {
-  MeetingAdminPin,
+  MeetingDate,
   MeetingInfo,
   MeetingPassword,
   MeetingShare,
   MeetingTheme,
-} from './_components'
-
-const stepTitles = {
-  1: '모임 정보 입력하기',
-  2: '모임 테마',
-  3: '비밀번호 설정',
-  4: '관리자 PIN 안내',
-  5: '',
-}
+} from './_components/index'
+import useMeetingForm from './_hooks/useMeetingForm'
 
 function CreateMeetingPage() {
-  const { step, setStep } = useMeetStore()
-
-  const handleShareMeeting = () => {
-    console.log('Share meeting')
-  }
-
-  const handleGoToMyMeeting = () => {
-    console.log('Go to my meeting')
-  }
-
-  const handleGoBack = () => {
-    if (step > 1 && step < 5) {
-      setStep(step - 1)
-    }
-  }
+  const { step, resetForm } = useMeetStore()
+  const { isLoading } = useMeetingForm()
 
   const renderStep = () => {
+    if (isLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full">
+          <Image
+            src="/icons/createLoading.svg"
+            width={48}
+            height={48}
+            alt="loading"
+          />
+          <p className="mt-4 text-lg">모임을 생성하고 있습니다...</p>
+        </div>
+      )
+    }
     switch (step) {
       case 1:
         return <MeetingInfo />
       case 2:
-        return <MeetingTheme />
+        return <MeetingDate />
       case 3:
-        return <MeetingPassword />
+        return <MeetingTheme />
       case 4:
-        return <MeetingAdminPin />
+        return <MeetingPassword />
       case 5:
-        return (
-          <MeetingShare
-            onShareMeeting={handleShareMeeting}
-            onGoToMyMeeting={handleGoToMyMeeting}
-          />
-        )
+        return <MeetingShare />
       default:
         return null
     }
   }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <div className="flex gap-4 ">
-        {step === 1 || step === 5 ? (
-          ''
-        ) : (
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="text-2xl mr-4 bg-white"
-            disabled={step === 1 || step === 5}
+    <div className="flex flex-col my-10 max-h-screen">
+      <div className="px-4">
+        {!isLoading && (
+          <div
+            className={`${step !== 5 ? 'items-center' : ''} flex  justify-between mb-6`}
           >
-            &gt;
-          </button>
+            <button className="p-1">
+              <Link href="/" onClick={() => resetForm()}>
+                <Image
+                  src="/icons/close.svg"
+                  width={24}
+                  height={24}
+                  alt="close"
+                />
+              </Link>
+            </button>
+            {step !== 5 ? (
+              <h1 className="text-xl font-bold flex-grow text-center">
+                {step !== 5 && '모임 생성'}
+              </h1>
+            ) : (
+              <button className="p-1">
+                <Link href="/" onClick={() => resetForm()}>
+                  <Image
+                    src="/icons/home.svg"
+                    width={24}
+                    height={24}
+                    alt="home"
+                  />
+                </Link>
+              </button>
+            )}
+          </div>
         )}
 
-        <h1 className="text-2xl font-bold mb-4 m-auto">
-          {stepTitles[step as keyof typeof stepTitles]}
-        </h1>
-      </div>
+        {step !== 5 && !isLoading ? (
+          <ProgressBar currentStep={step} totalSteps={4} />
+        ) : null}
 
-      {renderStep()}
+        {renderStep()}
+      </div>
     </div>
   )
 }

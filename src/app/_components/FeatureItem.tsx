@@ -18,7 +18,7 @@ function FeatureItem({
   isLast = false,
 }: FeatureItemProps) {
   return (
-    <div className={`${isLast ? 'mb-10' : 'mb-1'}`}>
+    <div>
       <Image
         src={icon}
         alt="Feature Icon"

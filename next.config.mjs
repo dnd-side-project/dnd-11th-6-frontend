@@ -1,9 +1,27 @@
 import withPWA from 'next-pwa'
 
-export default withPWA({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  // reactStrictMode: true,
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_IMAGE_BASE_URL.replace(
+          /^https?:\/\//,
+          '',
+        ),
+        port: '',
+      },
+    ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
+      },
+    ]
+  },
   async headers() {
     if (process.env.NODE_ENV === 'development') {
       return [
@@ -17,4 +35,11 @@ export default withPWA({
     }
     return []
   },
-})
+}
+
+const pwaConfig = {
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+}
+
+export default withPWA(pwaConfig)(nextConfig)

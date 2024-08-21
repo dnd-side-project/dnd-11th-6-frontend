@@ -1,6 +1,10 @@
 import { useCallback } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import createMeeting from '@/apis/meetingApi'
 import useZodForm from '@/hooks/useZodForm'
 import {
+  MeetingDateFormModel,
+  MeetingDateSchema,
   MeetingFormModel,
   MeetingSchema,
   PasswordFormModel,
@@ -11,11 +15,17 @@ import {
 import useMeetStore from '@/stores/useMeetStore'
 
 function useMeetingForm() {
-  const { step, setStep, setPin, formData, setFormData } = useMeetStore()
+  const { step, setStep, formData, setFormData, setMeetingResult } =
+    useMeetStore()
 
   const meetingForm = useZodForm<MeetingFormModel>(MeetingSchema, {
     mode: 'onChange',
     defaultValues: formData.meeting,
+  })
+
+  const meetingDateForm = useZodForm<MeetingDateFormModel>(MeetingDateSchema, {
+    mode: 'onChange',
+    defaultValues: formData.meetingDate,
   })
 
   const themeForm = useZodForm<ThemeFormModel>(ThemeSchema, {
@@ -31,46 +41,63 @@ function useMeetingForm() {
   const updateFormData = useCallback(() => {
     setFormData({
       meeting: meetingForm.getValues(),
+      meetingDate: meetingDateForm.getValues(),
       theme: themeForm.getValues(),
       password: passwordForm.getValues(),
     })
-  }, [meetingForm, themeForm, passwordForm, setFormData])
+  }, [meetingForm, meetingDateForm, themeForm, passwordForm, setFormData])
 
-  const onSubmit = async () => {
-    if (step === 1) {
-      const isStep1Valid = await meetingForm.trigger([
-        'name',
-        'description',
-        'date',
-        'isRecurring',
-        'endDate',
-      ])
-      if (isStep1Valid) {
-        updateFormData()
-        setStep(2)
+  const createMeetingMutation = useMutation({
+    mutationFn: createMeeting,
+    onSuccess: (data) => {
+      if (data.status === 200) {
+        setMeetingResult(data.data)
+        setStep(5)
       }
-    } else if (step === 2) {
-      const isStep2Valid = await themeForm.trigger(['photo', 'color'])
-      if (isStep2Valid) {
-        updateFormData()
-        setStep(3)
-      }
-    } else if (step === 3) {
+    },
+    onError: (error) => {
+      console.error('Failed to create meeting:', error)
+    },
+  })
+
+  const handleStepSubmit = async (stepNumber: number) => {
+    let isValid = false
+    const triggerFields = {
+      1: () => meetingForm.trigger(['name', 'description']),
+      2: () => meetingDateForm.trigger(['date', 'endDate']),
+      3: () => themeForm.trigger(['photo', 'color']),
+      4: () => passwordForm.trigger(['password']),
+    }
+
+    const triggerFunction =
+      triggerFields[stepNumber as keyof typeof triggerFields]
+    if (triggerFunction) {
+      isValid = await triggerFunction()
+    } else {
+      console.error(`Invalid step number: ${stepNumber}`)
+      return
+    }
+
+    if (isValid) {
       updateFormData()
-      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString()
-      setPin(generatedPin)
-      setStep(4)
-      console.log(formData)
-    } else if (step === 4) {
-      setStep(5)
+      if (stepNumber < 4) {
+        setStep(stepNumber + 1)
+      } else {
+        createMeetingMutation.mutate(useMeetStore.getState().formData)
+      }
     }
   }
+  const onSubmit = () => handleStepSubmit(step)
 
   return {
     meetingForm,
+    meetingDateForm,
     themeForm,
     passwordForm,
     onSubmit,
+    isLoading: createMeetingMutation.isPending,
+    isError: createMeetingMutation.isError,
+    error: createMeetingMutation.error,
   }
 }
 

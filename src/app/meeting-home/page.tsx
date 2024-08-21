@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Chip from '@/components/Chip'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
 import dice from '../../../public/icons/dice.svg'
@@ -32,12 +33,22 @@ function MeetingHomePage() {
       <MeetingHeader
         meetingData={meetingData!}
         scrollPosition={scrollPosition}
-        activeChip={activeChip}
-        setActiveChip={setActiveChip}
-        chips={chips}
       />
-      <MeetingPhotoGrid />
-      <MeetingActionButtons />
+      <div className="bg-[] px-4 py-[14px]">
+        <div className="flex space-x-2 py-4 overflow-x-auto ">
+          {chips.map((chip) => (
+            <Chip
+              key={chip.label}
+              label={chip.label}
+              active={activeChip === chip.label}
+              onClick={() => setActiveChip(chip.label)}
+              chipImage={chip.icon}
+            />
+          ))}
+        </div>
+        <MeetingPhotoGrid />
+        <MeetingActionButtons />
+      </div>
     </div>
   )
 }

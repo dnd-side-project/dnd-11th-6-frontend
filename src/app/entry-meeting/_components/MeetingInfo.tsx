@@ -37,7 +37,7 @@ function MeetingInfo({
       <div className="text-gray-900 font-bold text-[22px]">
         모임 앨범에 입장하시겠어요?
       </div>
-      <div className="flex flex-col bg-point-blue rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
+      <div className="flex flex-col bg-point-mint rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
         <div className="flex w-full">
           <div className="w-11 max-h-11 mr-3">
             {meetingData?.thumbnailUrl ? (
@@ -56,22 +56,22 @@ function MeetingInfo({
             )}
           </div>
           <div className="flex flex-col">
-            <div className="text-gray-400 text-sm">나의 모임</div>
-            <div className="text-gray-100 text-lg font-bold ">
+            <div className="text-gray-100 text-label">나의 모임</div>
+            <div className="text-gray-100 text-body1-semibold">
               {meetingData?.name}
             </div>
           </div>
         </div>
         <div className="flex justify-between mt-4">
-          <div className="bg-gray-100 bg-opacity-30 text-gray-100 text-sm font-semibold px-2 py-1 rounded-[4px]">
+          <div className="bg-gray-100 bg-opacity-30 text-white text-label-semibold px-2 py-1 rounded-[4px]">
             모임 진행 중
           </div>
-          <div className="text-gray-400 text-sm font-normal">
+          <div className="text-white text-label-light">
             {meetingData?.endDate}
           </div>
         </div>
         <div className="h-[1px] w-full bg-white mt-4" />
-        <div className="text-sm font-normal mt-4">{shortDescription}</div>
+        <div className="text-label-light mt-4">{shortDescription}</div>
       </div>
 
       <div className="flex mt-auto mb-5">

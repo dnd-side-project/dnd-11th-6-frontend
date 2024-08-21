@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { Meta, StoryObj } from '@storybook/react'
-import ProgressBar, { ProgressBarProps } from '.'
+import ProgressBar from '.'
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'Components/ProgressBar',
@@ -55,7 +55,9 @@ export const ManySteps: Story = {
   },
 }
 
-export const InteractiveProgressBar: StoryObj<ProgressBarProps> = {
+export const InteractiveProgressBar: StoryObj<
+  ComponentProps<typeof ProgressBar>
+> = {
   render: (args) => {
     const [currentStep, setCurrentStep] = React.useState(args.currentStep)
     return (

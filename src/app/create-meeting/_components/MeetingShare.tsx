@@ -5,6 +5,7 @@ import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import useMeetStore from '@/stores/useMeetStore'
 import useTooltipStore from '@/stores/useTooltipStore'
+import Logo from '../../../../public/logo.svg'
 
 function MeetingShare() {
   const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()
@@ -22,7 +23,7 @@ function MeetingShare() {
           생성된 모임 앨범을 친구들에게 알려보세요.
         </p>
         <Image
-          src={meetingResult.qrCodeUrl || ''}
+          src={meetingResult.qrCodeUrl || Logo}
           width={195}
           height={195}
           className="mb-4 w-full"

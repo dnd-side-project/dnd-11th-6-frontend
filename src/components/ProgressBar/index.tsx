@@ -1,6 +1,6 @@
 import React from 'react'
 
-export interface ProgressBarProps {
+interface ProgressBarProps {
   currentStep: number
   totalSteps: number
 }

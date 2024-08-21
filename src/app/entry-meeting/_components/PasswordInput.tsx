@@ -9,13 +9,17 @@ import {
 } from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-import useDebounce from '@/hooks/useDebounce'
+import useDebounce from '@/hooks/useDeboune'
 import useMeetingStore from '@/stores/useMeetingStore'
+import CrownSvg from 'public/icons/CrownSvg'
 import BackIcon from 'public/icons/back.svg'
 
 const passwordSchema = z.object({
   password: z.string().min(6, '최소 6자 이상 입력해주세요.'),
-  leaderAuthKey: z.string().length(4, '정확히 4자리를 입력해주세요.').optional(),
+  leaderAuthKey: z
+    .string()
+    .length(4, '정확히 4자리를 입력해주세요.')
+    .optional(),
 })
 
 type PasswordFormData = z.infer<typeof passwordSchema>
@@ -28,8 +32,11 @@ interface PasswordInputProps {
 
 const usePasswordValidation = (currentMeetingId: number) => {
   const [isLeader, setIsLeader] = React.useState(false)
-  const [apiErrorMessagePassword, setApiErrorMessagePassword] = React.useState<string | null>(null)
-  const [apiErrorMessageLeaderAuthKey, setApiErrorMessageLeaderAuthKey] = React.useState<string | null>(null)
+  const [apiErrorMessagePassword, setApiErrorMessagePassword] = React.useState<
+    string | null
+  >(null)
+  const [apiErrorMessageLeaderAuthKey, setApiErrorMessageLeaderAuthKey] =
+    React.useState<string | null>(null)
 
   const {
     control,
@@ -51,15 +58,25 @@ const usePasswordValidation = (currentMeetingId: number) => {
 
   React.useEffect(() => {
     if (debouncedPassword && debouncedPassword.length >= 6) {
-      validatePassword.mutate({ meetingId: currentMeetingId, password: debouncedPassword })
+      validatePassword.mutate({
+        meetingId: currentMeetingId,
+        password: debouncedPassword,
+      })
     } else {
       setApiErrorMessagePassword(null)
     }
   }, [debouncedPassword, currentMeetingId])
 
   React.useEffect(() => {
-    if (isLeader && debouncedLeaderAuthKey && debouncedLeaderAuthKey.length === 4) {
-      validateLeaderAuthKey.mutate({ meetingId: currentMeetingId, leaderAuthKey: debouncedLeaderAuthKey })
+    if (
+      isLeader &&
+      debouncedLeaderAuthKey &&
+      debouncedLeaderAuthKey.length === 4
+    ) {
+      validateLeaderAuthKey.mutate({
+        meetingId: currentMeetingId,
+        leaderAuthKey: debouncedLeaderAuthKey,
+      })
     } else {
       setApiErrorMessageLeaderAuthKey(null)
     }
@@ -70,24 +87,35 @@ const usePasswordValidation = (currentMeetingId: number) => {
       setApiErrorMessagePassword(
         validatePassword.error?.error?.code === 'MEETING_INVALIDATE_PASSWORD'
           ? '암호가 일치하지 않습니다.'
-          : validatePassword.error?.error?.message || '오류가 발생했습니다. 다시 시도해주세요.'
+          : validatePassword.error?.error?.message ||
+              '오류가 발생했습니다. 다시 시도해주세요.',
       )
     } else if (validatePassword.isSuccess) {
       setApiErrorMessagePassword(null)
     }
-  }, [validatePassword.isError, validatePassword.isSuccess, validatePassword.error])
+  }, [
+    validatePassword.isError,
+    validatePassword.isSuccess,
+    validatePassword.error,
+  ])
 
   React.useEffect(() => {
     if (validateLeaderAuthKey.isError) {
       setApiErrorMessageLeaderAuthKey(
-        validateLeaderAuthKey.error?.error?.code === 'MEETING_INVALIDATE_AUTH_KEY'
+        validateLeaderAuthKey.error?.error?.code ===
+          'MEETING_INVALIDATE_AUTH_KEY'
           ? '암호가 일치하지 않습니다.'
-          : validateLeaderAuthKey.error?.error?.message || '오류가 발생했습니다. 다시 시도해주세요.'
+          : validateLeaderAuthKey.error?.error?.message ||
+              '오류가 발생했습니다. 다시 시도해주세요.',
       )
     } else if (validateLeaderAuthKey.isSuccess) {
       setApiErrorMessageLeaderAuthKey(null)
     }
-  }, [validateLeaderAuthKey.isError, validateLeaderAuthKey.isSuccess, validateLeaderAuthKey.error])
+  }, [
+    validateLeaderAuthKey.isError,
+    validateLeaderAuthKey.isSuccess,
+    validateLeaderAuthKey.error,
+  ])
 
   React.useEffect(() => {
     reset({ password: '', leaderAuthKey: '' })
@@ -107,7 +135,13 @@ const usePasswordValidation = (currentMeetingId: number) => {
   }
 }
 
-const RoleToggle = ({ isLeader, setIsLeader }: { isLeader: boolean; setIsLeader: (value: boolean) => void }) => (
+const RoleToggle = ({
+  isLeader,
+  setIsLeader,
+}: {
+  isLeader: boolean
+  setIsLeader: (value: boolean) => void
+}) => (
   <div className="flex justify-center mt-6 mb-4">
     <div className="relative bg-gray-200 rounded-full p-1 w-[260px]">
       <div
@@ -129,30 +163,18 @@ const RoleToggle = ({ isLeader, setIsLeader }: { isLeader: boolean; setIsLeader:
           isLeader ? 'text-white' : 'text-gray-700'
         }`}
       >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="mr-1 inline-block"
-        >
-          <path
-            d="M12.75 16.5H5.25C4.9425 16.5 4.6875 16.245 4.6875 15.9375C4.6875 15.63 4.9425 15.375 5.25 15.375H12.75C13.0575 15.375 13.3125 15.63 13.3125 15.9375C13.3125 16.245 13.0575 16.5 12.75 16.5Z"
-            fill={isLeader ? 'white' : '#AAAFB3'}
-          />
-          <path
-            d="M15.2622 4.14027L12.2622 6.28527C11.8647 6.57027 11.2947 6.39777 11.1222 5.94027L9.70468 2.16027C9.46468 1.50777 8.54218 1.50777 8.30218 2.16027L6.87718 5.93277C6.70468 6.39777 6.14218 6.57027 5.74468 6.27777L2.74468 4.13277C2.14468 3.71277 1.34968 4.30527 1.59718 5.00277L4.71718 13.7403C4.82218 14.0403 5.10718 14.2353 5.42218 14.2353H12.5697C12.8847 14.2353 13.1697 14.0328 13.2747 13.7403L16.3947 5.00277C16.6497 4.30527 15.8547 3.71277 15.2622 4.14027ZM10.8747 11.0628H7.12468C6.81718 11.0628 6.56218 10.8078 6.56218 10.5003C6.56218 10.1928 6.81718 9.93777 7.12468 9.93777H10.8747C11.1822 9.93777 11.4372 10.1928 11.4372 10.5003C11.4372 10.8078 11.1822 11.0628 10.8747 11.0628Z"
-            fill={isLeader ? 'white' : '#AAAFB3'}
-          />
-        </svg>
+        <CrownSvg isLeader={isLeader} />
         모임장
       </button>
     </div>
   </div>
 )
 
-function PasswordInput({ onEnterClick, onBackClick, onHomeClick }: PasswordInputProps) {
+function PasswordInput({
+  onEnterClick,
+  onBackClick,
+  onHomeClick,
+}: PasswordInputProps) {
   const { meetingData } = useMeetingStore()
   const {
     control,
@@ -181,9 +203,9 @@ function PasswordInput({ onEnterClick, onBackClick, onHomeClick }: PasswordInput
       <div className="text-gray-700 font-normal text-sm mt-2">
         재밌고 안전한 모임 앨범을 위해 입력이 필요해요.
       </div>
-      
+
       <RoleToggle isLeader={isLeader} setIsLeader={setIsLeader} />
-      
+
       <div className="mt-6">
         <Controller
           name="password"
@@ -211,7 +233,9 @@ function PasswordInput({ onEnterClick, onBackClick, onHomeClick }: PasswordInput
                 label="관리자 인증키"
                 placeholder="관리자 인증키 4자리를 입력해주세요."
                 success={isLeaderAuthKeyValid}
-                error={apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message}
+                error={
+                  apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message
+                }
                 checking={validateLeaderAuthKey.isPending}
               />
             )}
@@ -235,7 +259,11 @@ function PasswordInput({ onEnterClick, onBackClick, onHomeClick }: PasswordInput
           fullWidth
           variant="primary"
           className="text-white"
-          disabled={isLeader ? !(isPasswordValid && isLeaderAuthKeyValid) : !isPasswordValid}
+          disabled={
+            isLeader
+              ? !(isPasswordValid && isLeaderAuthKeyValid)
+              : !isPasswordValid
+          }
         >
           완료
         </Button>

@@ -6,10 +6,10 @@ import { z } from 'zod'
 import {
   useValidateLeaderAuthKey,
   useValidatePassword,
-} from '@/apis/queries/entryQueries'
+} from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-import useDebounce from '@/hooks/useDeboune'
+import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 
@@ -17,7 +17,7 @@ const passwordSchema = z.object({
   password: z
     .string()
     .min(1, '암호를 입력해주세요.')
-    .min(6, '암호는 최소 6자 이상이어야 해요. :(')
+    .min(4, '암호는 최소 4자 이상이어야 해요. :(')
     .max(20, '비밀번호는 최대 20자까지 입력 가능해요. :('),
   leaderAuthKey: z
     .string()
@@ -62,6 +62,8 @@ function PasswordInput({
   >(null)
   const [apiErrorMessageLeaderAuthKey, setApiErrorMessageLeaderAuthKey] =
     useState<string | null>(null)
+  const [isPasswordValid, setIsPasswordValid] = useState(false)
+  const [isLeaderAuthKeyValid, setIsLeaderAuthKeyValid] = useState(false)
 
   const passwordValue = watch('password')
   const leaderAuthKeyValue = watch('leaderAuthKey')
@@ -73,13 +75,14 @@ function PasswordInput({
   const validateLeaderAuthKey = useValidateLeaderAuthKey()
 
   useEffect(() => {
-    if (debouncedPassword && debouncedPassword.length >= 6) {
+    if (debouncedPassword && debouncedPassword.length >= 4) {
       validatePassword.mutate({
         meetingId: currentMeetingId!,
         password: debouncedPassword,
       })
     } else {
       setApiErrorMessagePassword(null)
+      setIsPasswordValid(false)
     }
   }, [debouncedPassword])
 
@@ -95,6 +98,7 @@ function PasswordInput({
       })
     } else {
       setApiErrorMessageLeaderAuthKey(null)
+      setIsLeaderAuthKeyValid(false)
     }
   }, [isLeader, debouncedLeaderAuthKey])
 
@@ -111,8 +115,10 @@ function PasswordInput({
       } else {
         setApiErrorMessagePassword('오류가 발생했습니다. 다시 시도해주세요.')
       }
+      setIsPasswordValid(false)
     } else if (validatePassword.isSuccess) {
       setApiErrorMessagePassword(null)
+      setIsPasswordValid(true)
     }
   }, [
     validatePassword.isError,
@@ -138,8 +144,10 @@ function PasswordInput({
           '오류가 발생했습니다. 다시 시도해주세요.',
         )
       }
+      setIsLeaderAuthKeyValid(false)
     } else if (validateLeaderAuthKey.isSuccess) {
       setApiErrorMessageLeaderAuthKey(null)
+      setIsLeaderAuthKeyValid(true)
     }
   }, [
     validateLeaderAuthKey.isError,
@@ -156,10 +164,9 @@ function PasswordInput({
     reset({ password: '', leaderAuthKey: '' })
     validatePassword.reset()
     validateLeaderAuthKey.reset()
+    setIsPasswordValid(false)
+    setIsLeaderAuthKeyValid(false)
   }, [isLeader, reset])
-
-  const isPasswordValid = validatePassword.isSuccess
-  const isLeaderAuthKeyValid = validateLeaderAuthKey.isSuccess
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
@@ -226,6 +233,7 @@ function PasswordInput({
           label="모임 암호"
           placeholder="암호를 입력해주세요"
           success={isPasswordValid}
+          successMessage="비밀번호 입력 완료!"
           error={errorMessagePassword}
           checking={validatePassword.isPending}
         />
@@ -237,6 +245,7 @@ function PasswordInput({
             label="관리자 인증키"
             placeholder="관리자 인증키 4자리를 입력해주세요."
             success={isLeaderAuthKeyValid}
+            successMessage="인증키 입력 완료!"
             error={errorMessageLeaderAuthKey}
             checking={validateLeaderAuthKey.isPending}
           />

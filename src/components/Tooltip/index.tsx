@@ -30,13 +30,13 @@ function Tooltip({
 
   const arrowClass =
     position === 'bottom'
-      ? 'absolute transform -translate-x-1/2 bottom-full'
-      : 'absolute transform -translate-x-1/2 top-full'
+      ? ' -translate-x-1/2 bottom-full'
+      : ' -translate-x-1/2 top-full'
 
   const arrowInnerClass =
     position === 'bottom'
-      ? `border-8 border-transparent border-b-${bgColor.split('-')[1]}`
-      : `border-8 border-transparent border-t-${bgColor.split('-')[1]}`
+      ? ` border-b-${bgColor.split('-')[1]}`
+      : ` border-t-${bgColor.split('-')[1]}`
 
   return (
     <div
@@ -50,8 +50,11 @@ function Tooltip({
       role="button"
     >
       {position === 'top' && (
-        <div className={`${arrowClass} ${arrowClassName}`}>
-          <div className={arrowInnerClass} />
+        <div className={`absolute transform ${arrowClass} ${arrowClassName}`}>
+          <div
+            className={`${arrowInnerClass} border-8 border-transparent
+`}
+          />
         </div>
       )}
       <div
@@ -81,8 +84,8 @@ function Tooltip({
         </div>
       </div>
       {position === 'bottom' && (
-        <div className={`${arrowClass} ${arrowClassName}`}>
-          <div className={arrowInnerClass} />
+        <div className={`absolute transform ${arrowClass} ${arrowClassName}`}>
+          <div className={`${arrowInnerClass} border-8 border-transparent`} />
         </div>
       )}
     </div>

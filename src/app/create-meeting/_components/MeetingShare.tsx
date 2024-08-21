@@ -5,7 +5,7 @@ import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import useMeetStore from '@/stores/useMeetStore'
 import useTooltipStore from '@/stores/useTooltipStore'
-import Logo from '../../../../public/logo.svg'
+import Logo from 'public/logo.svg'
 
 function MeetingShare() {
   const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()

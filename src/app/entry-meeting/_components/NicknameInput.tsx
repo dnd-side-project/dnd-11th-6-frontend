@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
+import { useCheckNickname, useJoinMeeting } from '@/apis/queries/entryQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import useDebounce from '@/hooks/useDeboune'
+import useMeetingStore from '@/stores/useMeetingStore'
+import useUserStore from '@/stores/useUserStore'
 import BackIcon from 'public/icons/back.svg'
 
 const nicknameSchema = z.object({
@@ -16,7 +18,7 @@ const nicknameSchema = z.object({
     .max(8, '최대 8자까지 입력 가능해요. :(')
     .regex(/^[a-zA-Z0-9가-힣]+$/, '특수문자 및 공백은 사용할 수 없어요. :('),
 
-  isAdmin: z.boolean(),
+  role: z.enum(['LEADER', 'PARTICIPANT']),
 })
 
 type NicknameFormData = z.infer<typeof nicknameSchema>
@@ -24,9 +26,14 @@ type NicknameFormData = z.infer<typeof nicknameSchema>
 interface NicknameInputProps {
   onEnterClick: () => void
   onBackClick?: () => void
+  onHomeClick?: () => void
 }
 
-function NicknameInput({ onEnterClick, onBackClick }: NicknameInputProps) {
+function NicknameInput({
+  onEnterClick,
+  onBackClick,
+  onHomeClick,
+}: NicknameInputProps) {
   const {
     control,
     watch,
@@ -36,68 +43,81 @@ function NicknameInput({ onEnterClick, onBackClick }: NicknameInputProps) {
     resolver: zodResolver(nicknameSchema),
     defaultValues: {
       nickname: '',
-      isAdmin: false,
+      role: 'PARTICIPANT',
     },
     mode: 'onChange',
   })
 
+  const setNickname = useUserStore((state) => state.setNickname)
+  const setRole = useUserStore((state) => state.setRole)
+  const setParticipantId = useUserStore((state) => state.setParticipantId)
+  const meetingName = useMeetingStore((state) => state.meetingData?.name)
+  const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
 
   const nicknameValue = watch('nickname')
   const debouncedNickname = useDebounce(nicknameValue, 500)
 
-  const { isLoading, isSuccess, isError, error } = useQuery<
-    {
-      data: any
-      status: number
-      error: { code: string; message: string }
-    },
-    { data: any; status: number; error: { code: string; message: string } }
-  >({
-    queryKey: ['nickname', debouncedNickname],
-    queryFn: async () => {
-      if (!debouncedNickname) return null
-      const response = await fetch(
-        `/api/v1/meetings?nickname=${debouncedNickname}`,
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-    enabled:
-      !!debouncedNickname &&
-      nicknameSchema.shape.nickname.safeParse(debouncedNickname).success,
-    retry: false,
-  })
+  const {
+    data: nicknameCheckData,
+    isLoading,
+    isSuccess,
+    isError,
+    error: nicknameCheckError,
+  } = useCheckNickname(meetingId!, debouncedNickname)
+
+  const joinMeetingMutation = useJoinMeeting()
 
   useEffect(() => {
     if (isError) {
-      if (error.error.code === 'VALIDATION_ERROR') {
+      console.error(nicknameCheckError)
+      setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
+    } else if (isSuccess) {
+      if (!nicknameCheckData.data.isAvailableNickname) {
         setApiErrorMessage('이미 사용중인 닉네임이에요. :(')
       } else {
-        setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
+        setApiErrorMessage(null)
       }
     } else {
       setApiErrorMessage(null)
     }
-  }, [isError, error])
+  }, [isError, isSuccess, nicknameCheckData, nicknameCheckError])
 
   const errorMessage = apiErrorMessage || errors.nickname?.message || null
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
-    onEnterClick()
+  const onSubmit = handleSubmit((formData) => {
+    joinMeetingMutation.mutate(
+      {
+        meetingId: meetingId!,
+        nickname: formData.nickname,
+        role: formData.role,
+      },
+      {
+        onSuccess: (joinMeetingData) => {
+          setNickname(formData.nickname)
+          setRole(formData.role)
+          setParticipantId(joinMeetingData.data.participantId)
+          onEnterClick()
+        },
+        onError: (joinMeetingError) => {
+          console.error('Error joining meeting:', joinMeetingError)
+          setApiErrorMessage(
+            '모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.',
+          )
+        },
+      },
+    )
   })
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
-        <button type="button" onClick={onBackClick} className="">
+        <button type="button" onClick={onHomeClick} className="">
           <Image src={BackIcon} alt="back" />
         </button>
       </div>
       <div className="text-gray-900 font-bold text-[22px] mt-9">
-        [모임 이름] 앨범에서
+        {meetingName} 앨범에서
       </div>
       <div className="text-gray-900 font-bold text-[22px]">
         어떤 닉네임으로 불리고 싶나요?
@@ -116,16 +136,29 @@ function NicknameInput({ onEnterClick, onBackClick }: NicknameInputProps) {
         error={errorMessage}
         checking={isLoading}
         description="(최대8자)"
+        successMessage="사용가능한 닉네임이에요!"
       />
 
-      <Button
-        type="submit"
-        variant="primary"
-        className="mt-auto mb-5"
-        disabled={!isSuccess || !!errorMessage || nicknameValue === ''}
-      >
-        완료
-      </Button>
+      <div className="flex mt-auto mb-5">
+        <Button
+          type="button"
+          variant="light"
+          className="mr-2 w-28"
+          padding="px-6"
+          onClick={onBackClick}
+        >
+          이전
+        </Button>
+        <Button
+          type="submit"
+          fullWidth
+          variant="primary"
+          className=" text-white"
+          disabled={!isSuccess || !!errorMessage || nicknameValue === ''}
+        >
+          완료
+        </Button>
+      </div>
     </form>
   )
 }

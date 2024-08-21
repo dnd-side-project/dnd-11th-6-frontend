@@ -3,146 +3,113 @@ import { MeetingData } from '@/stores/useMeetingStore'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+interface ApiResponse<T = null> {
+  status: number;
+  data: T;
+}
+
 interface ApiError {
-  status: number
-  data: null
+  status: number;
+  data: null;
   error: {
-    code: string
-    message: string
-  }
+    code: string;
+    message: string;
+  };
 }
 
-interface CheckMeetLinkResponse {
-  data: MeetingData
-  status: number
-}
+type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>;
+type JoinMeetingResponse = ApiResponse<{ participantId: number }>;
+type CheckMeetLinkResponse = ApiResponse<MeetingData>;
+type ValidatePasswordResponse = ApiResponse;
+type ValidateLeaderAuthKeyResponse = ApiResponse;
 
-interface CheckNicknameResponse {
-  status: number
-  data: {
-    isAvailableNickname: boolean
-  }
-}
-
-interface JoinMeetingResponse {
-  status: number
-  data: {
-    participantId: number
-  }
-}
-
-interface ValidatePasswordResponse {
-  status: number
-  data: null
-}
-
-interface ValidateLeaderAuthKeyResponse {
-  status: number
-  data: null
-}
-
-export const useCheckNickname = (meetingId: number, nickname: string) =>
-  useQuery<CheckNicknameResponse, ApiError>({
-    queryKey: ['nickname', nickname],
-    queryFn: async () => {
-      if (!nickname) return null
-      const response = await fetch(
-        `${API_BASE_URL}/meetings/${meetingId}/participants/check-nickname?nickname=${nickname}`,
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
+const apiCall = async <T>(
+  endpoint: string,
+  method: 'GET' | 'POST' = 'GET',
+  body?: object
+): Promise<T> => {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
     },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  const result = await response.json();
+  if (!response.ok) throw result;
+  return result;
+};
+
+export const useCheckNickname = (
+  meetingId: number,
+  nickname: string,
+  options?: UseQueryOptions<CheckNicknameResponse, ApiError>
+) =>
+  useQuery<CheckNicknameResponse, ApiError>({
+    queryKey: ['nickname', meetingId, nickname],
+    queryFn: () =>
+      apiCall(`/meetings/${meetingId}/participants/check-nickname?nickname=${nickname}`),
     enabled: !!nickname,
     retry: false,
-  })
+    ...options,
+  });
 
-export const useJoinMeeting = () =>
-  useMutation<
+export const useJoinMeeting = (
+  options?: UseMutationOptions<
     JoinMeetingResponse,
     ApiError,
     { meetingId: number; nickname: string; role: string }
-  >({
-    mutationFn: async ({ meetingId, nickname, role }) => {
-      const response = await fetch(
-        `${API_BASE_URL}/meetings/${meetingId}/participants`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ nickname, role }),
-        },
-      )
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
-    },
-  })
+  >
+) =>
+  useMutation<JoinMeetingResponse, ApiError, { meetingId: number; nickname: string; role: string }>({
+    mutationFn: ({ meetingId, nickname, role }) =>
+      apiCall(`/meetings/${meetingId}/participants`, 'POST', { nickname, role }),
+    ...options,
+  });
 
-export const useCheckMeetingLink = (link: string) =>
+export const useCheckMeetingLink = (
+  link: string,
+  options?: UseQueryOptions<CheckMeetLinkResponse, ApiError>
+) =>
   useQuery<CheckMeetLinkResponse, ApiError>({
     queryKey: ['meeting', link],
-    queryFn: async () => {
-      if (!link) return null
-      const response = await fetch(
-        `${API_BASE_URL}/meetings?meetingLink=${link}`,
-      )
-      const result = await response.json()
-      console.log('result:', result)
-      if (!response.ok) throw result
-      return result
-    },
+    queryFn: () => apiCall(`/meetings?meetingLink=${link}`),
     enabled: !!link,
     retry: false,
-  })
+    ...options,
+  });
 
-export const useValidatePassword = () =>
-  useMutation<
+export const useValidatePassword = (
+  options?: UseMutationOptions<
     ValidatePasswordResponse,
     ApiError,
     { meetingId: number; password: string }
-  >({
-    mutationFn: async ({ meetingId, password }) => {
-      if (!password || password.length < 6) return null
-
-      const response = await fetch(
-        `${API_BASE_URL}/meetings/${meetingId}/validate-password`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password }),
-        },
-      )
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw errorData
-      }
-      return response.json()
+  >
+) =>
+  useMutation<ValidatePasswordResponse, ApiError, { meetingId: number; password: string }>({
+    mutationFn: ({ meetingId, password }) => {
+      if (!password || password.length < 6) return null;
+      return apiCall(`/meetings/${meetingId}/validate-password`, 'POST', { password });
     },
-  })
+    ...options,
+  });
 
-export const useValidateLeaderAuthKey = () =>
+export const useValidateLeaderAuthKey = (
+  options?: UseMutationOptions<
+    ValidateLeaderAuthKeyResponse,
+    ApiError,
+    { meetingId: number; leaderAuthKey: string }
+  >
+) =>
   useMutation<
     ValidateLeaderAuthKeyResponse,
     ApiError,
     { meetingId: number; leaderAuthKey: string }
   >({
-    mutationFn: async ({ meetingId, leaderAuthKey }) => {
-      if (!leaderAuthKey || leaderAuthKey.length !== 4) return null
-
-      const response = await fetch(
-        `${API_BASE_URL}/meetings/${meetingId}/validate-leader-key`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ leaderAuthKey }),
-        },
-      )
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw errorData
-      }
-      return response.json()
+    mutationFn: ({ meetingId, leaderAuthKey }) => {
+      if (!leaderAuthKey || leaderAuthKey.length !== 4) return null;
+      return apiCall(`/meetings/${meetingId}/validate-leader-key`, 'POST', { leaderAuthKey });
     },
-  })
+    ...options,
+  });

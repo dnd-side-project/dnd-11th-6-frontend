@@ -61,7 +61,7 @@ export const apiCall = async (
 ) => {
   const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
 
-  const makeRequest = async (): Promise<ApiResponse> => {
+  const makeRequest = async () => {
     const response = await fetch(url, {
       method,
       headers: {

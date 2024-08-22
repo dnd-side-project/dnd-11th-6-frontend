@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 import {
   useGetMeetingPassword,
   useShareMeeting,
 } from '@/apis/queries/meetingQueries'
-import useMeetingStore from '@/stores/useMeetingStore'
-import useUserStore from '@/stores/useUserStore'
-import Image from 'next/image'
-import Link from 'public/icons/link.svg'
-import Share from 'public/icons/share.svg'
-import QRCode from 'public/icons/qr-code.svg'
 import { useGetParticipantMissions } from '@/apis/queries/missionQuries'
 import QRPopup from '@/components/QRPopup'
+import useMeetingStore from '@/stores/useMeetingStore'
+import useUserStore from '@/stores/useUserStore'
+import Edit from 'public/icons/edit.svg'
+import LinkIcon from 'public/icons/link.svg'
+import Share from 'public/icons/share.svg'
+// import QRCode from 'public/icons/qr-code.svg'
 
 function MeetingRaising() {
   const role = useUserStore((state) => state.role)
-  const nickname = useUserStore((state) => state.nickname)
   const meetingName = useMeetingStore((state) => state.meetingData?.name)
-  console.log('meetingName:', meetingName)
-  const meetingSymbolColor = useMeetingStore(
-    (state) => state.meetingData?.symbolColor,
-  )
+  // const meetingSymbolColor = useMeetingStore(
+  //   (state) => state.meetingData?.symbolColor,
+  // )
   const meetingId =
     useMeetingStore((state) => state.meetingData?.meetingId) ?? 0
 
@@ -45,9 +45,6 @@ function MeetingRaising() {
   const [shareAdminKey, setShareAdminKey] = useState(false)
   const [copyStatus, setCopyStatus] = useState('공유하기')
   const [showQRPopup, setShowQRPopup] = useState(false)
-
-  console.log('role:', role)
-  console.log('nickname:', nickname)
 
   const handleShare = () => {
     const meetingLink = `https://get-snappy/${shareData?.data.meetingLink}`
@@ -78,7 +75,7 @@ function MeetingRaising() {
         </div>
         <hr className="h-[1px] w-full bg-gray-800 mt-3 mb-3" />
         <div className="flex">
-          <Image src={Link} alt="link" className="mr-2" />
+          <Image src={LinkIcon} alt="link" className="mr-2" />
           <div className="text-body2 text-gray-700">
             https://get-snappy/{shareData?.data.meetingLink}
           </div>
@@ -130,13 +127,21 @@ function MeetingRaising() {
       </div>
 
       <div className="flex flex-col px-5 py-4 flex-grow">
-        <div className="flex items-center">
-          <div className="text-body1-semibold text-gray-800 mr-2">
-            등록된 모임 미션
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="text-body1-semibold text-gray-800 mr-2">
+              등록된 모임 미션
+            </div>
+            <div className="text-label text-point-mint">
+              {missionData?.data.length}개
+            </div>
           </div>
-          <div className="text-label text-point-mint">
-            {missionData?.data.length}개
-          </div>
+
+          {role === 'LEADER' && (
+            <Link href="/manage-mission">
+              <Image src={Edit} alt="edit" />
+            </Link>
+          )}
         </div>
         <hr className="h-[1px] w-full bg-gray-800 mt-4 mb-5" />
         <div className="flex-grow flex flex-col">

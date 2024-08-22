@@ -13,8 +13,8 @@ type CheckMeetIdResponse = ApiResponse<MeetingData>
 type CheckMeetLinkResponse = ApiResponse<MeetingData>
 type ValidatePasswordResponse = ApiResponse
 type ValidateLeaderAuthKeyResponse = ApiResponse
-type shareMeetingResponse = ApiResponse<{ meetingLink: string }>
-type meetingPasswordResponse = ApiResponse<{
+type ShareMeetingResponse = ApiResponse<{ meetingLink: string }>
+type MeetingPasswordResponse = ApiResponse<{
   password: string
   leaderAuthKey?: string
 }>
@@ -117,9 +117,9 @@ export const useValidateLeaderAuthKey = (
 
 export const useShareMeeting = (
   meetingId: number,
-  options?: UseQueryOptions<shareMeetingResponse, ApiError>,
+  options?: UseQueryOptions<ShareMeetingResponse, ApiError>,
 ) =>
-  useQuery<shareMeetingResponse, ApiError>({
+  useQuery<ShareMeetingResponse, ApiError>({
     queryKey: ['meeting', meetingId],
     queryFn: () => apiCall(`/meetings/${meetingId}/share`),
     enabled: !!meetingId,
@@ -129,9 +129,9 @@ export const useShareMeeting = (
 
 export const useGetMeetingPassword = (
   meetingId: number,
-  options?: UseQueryOptions<meetingPasswordResponse, ApiError>,
+  options?: UseQueryOptions<MeetingPasswordResponse, ApiError>,
 ) =>
-  useQuery<meetingPasswordResponse, ApiError>({
+  useQuery<MeetingPasswordResponse, ApiError>({
     queryKey: ['meeting', meetingId, 'password'],
     queryFn: () => apiCall(`/meetings/${meetingId}/password`),
     enabled: !!meetingId,

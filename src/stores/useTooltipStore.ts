@@ -1,18 +1,22 @@
 import { create } from 'zustand'
 
+type TooltipType = 'password' | 'admin' | null
+
 interface TooltipState {
-  showTooltip: boolean
+  activeTooltip: TooltipType
 }
 
 interface TooltipActions {
-  setShowTooltip: (show: boolean) => void
+  showTooltip: (type: TooltipType) => void
+  hideTooltip: () => void
 }
 
 interface TooltipStore extends TooltipState, TooltipActions {}
 
 const useTooltipStore = create<TooltipStore>((set) => ({
-  showTooltip: true,
-  setShowTooltip: (show) => set({ showTooltip: show }),
+  activeTooltip: null,
+  showTooltip: (type) => set({ activeTooltip: type }),
+  hideTooltip: () => set({ activeTooltip: null }),
 }))
 
 export default useTooltipStore

@@ -2,6 +2,8 @@ import React from 'react'
 
 interface TooltipProps {
   message: string
+  textColor?: string
+  bgColor?: string
   onClose: () => void
   position?: 'top' | 'bottom'
   className?: string
@@ -12,6 +14,8 @@ function Tooltip({
   message = 'tooltip message',
   onClose,
   position = 'bottom',
+  textColor = 'text-white',
+  bgColor = 'bg-black',
   className = '',
   arrowClassName = '',
 }: TooltipProps) {
@@ -26,13 +30,13 @@ function Tooltip({
 
   const arrowClass =
     position === 'bottom'
-      ? 'absolute transform -translate-x-1/2 bottom-full'
-      : 'absolute transform -translate-x-1/2 top-full'
+      ? ' -translate-x-1/2 bottom-full'
+      : ' -translate-x-1/2 top-full'
 
   const arrowInnerClass =
     position === 'bottom'
-      ? 'border-8 border-transparent border-b-black'
-      : 'border-8 border-transparent border-t-black'
+      ? ` border-b-${bgColor.split('-')[1]}`
+      : ` border-t-${bgColor.split('-')[1]}`
 
   return (
     <div
@@ -46,11 +50,16 @@ function Tooltip({
       role="button"
     >
       {position === 'top' && (
-        <div className={`${arrowClass} ${arrowClassName}`}>
-          <div className={arrowInnerClass} />
+        <div className={`absolute transform ${arrowClass} ${arrowClassName}`}>
+          <div
+            className={`${arrowInnerClass} border-8 border-transparent
+`}
+          />
         </div>
       )}
-      <div className="bg-black text-white text-[16px] rounded-full py-2 px-4">
+      <div
+        className={`${textColor} ${bgColor} text-[16px] rounded-full py-2 px-4`}
+      >
         <div className="flex items-center justify-between">
           {message}
           <svg
@@ -75,8 +84,8 @@ function Tooltip({
         </div>
       </div>
       {position === 'bottom' && (
-        <div className={`${arrowClass} ${arrowClassName}`}>
-          <div className={arrowInnerClass} />
+        <div className={`absolute transform ${arrowClass} ${arrowClassName}`}>
+          <div className={`${arrowInnerClass} border-8 border-transparent`} />
         </div>
       )}
     </div>

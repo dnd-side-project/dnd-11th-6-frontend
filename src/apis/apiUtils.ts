@@ -1,5 +1,5 @@
 import useMeetingStore from '@/stores/useMeetingStore'
-import { useRouter } from 'next/router'
+import useUserStore from '@/stores/useUserStore'
 
 export interface ApiResponse<T = null> {
   status: number
@@ -17,10 +17,11 @@ export interface ApiError {
 
 const handleExpiredToken = () => {
   const meetingId = useMeetingStore.getState().meetingData?.meetingId
-  document.cookie = `ACCESS_TOKEN_${meetingId}=; max-age=0; path=/;`
-  document.cookie = `REFRESH_TOKEN_${meetingId}=; max-age=0; path=/;`
+  document.cookie = `ACCESS_TOKEN_${meetingId}=; max-age=0; path=/api/;`
+  document.cookie = `REFRESH_TOKEN_${meetingId}=; max-age=0; path=/api/;`
 
-  useMeetingStore.getState().clearMeetingData()
+  useMeetingStore.persist.clearStorage()
+  useUserStore.persist.clearStorage()
 
   alert('세션이 만료되었습니다. 다시 로그인해주세요.')
 
@@ -60,7 +61,7 @@ export const apiCall = async (
 ) => {
   const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
 
-  const makeRequest = async () => {
+  const makeRequest = async (): Promise<ApiResponse> => {
     const response = await fetch(url, {
       method,
       headers: {
@@ -73,7 +74,7 @@ export const apiCall = async (
     if (response.status === 401 || response.status === 403) {
       try {
         await refreshToken()
-        return makeRequest()
+        return await makeRequest()
       } catch (error) {
         console.error('Error refreshing token:', error)
         handleExpiredToken()

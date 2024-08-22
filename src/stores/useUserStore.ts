@@ -13,7 +13,6 @@ interface UserActions {
   setNickname: (nickname: string) => void
   setRole: (role: 'LEADER' | 'PARTICIPANT') => void
   setShootCount: (shootCount: number) => void
-  clearUserData: () => void
 }
 
 interface UserStore extends UserState, UserActions {}
@@ -33,7 +32,6 @@ const useUserStore = create(
       setNickname: (nickname) => set({ nickname }),
       setRole: (role) => set({ role }),
       setShootCount: (shootCount) => set({ shootCount }),
-      clearUserData: () => set(initialState),
     }),
     {
       name: 'user-storage',

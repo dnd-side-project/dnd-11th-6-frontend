@@ -28,7 +28,7 @@ function MeetingInfo({
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex items-start">
         <button type="button" onClick={onHomeClick} className="">
-          <Image src={BackIcon} alt="back" />
+          <Image src={BackIcon} alt="back" width={10} height={18} />
         </button>
       </div>
       <div className="text-gray-900 font-bold text-[22px] mt-9">
@@ -39,20 +39,24 @@ function MeetingInfo({
       </div>
       <div className="flex flex-col bg-point-mint rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
         <div className="flex w-full">
-          <div className="w-11 max-h-11 mr-3">
+          <div className="w-11 max-h-11 mr-3 relative">
             {meetingData?.thumbnailUrl ? (
               <Image
                 loader={({ src }) => src}
                 src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${meetingData.thumbnailUrl}`}
                 alt="thumbnail"
-                width={44}
-                height={44}
-                layout="responsive"
+                layout="fill"
+                objectFit="cover"
                 className="rounded-full"
                 unoptimized
               />
             ) : (
-              <Image src={Logo} alt="thumbnail" width={44} height={44} />
+              <Image
+                src={Logo}
+                alt="thumbnail"
+                layout="fill"
+                objectFit="contain"
+              />
             )}
           </div>
           <div className="flex flex-col">

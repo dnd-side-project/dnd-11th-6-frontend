@@ -1,5 +1,8 @@
-import React, { use, useEffect, useMemo, useState } from 'react'
-import { useShareMeeting } from '@/apis/queries/meetingQueries'
+import React, { useState } from 'react'
+import {
+  useGetMeetingPassword,
+  useShareMeeting,
+} from '@/apis/queries/meetingQueries'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import Image from 'next/image'
@@ -7,26 +10,41 @@ import Link from 'public/icons/link.svg'
 import Share from 'public/icons/share.svg'
 import QRCode from 'public/icons/qr-code.svg'
 import { useGetParticipantMissions } from '@/apis/queries/missionQuries'
+import QRPopup from '@/components/QRPopup'
 
 function MeetingRaising() {
   const role = useUserStore((state) => state.role)
   const nickname = useUserStore((state) => state.nickname)
+  const meetingName = useMeetingStore((state) => state.meetingData?.name)
+  console.log('meetingName:', meetingName)
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const meetingId =
     useMeetingStore((state) => state.meetingData?.meetingId) ?? 0
+
   const {
     data: shareData,
     isLoading: isShareDataLoading,
     error: shareDataError,
   } = useShareMeeting(meetingId)
+
   const {
     data: missionData,
     isLoading: isMissionDataLoading,
     error: missionDataError,
   } = useGetParticipantMissions(meetingId)
 
+  const {
+    data: passwordData,
+    isLoading: isPasswordDataLoading,
+    error: passwordDataError,
+  } = useGetMeetingPassword(meetingId)
+
   const [sharePassword, setSharePassword] = useState(false)
   const [shareAdminKey, setShareAdminKey] = useState(false)
   const [copyStatus, setCopyStatus] = useState('공유하기')
+  const [showQRPopup, setShowQRPopup] = useState(false)
 
   console.log('role:', role)
   console.log('nickname:', nickname)
@@ -47,9 +65,9 @@ function MeetingRaising() {
       setTimeout(() => setCopyStatus('공유하기'), 2000)
     })
   }
-  if (isShareDataLoading || isMissionDataLoading)
+  if (isShareDataLoading || isMissionDataLoading || isPasswordDataLoading)
     return <div>데이터를 불러오는 중...</div>
-  if (shareDataError || missionDataError)
+  if (shareDataError || missionDataError || passwordDataError)
     return <div>데이터를 불러오는데 실패했습니다.</div>
 
   return (
@@ -73,7 +91,9 @@ function MeetingRaising() {
               checked={sharePassword}
               onChange={(e) => setSharePassword(e.target.checked)}
             />
-            <span className="text-body2 text-gray-700">비밀번호 1234</span>
+            <span className="text-body2 text-gray-700">
+              비밀번호 {passwordData?.data.password}
+            </span>
           </label>
           {role === 'LEADER' && (
             <label className="flex items-center">
@@ -83,14 +103,16 @@ function MeetingRaising() {
                 checked={shareAdminKey}
                 onChange={(e) => setShareAdminKey(e.target.checked)}
               />
-              <span className="text-body2 text-gray-700">관리자키 1234</span>
+              <span className="text-body2 text-gray-700">
+                관리자키 {passwordData?.data.leaderAuthKey}
+              </span>
             </label>
           )}
         </div>
 
         <div className="flex mt-4">
           <button
-            onClick={handleShare}
+            onClick={() => setShowQRPopup(true)}
             className="flex justify-center items-center w-1/2 bg-gray-50 rounded-[14px] p-[14px] text-label-medium text-gray-700"
           >
             <Image src={Share} alt="share" className="mr-2" />
@@ -141,6 +163,14 @@ function MeetingRaising() {
           )}
         </div>
       </div>
+      {showQRPopup && meetingName && (
+        <QRPopup
+          qrData={`https://get-snappy/${shareData?.data.meetingLink}`}
+          meetingName={meetingName}
+          // themeColor={meetingSymbolColor}
+          onClose={() => setShowQRPopup(false)}
+        />
+      )}
     </div>
   )
 }

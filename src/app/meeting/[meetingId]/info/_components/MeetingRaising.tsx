@@ -54,10 +54,10 @@ function MeetingRaising() {
     let shareText = `우리 모임에서 같이 스냅피하자!\n${meetingLink}\n`
 
     if (sharePassword) {
-      shareText += '비밀번호: 0000\n'
+      shareText += `비밀번호: ${passwordData?.data.password}\n`
     }
     if (shareAdminKey && role === 'LEADER') {
-      shareText += '관리자키: 0000\n'
+      shareText += `관리자키: ${passwordData?.data.leaderAuthKey}\n`
     }
 
     navigator.clipboard.writeText(shareText).then(() => {

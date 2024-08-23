@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import { MeetingFormData } from '@/lib/meetingTypes'
 
 const API_BASE_URL = 'http://api.get-snappy.co.kr/api/v1'

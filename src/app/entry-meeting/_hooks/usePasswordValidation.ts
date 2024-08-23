@@ -6,7 +6,7 @@ import {
   useValidateLeaderAuthKey,
   useValidatePassword,
 } from '@/apis/queries/meetingQueries'
-import useDebounce from '@/hooks/useDeboune'
+import useDebounce from '@/hooks/useDebounce'
 
 const passwordSchema = z.object({
   password: z.string().min(6, '최소 6자 이상 입력해주세요.'),

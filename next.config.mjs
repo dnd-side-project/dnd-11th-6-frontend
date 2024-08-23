@@ -2,6 +2,9 @@ import withPWA from 'next-pwa'
 
 const nextConfig = {
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
   images: {
     remotePatterns: [
       {

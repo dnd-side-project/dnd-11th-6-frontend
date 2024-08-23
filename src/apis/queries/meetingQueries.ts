@@ -5,45 +5,19 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { MeetingData } from '@/stores/useMeetingStore'
-
-interface ApiResponse<T = null> {
-  status: number
-  data: T
-}
-
-interface ApiError {
-  status: number
-  data: null
-  error: {
-    code: string
-    message: string
-  }
-}
+import { apiCall, ApiResponse, ApiError } from '../apiUtils'
 
 type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>
 type JoinMeetingResponse = ApiResponse<{ participantId: number }>
+type CheckMeetIdResponse = ApiResponse<MeetingData>
 type CheckMeetLinkResponse = ApiResponse<MeetingData>
 type ValidatePasswordResponse = ApiResponse
 type ValidateLeaderAuthKeyResponse = ApiResponse
-
-const apiCall = async <T>(
-  endpoint: string,
-  method: 'GET' | 'POST' = 'GET',
-  body?: object,
-): Promise<T> => {
-  const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
-  const response = await fetch(url, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  })
-
-  const result = await response.json()
-  if (!response.ok) throw result
-  return result
-}
+type ShareMeetingResponse = ApiResponse<{ meetingLink: string }>
+type MeetingPasswordResponse = ApiResponse<{
+  password: string
+  leaderAuthKey?: string
+}>
 
 export const useCheckNickname = (
   meetingId: number,
@@ -93,6 +67,18 @@ export const useCheckMeetingLink = (
     ...options,
   })
 
+export const useCheckMeetingId = (
+  meetingId: number,
+  options?: UseQueryOptions<CheckMeetIdResponse, ApiError>,
+) =>
+  useQuery<CheckMeetIdResponse, ApiError>({
+    queryKey: ['meeting', meetingId],
+    queryFn: () => apiCall(`/meetings/${meetingId}`),
+    enabled: !!meetingId,
+    retry: false,
+    ...options,
+  })
+
 export const useValidatePassword = (
   options?: UseMutationOptions<
     ValidatePasswordResponse,
@@ -126,5 +112,29 @@ export const useValidateLeaderAuthKey = (
       apiCall(`/meetings/${meetingId}/validate-leader-key`, 'POST', {
         leaderAuthKey,
       }),
+    ...options,
+  })
+
+export const useShareMeeting = (
+  meetingId: number,
+  options?: UseQueryOptions<ShareMeetingResponse, ApiError>,
+) =>
+  useQuery<ShareMeetingResponse, ApiError>({
+    queryKey: ['meeting', meetingId],
+    queryFn: () => apiCall(`/meetings/${meetingId}/share`),
+    enabled: !!meetingId,
+    retry: false,
+    ...options,
+  })
+
+export const useGetMeetingPassword = (
+  meetingId: number,
+  options?: UseQueryOptions<MeetingPasswordResponse, ApiError>,
+) =>
+  useQuery<MeetingPasswordResponse, ApiError>({
+    queryKey: ['meeting', meetingId, 'password'],
+    queryFn: () => apiCall(`/meetings/${meetingId}/password`),
+    enabled: !!meetingId,
+    retry: false,
     ...options,
   })

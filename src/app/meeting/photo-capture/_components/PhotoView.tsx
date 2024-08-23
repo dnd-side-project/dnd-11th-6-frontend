@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { format } from 'date-fns/format'
 import Image from 'next/image'
-import useUploadSnap from '@/apis/queries/snapQueries'
+import { useUploadSnap } from '@/apis/queries/snapQueries'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
@@ -62,9 +62,9 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
     }
 
     if (missionType === 'random') {
-      snapData.randomMissionId = missionId
+      snapData.randomMissionId = missionId ?? undefined
     } else if (missionType === 'select') {
-      snapData.missionId = missionId
+      snapData.missionId = missionId ?? undefined
     }
 
     try {
@@ -83,7 +83,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
           <Image src={Back} alt="back" className="w-[7.5px] h-[15px]" />
         </button>
         <div className="flex-1 flex justify-center items-center">
-          <div className="font-bold">스냅 확인하기</div>
+          <div className="text-body1-semibold text-gray-900">스냅 확인하기</div>
         </div>
         <button onClick={goHome} className="cursor-pointer">
           <Image src={Close} alt="Close Button" className="w-4 h-4" />

@@ -69,7 +69,7 @@ function EntryMeeting() {
         return (
           <Welcome
             onEnterClick={() => {
-              router.back()
+              router.push(`/meeting-home`)
             }}
             onBackClick={() => {
               router.back()

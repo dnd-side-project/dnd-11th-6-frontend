@@ -1,7 +1,27 @@
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { ApiResponse, ApiError } from '../apiUtils'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query'
+import { ApiResponse, ApiError, apiCall } from '../apiUtils'
 
 type UploadSnapResponse = ApiResponse<{ snapId: number; snapUrl: string }>
+
+type GetSnapDetailResponse = ApiResponse<{
+  snapId: number
+  snapUrl: string
+  shootDate: string
+  type: 'SIMPLE' | 'MEETING_MISSION' | 'RANDOM_MISSION'
+  photographer: {
+    participantId: number
+    nickname: string
+  }
+  mission?: {
+    missionId?: number
+    content?: string
+  }
+}>
 
 interface SnapData {
   shootDate: string
@@ -53,4 +73,15 @@ export const useUploadSnap = (
     ...options,
   })
 
-export default useUploadSnap
+export const useGetSnapDetail = (
+  meetingId: number,
+  snapId: number,
+  options?: UseQueryOptions<GetSnapDetailResponse, ApiError>,
+) =>
+  useQuery<GetSnapDetailResponse, ApiError>({
+    queryKey: ['snaps', meetingId, snapId],
+    queryFn: () => apiCall(`/meetings/${meetingId}/snaps/${snapId}`),
+    enabled: !!meetingId && !!snapId,
+    retry: false,
+    ...options,
+  })

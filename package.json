@@ -24,6 +24,7 @@
     "@testing-library/react": "^16.0.0",
     "axios": "^1.7.4",
     "dayjs": "^1.11.12",
+    "date-fns": "^3.6.0",
     "next": "14.2.4",
     "next-pwa": "^5.6.0",
     "qrcode": "^1.5.4",

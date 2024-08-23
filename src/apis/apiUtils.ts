@@ -56,7 +56,7 @@ const refreshToken = async () => {
 
 export const apiCall = async (
   endpoint: string,
-  method: 'GET' | 'POST' = 'GET',
+  method: 'GET' | 'POST' | 'DELETE' = 'GET',
   body?: object,
 ) => {
   const url = `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
 interface Snapshot {
@@ -17,41 +17,34 @@ interface SnapshotsResponse {
   }
 }
 
-const useSnapshots = (
-  meetingId: number,
-  initialCursorId: number = 64,
-  limit: number = 3,
-) => {
+const useSnapshots = (meetingId: number) => {
   const [snapshots, setSnapshots] = useState<Snapshot[]>([])
-  const [nextCursorId, setNextCursorId] = useState<number | null>(
-    initialCursorId,
-  )
+  const [totalSnapshots, setTotalSnapshots] = useState<number>(0)
+  const [cursorId, setCursorId] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
+  const [hasMore, setHasMore] = useState(true)
 
-  const fetchSnapshots = async () => {
-    if (!nextCursorId) return
+  const fetchSnapshots = useCallback(async () => {
+    if (!hasMore || loading) return
 
     setLoading(true)
     try {
       const response = await axios.get<SnapshotsResponse>(
         `/api/v1/meetings/${meetingId}/snaps`,
         {
-          params: { cursorId: nextCursorId, limit },
+          params: { cursorId, limit: 5 },
           headers: {
             'Content-Type': 'application/json;charset=UTF-8',
-            Cookie: `ACCESS_TOKEN_53=eyJhbGciOiJIUzI1NiJ9.eyJwWXJOXJOaWFwFOIjoxNSwiaXNwaWFwFOIjoxNSwiaCJzZXNzaW9uSWQiOiJ`,
           },
         },
       )
 
-      setSnapshots((prevSnapshots) => [
-        ...prevSnapshots,
-        ...response.data.data.data,
-      ])
-      setNextCursorId(
-        response.data.data.hasNext ? response.data.data.nextCursorId : null,
-      )
+      const newSnapshots = response.data.data.data
+      setTotalSnapshots(response.data.data.count)
+      setSnapshots((prevSnapshots) => [...prevSnapshots, ...newSnapshots])
+      setCursorId(response.data.data.nextCursorId)
+      setHasMore(response.data.data.hasNext)
     } catch (err) {
       setError(
         err instanceof Error
@@ -61,18 +54,19 @@ const useSnapshots = (
     } finally {
       setLoading(false)
     }
-  }
+  }, [meetingId, cursorId, hasMore, loading])
 
   useEffect(() => {
     fetchSnapshots()
   }, [meetingId])
 
   return {
+    totalSnapshots,
     snapshots,
     loading,
     error,
     fetchMore: fetchSnapshots,
-    hasMore: !!nextCursorId,
+    hasMore,
   }
 }
 

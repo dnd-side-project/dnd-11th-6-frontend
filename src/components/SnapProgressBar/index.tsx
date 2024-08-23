@@ -1,9 +1,9 @@
 import React from 'react'
-import useSnapStore from '../../stores/useSnapStore'
+import useUserStore from '@/stores/useUserStore'
 
 const SnapProgressBar = () => {
-  const { snapCount, totalSnapCount } = useSnapStore()
-  const percentage = (snapCount / totalSnapCount) * 100
+  const { shootCount } = useUserStore()
+  const percentage = (shootCount / 10) * 100
 
   return (
     <div className="w-full bg-gray-200 rounded-full" style={{ height: '10px' }}>
@@ -13,11 +13,11 @@ const SnapProgressBar = () => {
       />
       <div className="text-sm text-gray-600 mt-2 flex justify-between">
         <span>
-          {snapCount === totalSnapCount
+          {shootCount === 10
             ? '모든 사진 촬영을 마쳤어요!'
-            : `남은 스냅 ${totalSnapCount - snapCount}장`}
+            : `남은 스냅 ${10 - shootCount}장`}
         </span>
-        <span>{`지금까지 ${snapCount}장`}</span>
+        <span>{`지금까지 ${shootCount}장`}</span>
       </div>
     </div>
   )

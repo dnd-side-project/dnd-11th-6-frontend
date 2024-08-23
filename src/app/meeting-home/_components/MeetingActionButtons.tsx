@@ -1,13 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
-import useSnapStore from '@/stores/useSnapStore'
+import useUserStore from '@/stores/useUserStore'
 
 const MeetingActionButtons = () => {
-  const { snapCount, totalSnapCount } = useSnapStore()
-
+  const { shootCount } = useUserStore()
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center p-4 gap-2 shadow-top animate-float">
-      {snapCount === totalSnapCount ? (
+      {shootCount === 10 ? (
         ''
       ) : (
         <button className="bg-[#12C7E0] text-white px-5 py-3 gap-1 rounded-full flex items-center">

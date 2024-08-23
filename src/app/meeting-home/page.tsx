@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-// import useSnapshots from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
+import useMeetingStore from '@/stores/useMeetingStore'
 import dice from '../../../public/icons/dice.svg'
 import profile from '../../../public/icons/profile.svg'
 import snappy from '../../../public/icons/snappy.svg'
@@ -17,14 +17,12 @@ import {
 function MeetingHomePage() {
   const [activeChip, setActiveChip] = useState('전체')
   const scrollPosition = useScrollPosition()
-  const { data: meetingData, isLoading, error } = useMeetingData(1)
-  // const {
-  //   snapshots,
-  //   loading: snapshotsLoading,
-  //   error: snapshotsError,
-  //   fetchMore,
-  //   hasMore,
-  // } = useSnapshots(1)
+  const { meetingData } = useMeetingStore()
+  const {
+    data: meetingInfo,
+    isLoading,
+    error,
+  } = useMeetingData(meetingData?.meetingId ?? 0)
 
   const chips = [
     { label: '전체', icon: '' },
@@ -39,7 +37,7 @@ function MeetingHomePage() {
   return (
     <div className="pb-20">
       <MeetingHeader
-        meetingData={meetingData!}
+        meetingInfo={meetingInfo!}
         scrollPosition={scrollPosition}
       />
       <div className="bg-gray-50 px-4 py-[14px]">
@@ -54,10 +52,7 @@ function MeetingHomePage() {
             />
           ))}
         </div>
-        <div>
-          <span className="text-gray-500 text-xs mr-[6px]">전체사진</span>
-          <span className="text-gray-700 text-xs">231장</span>
-        </div>
+
         <MeetingPhotoGrid />
         <MeetingActionButtons />
       </div>

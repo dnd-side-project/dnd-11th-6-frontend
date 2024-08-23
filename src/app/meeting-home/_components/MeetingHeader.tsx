@@ -62,7 +62,7 @@ const MeetingHeader = ({ meetingData, scrollPosition }: MeetingHeaderProps) => {
         <h2 className="text-lg font-medium text-gray-700 mb-2">
           알루리루붐님의 스냅피 활동
         </h2>
-        <SnapProgressBar totalSnaps={10} takenSnaps={5} />
+        <SnapProgressBar />
       </div>
     </div>
   )

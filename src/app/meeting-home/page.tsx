@@ -34,7 +34,7 @@ function MeetingHomePage() {
         meetingData={meetingData!}
         scrollPosition={scrollPosition}
       />
-      <div className="bg-[] px-4 py-[14px]">
+      <div className="bg-gray-50 px-4 py-[14px]">
         <div className="flex space-x-2 py-4 overflow-x-auto ">
           {chips.map((chip) => (
             <Chip
@@ -45,6 +45,10 @@ function MeetingHomePage() {
               chipImage={chip.icon}
             />
           ))}
+        </div>
+        <div>
+          <span className="text-gray-500 text-xs mr-[6px]">전체사진</span>
+          <span className="text-gray-700 text-xs">231장</span>
         </div>
         <MeetingPhotoGrid />
         <MeetingActionButtons />

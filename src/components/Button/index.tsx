@@ -12,9 +12,9 @@ export interface ButtonProps
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-gray-900 text-white text-lg ',
-  light: 'bg-gray-100 border border-gray-300 text-gray-900 text-lg ',
-  outline: 'bg-white border border-gray-700 text-gray-900 text-lg',
+  primary: 'bg-gray-900  text-lg ',
+  light: 'bg-gray-100 border-none text-gray-900 text-lg',
+  outline: 'bg-white border border-gray-500 text-gray-900 text-lg',
 }
 
 export function Button({

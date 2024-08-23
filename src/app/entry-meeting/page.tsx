@@ -13,7 +13,7 @@ import {
 
 function EntryMeeting() {
   const router = useRouter()
-  const [page, setPage] = useState(3)
+  const [page, setPage] = useState(0)
   const meetingData = useMeetingStore((state) => state.meetingData)
 
   const renderPage = () => {

@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { z } from 'zod'
-import { useCheckNickname, useJoinMeeting } from '@/apis/queries/entryQueries'
+import { useCheckNickname, useJoinMeeting } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
-import useDebounce from '@/hooks/useDeboune'
+import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import BackIcon from 'public/icons/back.svg'
@@ -49,8 +49,8 @@ function NicknameInput({
   })
 
   const setNickname = useUserStore((state) => state.setNickname)
-  const setRole = useUserStore((state) => state.setRole)
   const setParticipantId = useUserStore((state) => state.setParticipantId)
+  const userRole = useUserStore((state) => state.role)
   const meetingName = useMeetingStore((state) => state.meetingData?.name)
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
@@ -90,12 +90,11 @@ function NicknameInput({
       {
         meetingId: meetingId!,
         nickname: formData.nickname,
-        role: formData.role,
+        role: userRole,
       },
       {
         onSuccess: (joinMeetingData) => {
           setNickname(formData.nickname)
-          setRole(formData.role)
           setParticipantId(joinMeetingData.data.participantId)
           onEnterClick()
         },

@@ -1,4 +1,5 @@
-import create from 'zustand'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 export interface Photo {
   id: string
@@ -22,24 +23,32 @@ interface MeetingState {
 }
 
 interface MeetingActions {
-  setMeetingData: (meetingData: MeetingData) => void
+  setMeetingData: (meetingData: MeetingData | null) => void
   setMeetingId: (meetingId: number) => void
   setPhotos: (photos: Photo[]) => void
 }
 
 interface MeetingStore extends MeetingState, MeetingActions {}
 
-const useMeetingStore = create<MeetingStore>((set) => ({
-  meetingData: null,
-  photos: [],
-  setMeetingData: (meetingData) => set({ meetingData }),
-  setMeetingId: (meetingId) =>
-    set((state) => ({
-      meetingData: state.meetingData
-        ? { ...state.meetingData, meetingId }
-        : null,
-    })),
-  setPhotos: (photos) => set({ photos }),
-}))
+const useMeetingStore = create(
+  persist<MeetingStore>(
+    (set) => ({
+      meetingData: null,
+      photos: [],
+      setMeetingData: (meetingData) => set({ meetingData }),
+      setMeetingId: (meetingId) =>
+        set((state) => ({
+          meetingData: state.meetingData
+            ? { ...state.meetingData, meetingId }
+            : null,
+        })),
+      setPhotos: (photos) => set({ photos }),
+    }),
+    {
+      name: 'meeting-storage',
+      storage: createJSONStorage(() => sessionStorage),
+    },
+  ),
+)
 
 export default useMeetingStore

@@ -44,19 +44,20 @@ export const ToggleSwitch = ({
             onClick={handleLeftClick}
             className={`relative z-10 w-1/2 py-2 rounded-full transition-all duration-300 ${
               !value ? activeTextColor : inactiveTextColor
-            }`}
+            } flex items-center justify-center`}
           >
             {LeftIcon && <LeftIcon isActive={!value} />}
-            {leftOption}
+            <span className="ml-1">{leftOption}</span>
           </button>
           <button
             onClick={handleRightClick}
             className={`relative z-10 w-1/2 py-2 rounded-full transition-all duration-300 ${
               value ? activeTextColor : inactiveTextColor
-            }`}
+            } flex items-center justify-center`}
           >
+            {' '}
             {RightIcon && <RightIcon isActive={value} />}
-            {rightOption}
+            <span className="ml-1">{rightOption}</span>
           </button>
         </div>
       </div>

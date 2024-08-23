@@ -225,14 +225,17 @@ function MissionCreationPage() {
               variant={currentMission ? 'light' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
-              className={currentMission ? 'w-20 px-3' : 'w-full text-white'}
+              padding="py-[14px] px-7"
+              className={
+                currentMission ? 'w-20' : 'w-full text-white bg-point-mint'
+              }
             >
               {isSpinning ? (
                 '미션 뽑는 중...'
               ) : currentMission ? (
-                <Image src={Refresh} alt="refresh" className="w-5" />
+                <Image src={Refresh} alt="refresh" className="w-4" />
               ) : (
-                '미션 뽑기'
+                '미션룰렛 돌리기'
               )}
             </Button>
             {currentMission && (
@@ -240,7 +243,7 @@ function MissionCreationPage() {
                 type="button"
                 variant="primary"
                 onClick={performMission}
-                className="w-full text-white"
+                className="w-full text-white bg-point-mint"
               >
                 미션 수행하기
               </Button>
@@ -252,7 +255,7 @@ function MissionCreationPage() {
             variant="primary"
             onClick={performMission}
             disabled={!currentMission}
-            className="w-full text-white"
+            className="w-full text-white bg-point-mint"
           >
             미션 수행하기
           </Button>

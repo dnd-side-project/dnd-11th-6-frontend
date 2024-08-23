@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -16,19 +16,6 @@ import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
 import Twinkle from 'public/icons/twinkle.svg'
 import Roulette from 'public/roulette.svg'
-
-const missions = [
-  '여기에서 제일 연장자 찾기',
-  '여기에서 제일 막내 찾기',
-  '옆 사람 어깨 주물러주기',
-  '옆 사람에게 칭찬 해주기',
-  '지금 기분을 춤으로 표현하기',
-  '가장 좋아하는 음식 말하기',
-  '최근에 본 영화 추천하기',
-  '1분 동안 눈 안 깜빡이고 있기',
-  '좋아하는 노래 한 소절 부르기',
-  '짝꿍과 손잡고 1분 동안 있기',
-]
 
 function MissionCreationPage() {
   const router = useRouter()

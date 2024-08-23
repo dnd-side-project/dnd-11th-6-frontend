@@ -52,6 +52,12 @@ function MissionCreationPage() {
     }
   }, [randomMissions])
 
+  useEffect(() => {
+    if (!missionType) {
+      setMissionType('random')
+    }
+  }, [])
+
   const startSpinning = async () => {
     setIsSpinning(true)
     setCurrentMission(null)

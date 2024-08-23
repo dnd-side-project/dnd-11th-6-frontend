@@ -9,7 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_IMAGE_BASE_URL.replace(
+        hostname: 'https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com'.replace(
           /^https?:\/\//,
           '',
         ),
@@ -21,7 +21,7 @@ const nextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`,
+        destination: 'https://api.get-snappy.co.kr/api/v1/:path*',
       },
     ]
   },

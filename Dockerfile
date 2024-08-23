@@ -19,6 +19,8 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV NEXT_PUBLIC_IMAGE_BASE_URL=your_image_base_url
+ENV NEXT_PUBLIC_API_BASE_URL=your_api_base_url
 
 RUN apk add --no-cache libc6-compat
 RUN npm install -g pnpm

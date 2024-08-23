@@ -3,11 +3,16 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import useCamera from '@/hooks/useCamera'
+import useMeetingStore from '@/stores/useMeetingStore'
 import CameraView from './_components/CameraView'
 import PhotoView from './_components/PhotoView'
 
 function PhotoCapture() {
+  const router = useRouter()
   const [photo, setPhoto] = useState<string | null>(null)
+  const [captureTime, setCaptureTime] = useState<Date | null>(null)
+  const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
+
   const {
     isCameraOpen,
     isRearCamera,
@@ -16,12 +21,10 @@ function PhotoCapture() {
     openCamera,
     takePicture,
     toggleCamera,
-  } = useCamera(setPhoto)
-
-  const router = useRouter()
-  function goBack() {
-    router.back()
-  }
+  } = useCamera((photoData: string | null) => {
+    setPhoto(photoData)
+    setCaptureTime(new Date())
+  })
 
   return (
     <div className="flex flex-col items-center">
@@ -31,14 +34,15 @@ function PhotoCapture() {
           isRearCamera={isRearCamera}
           onCapture={takePicture}
           onToggleCamera={toggleCamera}
-          goBack={() => goBack()}
+          goBack={() => router.back()}
         />
       )}
       {photo && (
         <PhotoView
           photo={photo}
+          captureTime={captureTime}
           onRetake={openCamera}
-          goBack={() => goBack()}
+          goHome={() => router.push(`/meeting/${meetingId}`)}
         />
       )}
       <canvas ref={canvasRef} className="hidden" />

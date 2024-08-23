@@ -9,6 +9,7 @@ import useMissionStore from '@/stores/useMissionStore'
 import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
 import Twinkle from 'public/icons/twinkle.svg'
+import Roulette from 'public/roulette.svg'
 
 const missions = [
   '여기에서 제일 연장자 찾기',
@@ -29,11 +30,7 @@ function MissionCreationPage() {
   const [isSpinning, setIsSpinning] = useState(false)
   const selectedMission = useMissionStore((state) => state.currentMission)
   const setSelectedMission = useMissionStore((state) => state.setCurrentMission)
-  const [visibleMissions, setVisibleMissions] = useState<string[]>([
-    '?',
-    '?',
-    '?',
-  ])
+  const [visibleMissions, setVisibleMissions] = useState<string[]>(['?'])
 
   const startSpinning = () => {
     setIsSpinning(true)
@@ -55,7 +52,7 @@ function MissionCreationPage() {
         const randomMission =
           missions[Math.floor(Math.random() * missions.length)]
         setSelectedMission(randomMission)
-        setVisibleMissions([randomMission, '?', '?'])
+        setVisibleMissions([randomMission])
       }
     }, 100)
   }
@@ -67,7 +64,7 @@ function MissionCreationPage() {
 
   const performMission = () => {
     setSelectedMission(null)
-    setVisibleMissions(['?', '?', '?'])
+    setVisibleMissions(['?'])
   }
 
   return (
@@ -96,17 +93,18 @@ function MissionCreationPage() {
       />
 
       {missionType === 'random' ? (
-        <div className="flex-grow flex flex-col items-center justify-center p-4 bg-gray-100">
-          <div className="w-64 h-64 mb-8 overflow-hidden">
-            <div
-              className={`flex flex-col items-center transition-transform duration-100 ease-linear ${isSpinning ? '-translate-y-1/3' : ''}`}
-            >
+        <div className="flex-grow flex flex-col items-center justify-center p-4 bg-white">
+          <div className="relative w-full h-full">
+            <Image src={Roulette} alt="roulette" className="w-full h-full" />
+            <div className="roulette-text absolute inset-0 flex flex-col items-center justify-center transition-transform duration-100 ease-linear">
               {visibleMissions.map((mission, index) => (
                 <div
                   key={index}
-                  className="w-full h-64 bg-white shadow-md rounded-lg flex items-center justify-center p-4 text-center mb-4"
+                  className="w-full h-full flex items-center justify-center px-12 text-center"
                 >
-                  <p className="text-lg font-semibold">{mission}</p>
+                  <p className="text-heading1-semibold text-gray-800">
+                    {mission}
+                  </p>
                 </div>
               ))}
             </div>
@@ -155,7 +153,7 @@ function MissionCreationPage() {
           <>
             <Button
               type="button"
-              variant={selectedMission ? 'outline' : 'primary'}
+              variant={selectedMission ? 'light' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
               className={selectedMission ? 'w-20 px-3' : 'w-full text-white'}
@@ -163,7 +161,7 @@ function MissionCreationPage() {
               {isSpinning ? (
                 '미션 뽑는 중...'
               ) : selectedMission ? (
-                <Image src={Refresh} alt="refresh" />
+                <Image src={Refresh} alt="refresh" className="w-5" />
               ) : (
                 '미션 뽑기'
               )}

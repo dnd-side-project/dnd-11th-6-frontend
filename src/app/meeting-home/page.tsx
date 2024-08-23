@@ -16,6 +16,8 @@ import {
 
 function MeetingHomePage() {
   const [activeChip, setActiveChip] = useState('전체')
+  const [selectedImages, setSelectedImages] = useState<string[]>([])
+  const [isSelecting, setIsSelecting] = useState(false)
   const scrollPosition = useScrollPosition()
   const { meetingData } = useMeetingStore()
   const {
@@ -30,6 +32,30 @@ function MeetingHomePage() {
     { label: '모임미션', icon: profile },
     { label: '내가찍은', icon: snappy },
   ]
+
+  const handleSelectImage = (imageUrl: string) => {
+    if (isSelecting) {
+      setSelectedImages((prev) =>
+        prev.includes(imageUrl)
+          ? prev.filter((url) => url !== imageUrl)
+          : [...prev, imageUrl],
+      )
+    }
+  }
+
+  const handleToggleSelecting = () => {
+    if (isSelecting && selectedImages.length > 0) {
+      selectedImages.forEach((imageUrl) => {
+        const link = document.createElement('a')
+        link.href = imageUrl
+        link.download = imageUrl.split('/').pop() || 'download'
+        link.click()
+      })
+      setSelectedImages([])
+      setIsSelecting(false)
+    }
+    setIsSelecting(!isSelecting)
+  }
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>An error has occurred: {error.message}</div>
@@ -53,8 +79,16 @@ function MeetingHomePage() {
           ))}
         </div>
 
-        <MeetingPhotoGrid activeChip={activeChip} />
-        <MeetingActionButtons />
+        <MeetingPhotoGrid
+          activeChip={activeChip}
+          selectedImages={selectedImages}
+          onSelectImage={handleSelectImage}
+          isSelecting={isSelecting}
+        />
+        <MeetingActionButtons
+          isSelecting={isSelecting}
+          onToggleSelecting={handleToggleSelecting}
+        />
       </div>
     </div>
   )

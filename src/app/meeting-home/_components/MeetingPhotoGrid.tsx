@@ -3,11 +3,19 @@ import Image from 'next/image'
 import useSnapshots from '@/apis/getSnapApi'
 import useMeetingStore from '@/stores/useMeetingStore'
 
-interface PhothoGirdProps {
+interface PhotoGridProps {
   activeChip: string
+  selectedImages: string[]
+  onSelectImage: (imageUrl: string) => void
+  isSelecting: boolean
 }
 
-const MeetingPhotoGrid = ({ activeChip }: PhothoGirdProps) => {
+const MeetingPhotoGrid = ({
+  activeChip,
+  selectedImages,
+  onSelectImage,
+  isSelecting,
+}: PhotoGridProps) => {
   const { meetingData } = useMeetingStore()
   const {
     totalSnapshots,
@@ -34,6 +42,7 @@ const MeetingPhotoGrid = ({ activeChip }: PhothoGirdProps) => {
   )
 
   if (snapshotsError) return <div>Error loading snapshots</div>
+
   return (
     <>
       <div>
@@ -43,21 +52,29 @@ const MeetingPhotoGrid = ({ activeChip }: PhothoGirdProps) => {
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2 p-4">
-        {snapshots.map((snapshot, index) => (
-          <div
-            key={`${snapshot.snapId}${index}`}
-            className="aspect-square relative"
-            ref={index === snapshots.length - 1 ? lastSnapshotElementRef : null}
-          >
-            <Image
-              src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${snapshot.snapUrl}`}
-              alt={`Photo ${snapshot.snapId} ${index + 1}`}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-lg"
-            />
-          </div>
-        ))}
+        {snapshots.map((snapshot, index) => {
+          const isSelected = selectedImages.includes(snapshot.snapUrl)
+          return (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+            <div
+              key={`${snapshot.snapId}${index}`}
+              className={`aspect-square relative ${isSelected ? 'border-4 border-blue-500' : ''}`}
+              ref={
+                index === snapshots.length - 1 ? lastSnapshotElementRef : null
+              }
+              onClick={() => onSelectImage(snapshot.snapUrl)}
+              style={{ cursor: isSelecting ? 'pointer' : 'default' }} // 선택 모드일 때만 포인터 표시
+            >
+              <Image
+                src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${snapshot.snapUrl}`}
+                alt={`Photo ${snapshot.snapId} ${index + 1}`}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+            </div>
+          )
+        })}
         {snapshotsLoading && <div>Loading more...</div>}
       </div>
     </>

@@ -47,7 +47,7 @@ const useSnapshots = (meetingId: number, activeChip: string) => {
         const response = await axios.get<SnapshotsResponse>(
           `/api/v1/meetings/${meetingId}/snaps/${currentEndpoint}`,
           {
-            params: { cursorId, limit: 5 },
+            params: { cursorId, limit: 12 },
             headers: {
               'Content-Type': 'application/json;charset=UTF-8',
             },

@@ -1,7 +1,9 @@
+import Lottie from 'lottie-react'
 import Image from 'next/image'
 import { Button } from '@/components/Button'
 import useUserStore from '@/stores/useUserStore'
 import Close from 'public/icons/close.svg'
+import welcomeAnimation from 'public/lotties/welcome.json'
 
 interface WelcomeProps {
   onEnterClick: () => void
@@ -24,7 +26,13 @@ function Welcome({ onEnterClick, onBackClick }: WelcomeProps) {
       <div className="text-gray-900 font-bold text-[22px]">
         모임 앨범에 들어오신걸 환영해요!
       </div>
-
+      <div className="flex-grow flex items-center justify-center">
+        <Lottie
+          animationData={welcomeAnimation}
+          loop={false}
+          style={{ width: 300, height: 300 }}
+        />
+      </div>
       <Button
         onClick={onEnterClick}
         variant="primary"

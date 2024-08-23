@@ -15,7 +15,7 @@ interface MeetingHeaderProps {
 }
 
 const MeetingHeader = ({ meetingInfo, scrollPosition }: MeetingHeaderProps) => {
-  const { nickname, shootCount } = useUserStore()
+  const { nickname } = useUserStore()
   let meetingStatus = ''
   if (dayjs().isBefore(meetingInfo.startDate, 'day')) {
     meetingStatus = '모임 시작전'

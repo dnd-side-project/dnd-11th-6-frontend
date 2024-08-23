@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import useUserStore from '@/stores/useUserStore'
 
 interface MeetingActionButtonsProps {
@@ -18,10 +19,17 @@ const MeetingActionButtons = ({
       {shootCount === 10 ? (
         ''
       ) : (
-        <button className="bg-[#12C7E0] text-white px-5 py-3 gap-1 rounded-full flex items-center">
-          <Image src="/icons/camera.svg" alt="Camera" width={20} height={20} />
-          <span>스냅찍기</span>
-        </button>
+        <Link href="/meeting/photo-capture">
+          <button className="bg-[#12C7E0] text-white px-5 py-3 gap-1 rounded-full flex items-center">
+            <Image
+              src="/icons/camera.svg"
+              alt="Camera"
+              width={20}
+              height={20}
+            />
+            <span>스냅찍기</span>
+          </button>
+        </Link>
       )}
 
       <button

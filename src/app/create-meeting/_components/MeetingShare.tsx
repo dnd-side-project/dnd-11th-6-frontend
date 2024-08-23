@@ -1,6 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import useMeetStore from '@/stores/useMeetStore'
@@ -118,9 +119,11 @@ function MeetingShare() {
           <p className="text-black font-semibold text-base ml-2">공유하기</p>
         </Button>
       </div>
-      <Button variant="primary" className="mt-auto mb-5" fullWidth>
-        앨범 입장하기
-      </Button>
+      <Link href="/entry-meeting">
+        <Button variant="primary" className="mt-auto mb-5 text-white" fullWidth>
+          앨범 입장하기
+        </Button>
+      </Link>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useGetSnapDetail } from '@/apis/queries/snapQueries'
 import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import Dice from 'public/icons/dice.svg'
 import Download from 'public/icons/download.svg'
@@ -22,7 +23,7 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
   const handleDownload = async () => {
     if (!snapData) return
     try {
-      const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${snapData.data.snapUrl}`
+      const imageUrl = `${IMAGE_BASE_URL}/${snapData.data.snapUrl}`
       const response = await fetch(imageUrl)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -43,7 +44,7 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
   if (!snapData) return <div>No data available</div>
 
   const { snapUrl, shootDate, type, photographer, mission } = snapData.data
-  const fullImageUrl = `${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${snapUrl}`
+  const fullImageUrl = `${IMAGE_BASE_URL}/${snapUrl}`
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen ">

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Button } from '@/components/Button'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
@@ -43,7 +44,7 @@ function MeetingInfo({
             {meetingData?.thumbnailUrl ? (
               <Image
                 loader={({ src }) => src}
-                src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/${meetingData.thumbnailUrl}`}
+                src={`${IMAGE_BASE_URL}/${meetingData.thumbnailUrl}`}
                 alt="thumbnail"
                 layout="fill"
                 objectFit="cover"

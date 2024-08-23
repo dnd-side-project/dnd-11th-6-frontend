@@ -1,8 +1,7 @@
 import axios from 'axios'
 
+import { API_BASE_URL } from '@/constant/base_url'
 import { MeetingFormData } from '@/lib/meetingTypes'
-
-const API_BASE_URL = 'https://api.get-snappy.co.kr/api/v1'
 
 const createMeeting = async (formData: MeetingFormData) => {
   const meetingData = {

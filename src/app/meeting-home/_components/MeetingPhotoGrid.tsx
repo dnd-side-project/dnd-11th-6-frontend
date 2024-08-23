@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useCallback } from 'react'
+import React, { useRef, useCallback } from 'react'
 import Image from 'next/image'
 import useSnapshots from '@/apis/getSnapApi'
 import useMeetingStore from '@/stores/useMeetingStore'
 
-const MeetingPhotoGrid = () => {
+interface PhothoGirdProps {
+  activeChip: string
+}
+
+const MeetingPhotoGrid = ({ activeChip }: PhothoGirdProps) => {
   const { meetingData } = useMeetingStore()
   const {
     totalSnapshots,
@@ -12,7 +16,7 @@ const MeetingPhotoGrid = () => {
     error: snapshotsError,
     fetchMore,
     hasMore,
-  } = useSnapshots(meetingData?.meetingId ?? 0)
+  } = useSnapshots(meetingData?.meetingId ?? 0, activeChip)
 
   const observer = useRef<IntersectionObserver | null>(null)
   const lastSnapshotElementRef = useCallback(

@@ -53,7 +53,7 @@ function MeetingHomePage() {
           ))}
         </div>
 
-        <MeetingPhotoGrid />
+        <MeetingPhotoGrid activeChip={activeChip} />
         <MeetingActionButtons />
       </div>
     </div>

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import useMeetingStore from '@/stores/useMeetingStore'
 import {
   LinkInput,
@@ -9,12 +10,26 @@ import {
   NicknameInput,
   PasswordInput,
   Welcome,
-} from './_components'
+} from '../_components'
 
 function EntryMeeting() {
   const router = useRouter()
+  const params = useParams()
   const [page, setPage] = useState(0)
   const meetingData = useMeetingStore((state) => state.meetingData)
+  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
+
+  const meetingCode = params?.meetingCode as string
+
+  const { data, isLoading, isSuccess, isError } =
+    useCheckMeetingLink(meetingCode)
+
+  useEffect(() => {
+    if (meetingCode && isSuccess && data) {
+      setMeetingData(data.data)
+      setPage(1)
+    }
+  }, [meetingCode, isSuccess, data, setMeetingData])
 
   const renderPage = () => {
     switch (page) {
@@ -22,7 +37,7 @@ function EntryMeeting() {
         return (
           <LinkInput
             onEnterClick={() => {
-              setPage(page + 1)
+              setPage(1)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -32,9 +47,10 @@ function EntryMeeting() {
       case 1:
         return meetingData ? (
           <MeetingInfo
-            onEnterClick={() => setPage(page + 1)}
+            meetingCode={meetingCode}
+            onEnterClick={() => setPage(2)}
             onBackClick={() => {
-              setPage(page - 1)
+              setPage(0)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -44,9 +60,9 @@ function EntryMeeting() {
       case 2:
         return (
           <PasswordInput
-            onEnterClick={() => setPage(page + 1)}
+            onEnterClick={() => setPage(3)}
             onBackClick={() => {
-              setPage(page - 1)
+              setPage(1)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -56,9 +72,9 @@ function EntryMeeting() {
       case 3:
         return (
           <NicknameInput
-            onEnterClick={() => setPage(page + 1)}
+            onEnterClick={() => setPage(4)}
             onBackClick={() => {
-              setPage(page - 1)
+              setPage(2)
             }}
             onHomeClick={() => {
               router.push('/')
@@ -77,8 +93,16 @@ function EntryMeeting() {
           />
         )
       default:
-        return <LinkInput onEnterClick={() => setPage(page + 1)} />
+        return <LinkInput onEnterClick={() => setPage(1)} />
     }
+  }
+
+  if (meetingCode && isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (meetingCode && isError) {
+    return <div>Error loading meeting data</div>
   }
 
   return <div className="flex flex-col items-center">{renderPage()}</div>

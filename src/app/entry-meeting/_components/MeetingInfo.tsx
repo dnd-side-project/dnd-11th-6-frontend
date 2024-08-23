@@ -1,28 +1,46 @@
+import { useEffect } from 'react'
 import Image from 'next/image'
+import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
 
 interface MeetingInfoProps {
+  meetingCode?: string
   onEnterClick: () => void
   onBackClick: () => void
   onHomeClick?: () => void
 }
 
 function MeetingInfo({
+  meetingCode,
   onEnterClick,
   onBackClick,
   onHomeClick,
 }: MeetingInfoProps) {
   const maxLength = 75
   const meetingData = useMeetingStore((state) => state.meetingData)
+  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
+
+  console.log('meetingData:', meetingData)
+
+  const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
+
+  useEffect(() => {
+    if (meetingCode && isSuccess && data) {
+      setMeetingData(data.data)
+    }
+  }, [meetingCode, isSuccess, data, setMeetingData])
+
   const shortDescription =
     meetingData?.description && meetingData.description.length > maxLength
       ? `${meetingData?.description.substring(0, maxLength)}...`
       : meetingData?.description
 
-  console.log('meetingData:', meetingData)
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="flex flex-col min-h-screen w-full p-4">

@@ -4,25 +4,27 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import Image from 'next/image'
 import SnapProgressBar from '@/components/SnapProgressBar'
 import { MeetingDataTypes } from '@/lib/meetingDataTypes'
+import useUserStore from '@/stores/useUserStore'
 import Right from '../../../../public/icons/right.svg'
 
 dayjs.extend(isSameOrAfter)
 
 interface MeetingHeaderProps {
-  meetingData: MeetingDataTypes
+  meetingInfo: MeetingDataTypes
   scrollPosition: number
 }
 
-const MeetingHeader = ({ meetingData, scrollPosition }: MeetingHeaderProps) => {
+const MeetingHeader = ({ meetingInfo, scrollPosition }: MeetingHeaderProps) => {
+  const { nickname, shootCount } = useUserStore()
   let meetingStatus = ''
-  if (dayjs().isBefore(meetingData.startDate, 'day')) {
+  if (dayjs().isBefore(meetingInfo.startDate, 'day')) {
     meetingStatus = '모임 시작전'
   } else if (
-    dayjs().isSameOrAfter(meetingData.startDate, 'day') &&
-    dayjs().isBefore(meetingData.endDate, 'day')
+    dayjs().isSameOrAfter(meetingInfo.startDate, 'day') &&
+    dayjs().isBefore(meetingInfo.endDate, 'day')
   ) {
     meetingStatus = '모임 진행 중'
-  } else if (dayjs().isSameOrAfter(meetingData.endDate, 'day')) {
+  } else if (dayjs().isSameOrAfter(meetingInfo.endDate, 'day')) {
     meetingStatus = '모임 종료'
   }
   return (
@@ -33,14 +35,14 @@ const MeetingHeader = ({ meetingData, scrollPosition }: MeetingHeaderProps) => {
     >
       <div className="flex items-center py-[18px]">
         <Image
-          src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${meetingData.thumbnailUrl}`}
+          src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${meetingInfo.thumbnailUrl}`}
           alt="Meeting Thumbnail"
           width={52}
           height={52}
           className="rounded-lg mr-3"
         />
         <div className="flex justify-between w-full">
-          <h1 className="text-2xl font-bold">{meetingData.name}</h1>
+          <h1 className="text-2xl font-bold">{meetingInfo.name}</h1>
           <Image src={Right} alt="Right Arrow" width={24} height={24} />
         </div>
       </div>
@@ -55,12 +57,12 @@ const MeetingHeader = ({ meetingData, scrollPosition }: MeetingHeaderProps) => {
         <span
           className={`${meetingStatus === '모임 진행 중' ? 'text-[#5FEAFF]' : 'text-gray-600'}`}
         >
-          {`${meetingStatus === '모임 종료' ? '' : dayjs(meetingData.endDate).format('YYYY-MM-DD')}${meetingStatus === '모임 진행 중' ? '까지 촬영 가능해요!' : meetingStatus === '모임 시작전' ? '부터 촬영 가능해요!' : `모임 링크 만료까지 ${dayjs(meetingData.endDate).diff(dayjs(), 'day')}일 남았어요.`}`}
+          {`${meetingStatus === '모임 종료' ? '' : dayjs(meetingInfo.endDate).format('YYYY-MM-DD')}${meetingStatus === '모임 진행 중' ? '까지 촬영 가능해요!' : meetingStatus === '모임 시작전' ? '부터 촬영 가능해요!' : `모임 링크 만료까지 ${dayjs(meetingInfo.endDate).diff(dayjs(), 'day')}일 남았어요.`}`}
         </span>
       </div>
       <div className="py-4">
         <h2 className="text-lg font-medium text-gray-700 mb-2">
-          알루리루붐님의 스냅피 활동
+          {`${nickname}님의 스냅피 활동`}
         </h2>
         <SnapProgressBar />
       </div>

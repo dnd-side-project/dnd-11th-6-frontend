@@ -42,7 +42,13 @@ const MeetingLayout = ({
               이전
             </Button>
           )}
-          <Button type="submit" disabled={!isValid} fullWidth variant="primary">
+          <Button
+            type="submit"
+            disabled={!isValid}
+            fullWidth
+            variant="primary"
+            className="text-white"
+          >
             다음
           </Button>
         </div>

@@ -1,29 +1,48 @@
 import React from 'react'
 import Image from 'next/image'
-import useSnapStore from '@/stores/useSnapStore'
+import Link from 'next/link'
+import useUserStore from '@/stores/useUserStore'
 
-const MeetingActionButtons = () => {
-  const { snapCount, totalSnapCount } = useSnapStore()
+interface MeetingActionButtonsProps {
+  isSelecting: boolean
+  onToggleSelecting: () => void
+}
+
+const MeetingActionButtons = ({
+  isSelecting,
+  onToggleSelecting,
+}: MeetingActionButtonsProps) => {
+  const { shootCount } = useUserStore()
 
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center p-4 gap-2 shadow-top animate-float">
-      {snapCount === totalSnapCount ? (
+      {shootCount === 10 ? (
         ''
       ) : (
-        <button className="bg-[#12C7E0] text-white px-5 py-3 gap-1 rounded-full flex items-center">
-          <Image src="/icons/camera.svg" alt="Camera" width={20} height={20} />
-          <span>스냅찍기</span>
-        </button>
+        <Link href="/meeting/photo-capture">
+          <button className="bg-[#12C7E0] text-white px-5 py-3 gap-1 rounded-full flex items-center">
+            <Image
+              src="/icons/camera.svg"
+              alt="Camera"
+              width={20}
+              height={20}
+            />
+            <span>스냅찍기</span>
+          </button>
+        </Link>
       )}
 
-      <button className="bg-gray-200 text-gray-800 px-5 py-3 gap-1 rounded-full flex items-center">
+      <button
+        className="bg-gray-200 text-gray-800 px-5 py-3 gap-1 rounded-full flex items-center"
+        onClick={onToggleSelecting}
+      >
         <Image
           src="/icons/download.svg"
           alt="Download"
           width={20}
           height={20}
         />
-        <span>다운로드</span>
+        <span>{isSelecting ? '다운로드' : '선택하기'}</span>
       </button>
     </div>
   )

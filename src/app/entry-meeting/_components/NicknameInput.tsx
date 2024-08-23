@@ -130,7 +130,7 @@ function NicknameInput({
         control={control}
         rules={{ required: '닉네임을 입력해주세요' }}
         placeholder="나의 닉네임 입력"
-        wrapperClassName="mt-10"
+        // wrapperClassName="mt-10"
         success={isSuccess}
         error={errorMessage}
         checking={isLoading}

@@ -15,6 +15,7 @@ export function QRPopup({
   onClose,
 }: QRPopupProps) {
   const themeColorClass = themeColor ? `bg-${themeColor}` : 'bg-point-mint'
+  console.log(qrData)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg">
       <div className="relative bg-white rounded-[14px] p-8 w-4/5 max-w-sm">

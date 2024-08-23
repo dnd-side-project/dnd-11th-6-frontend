@@ -24,7 +24,6 @@ function Section4() {
           subTitle="랜덤미션을 제공해요."
           description="낯선 사람과도 어색함 없이"
           subDescription="더욱 재미있는 추억을 남길 수 있을 거예요."
-          isLast
         />
       </div>
     </section>

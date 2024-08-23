@@ -6,7 +6,6 @@ interface FeatureItemProps {
   subTitle: string
   description: string
   subDescription: string
-  isLast?: boolean
 }
 
 function FeatureItem({
@@ -15,7 +14,6 @@ function FeatureItem({
   subTitle,
   description,
   subDescription,
-  isLast = false,
 }: FeatureItemProps) {
   return (
     <div>

@@ -5,7 +5,6 @@ import Providers from './providers'
 export const metadata: Metadata = {
   title: 'Snappy',
   description: '즐거운 모임의 순간들을 스냅피와 함께하세요!',
-  themeColor: '#9aa7fe',
   icons: {
     icon: '/favicon.ico',
     apple: '/icons/icon-512x512.png',

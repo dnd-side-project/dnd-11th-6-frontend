@@ -19,8 +19,6 @@ const meta: Meta<typeof Tooltip> = {
     arrowClassName: { control: 'text' },
     bgColor: { control: 'text' },
     textColor: { control: 'text' },
-    rounded: { control: 'text' },
-    padding: { control: 'text' },
   },
 }
 
@@ -66,8 +64,6 @@ export const CustomShape: Story = {
     message: 'Custom shaped tooltip',
     position: 'bottom',
     arrowClassName: 'left-1/2',
-    rounded: 'rounded-lg',
-    padding: 'p-3',
   },
 }
 

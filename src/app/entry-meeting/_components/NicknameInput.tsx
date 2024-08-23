@@ -53,10 +53,17 @@ function NicknameInput({
   const userRole = useUserStore((state) => state.role)
   const meetingName = useMeetingStore((state) => state.meetingData?.name)
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
-  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
-
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(
+    undefined,
+  )
+  const [successMessage, setSuccessMessage] = useState<string | undefined>(
+    undefined,
+  )
   const nicknameValue = watch('nickname')
   const debouncedNickname = useDebounce(nicknameValue, 500)
+
+  const isNicknameValid =
+    nicknameSchema.shape.nickname.safeParse(nicknameValue).success
 
   const {
     data: nicknameCheckData,
@@ -64,26 +71,44 @@ function NicknameInput({
     isSuccess,
     isError,
     error: nicknameCheckError,
-  } = useCheckNickname(meetingId!, debouncedNickname)
-
+  } = useCheckNickname(meetingId!, debouncedNickname, {
+    queryKey: ['checkNickname', meetingId, debouncedNickname],
+    enabled: isNicknameValid && debouncedNickname.length > 0,
+  })
   const joinMeetingMutation = useJoinMeeting()
 
   useEffect(() => {
+    if (!isNicknameValid) {
+      setApiErrorMessage(undefined)
+      setSuccessMessage(undefined)
+      return
+    }
+
     if (isError) {
       console.error(nicknameCheckError)
       setApiErrorMessage('오류가 발생했습니다. 다시 시도해주세요.')
+      setSuccessMessage(undefined)
     } else if (isSuccess) {
       if (!nicknameCheckData.data.isAvailableNickname) {
         setApiErrorMessage('이미 사용중인 닉네임이에요. :(')
+        setSuccessMessage(undefined)
       } else {
-        setApiErrorMessage(null)
+        setApiErrorMessage(undefined)
+        setSuccessMessage('사용가능한 닉네임이에요!')
       }
     } else {
-      setApiErrorMessage(null)
+      setApiErrorMessage(undefined)
+      setSuccessMessage(undefined)
     }
-  }, [isError, isSuccess, nicknameCheckData, nicknameCheckError])
+  }, [
+    isError,
+    isSuccess,
+    nicknameCheckData,
+    nicknameCheckError,
+    isNicknameValid,
+  ])
 
-  const errorMessage = apiErrorMessage || errors.nickname?.message || null
+  const errorMessage = errors.nickname?.message || apiErrorMessage || undefined
 
   const onSubmit = handleSubmit((formData) => {
     joinMeetingMutation.mutate(
@@ -103,6 +128,7 @@ function NicknameInput({
           setApiErrorMessage(
             '모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.',
           )
+          setSuccessMessage(undefined)
         },
       },
     )
@@ -124,18 +150,17 @@ function NicknameInput({
       <div className="text-gray-700 font-normal text-sm mt-2">
         특수문자, 공백은 사용할 수 없어요.
       </div>
-
+      <div className="mb-10" />
       <Input
         name="nickname"
         control={control}
         rules={{ required: '닉네임을 입력해주세요' }}
         placeholder="나의 닉네임 입력"
-        // wrapperClassName="mt-10"
-        success={isSuccess}
+        success={isSuccess && !errorMessage && isNicknameValid}
         error={errorMessage}
         checking={isLoading}
         description="(최대8자)"
-        successMessage="사용가능한 닉네임이에요!"
+        successMessage={successMessage}
       />
 
       <div className="flex mt-auto mb-5">
@@ -153,7 +178,12 @@ function NicknameInput({
           fullWidth
           variant="primary"
           className=" text-white"
-          disabled={!isSuccess || !!errorMessage || nicknameValue === ''}
+          disabled={
+            !isSuccess ||
+            !!errorMessage ||
+            nicknameValue === '' ||
+            !isNicknameValid
+          }
         >
           완료
         </Button>

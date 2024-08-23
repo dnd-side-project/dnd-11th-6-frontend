@@ -6,7 +6,7 @@
     "dev": "node server.mjs",
     "dev:https": "USE_HTTPS=true node server.mjs",
     "build": "next build",
-    "start": "NODE_ENV=production node server.mjs",
+    "start": "next start",
     "start:https": "NODE_ENV=production USE_HTTPS=true node server.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

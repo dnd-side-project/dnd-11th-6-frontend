@@ -55,7 +55,7 @@ const useMeetStore = create<MeetStore>((set) => ({
   setMeetingResult: async (result: Omit<MeetingResult, 'qrCodeUrl'>) => {
     try {
       const qrCodeUrl = await generateQRCode(
-        `https://get-snappy.co.kr/${result.meetingLink}`,
+        `https://get-snappy.co.kr/entry-meeting/${result.meetingLink}`,
       )
       set({
         meetingResult: {

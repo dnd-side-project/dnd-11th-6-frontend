@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+// import useSnapshots from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
@@ -17,6 +18,13 @@ function MeetingHomePage() {
   const [activeChip, setActiveChip] = useState('전체')
   const scrollPosition = useScrollPosition()
   const { data: meetingData, isLoading, error } = useMeetingData(1)
+  // const {
+  //   snapshots,
+  //   loading: snapshotsLoading,
+  //   error: snapshotsError,
+  //   fetchMore,
+  //   hasMore,
+  // } = useSnapshots(1)
 
   const chips = [
     { label: '전체', icon: '' },

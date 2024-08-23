@@ -1,80 +1,120 @@
+import { format } from 'date-fns/format'
 import Image from 'next/image'
+import useUploadSnap from '@/apis/queries/snapQueries'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
-import usePhoto from '@/hooks/usePhoto'
+import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
+import Back from 'public/icons/back.svg'
+import Dice from 'public/icons/dice.svg'
+import base64ToFile from '../_utils/base64ToFile'
+import formatCaptureTime from '../_utils/formatCaptureTime'
 
 type PhotoViewProps = {
   photo: string
+  captureTime: Date | null
   onRetake: () => void
-  goBack: () => void
+  goHome: () => void
 }
 
-function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
+function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
   const showTooltip = useTooltipStore((state) => state.showTooltip)
   const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
-  const currentMission = useMissionStore((state) => state.currentMission)
+  const { currentMission, missionType, missionId } = useMissionStore()
+  const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
 
-  const { uploadPhoto, isUploading } = usePhoto()
+  const { mutate: uploadSnap, isPending: isUploading } = useUploadSnap({
+    onSuccess: () => {
+      goHome()
+    },
+    onError: (error) => {
+      console.error('Failed to upload snap:', error)
+    },
+  })
 
   const handleUpload = async () => {
+    if (!meetingId) {
+      console.error('Meeting ID is not available')
+      return
+    }
+
+    const formattedDate = captureTime
+      ? format(captureTime, "yyyy-MM-dd'T'HH:mm")
+      : format(new Date(), "yyyy-MM-dd'T'HH:mm")
+
+    const snapData: {
+      shootDate: string
+      randomMissionId?: number
+      missionId?: number
+    } = {
+      shootDate: formattedDate,
+    }
+
+    if (missionType === 'random') {
+      snapData.randomMissionId = missionId
+    } else if (missionType === 'select') {
+      snapData.missionId = missionId
+    }
+
     try {
-      await uploadPhoto(photo)
+      const file = await base64ToFile(photo, 'snap.jpg')
+      uploadSnap({ meetingId, snapData, image: file, missionType })
     } catch (error) {
-      console.error('Upload failed:', error)
+      console.error('Error processing image:', error)
     }
   }
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen p-4">
-      <div className="flex justify-between items-center h-12 w-full">
-        <div className="flex-1">{}</div>
+    <div className="flex flex-col items-center w-full min-h-screen ">
+      {/* header */}
+      <div className="flex justify-between items-center h-12 w-full p-4">
+        <button onClick={onRetake} className="cursor-pointer">
+          <Image src={Back} alt="back" className="w-[7.5px] h-[15px]" />
+        </button>
         <div className="flex-1 flex justify-center items-center">
-          <div className="font-bold">촬영자님의 스냅</div>
+          <div className="font-bold">스냅 확인하기</div>
         </div>
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={goBack}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') goBack()
-          }}
-          className="flex-1 flex justify-end items-center cursor-pointer"
-        >
-          <Image src={Close} alt="Close Button" className="w-6 h-6" />
-        </div>
+        <button onClick={goHome} className="cursor-pointer">
+          <Image src={Close} alt="Close Button" className="w-4 h-4" />
+        </button>
       </div>
-      <div className="h-[60px] mt-6">
+
+      <div className="mt-6">
         {currentMission && (
-          <div className=" rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] font-semibold">
+          <div className=" rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] text-body2-medium text-gray-900">
             {currentMission}
           </div>
         )}
       </div>
-      <Image
-        src={photo}
-        alt="찍은 사진"
-        width={360}
-        height={480}
-        className="w-[360px] h-[480px] rounded-[14px] mt-3"
-        style={{ objectFit: 'cover' }}
-      />
-      <div className="flex  mt-3">
-        <div className="text-[#888D91] mr-3">2024.08.06 PM 10:08</div>
-        {currentMission && (
-          <div className="flex items-center bg-gray-100 rounded-[14px] px-[10px] py-1 text-xs text-gray-900">
-            모임미션
+
+      {/* photo */}
+      <div className="w-full mt-auto mb-auto">
+        <div className="relative w-full pb-[100%] overflow-hidden rounded-[14px]">
+          <Image src={photo} alt="찍은 사진" fill className="object-cover" />
+        </div>
+
+        <div className="flex justify-center items-center mt-3">
+          {currentMission && (
+            <div className="flex items-center bg-gray-100 rounded-[14px] px-[10px] py-1 text-caption text-gray-900 mr-3">
+              <Image src={Dice} alt="Dice Icon" className="w-4 h-4 mr-1" />
+              {missionType === 'random' ? '랜덤미션' : '모임미션'}
+            </div>
+          )}
+          <div className="text-label text-gray-600">
+            {formatCaptureTime(captureTime)}
           </div>
-        )}
+        </div>
       </div>
-      <div className="button-group flex w-full mt-auto mb-5 ">
+
+      {/* buttons */}
+      <div className="button-group flex w-full mt-auto mb-5 p-4">
         <Button
           type="button"
           onClick={onRetake}
-          variant="outline"
+          variant="light"
           disabled={isUploading}
         >
           <Image src={Refresh} alt="Retake Button" className="w-8 h-8" />
@@ -82,20 +122,21 @@ function PhotoView({ photo, onRetake, goBack }: PhotoViewProps) {
         <div className="w-3" />
         <Button
           type="button"
-          onClick={() => handleUpload()}
+          onClick={handleUpload}
           variant="primary"
-          className="text-white w-full relative"
+          className="text-white text-body1-semibold w-full relative bg-point-mint"
+          disabled={isUploading}
         >
           {showTooltip && (
             <Tooltip
-              message="내 사진에 미션을 더 해봐요!"
+              message="한 번 업로드된 스냅은 삭제가 어려워요!"
               onClose={() => setShowTooltip(false)}
               position="top"
               arrowClassName="left-1/2"
-              className="bottom-16 left-1/2"
+              className="bottom-16 left-1/3"
             />
           )}
-          스냅 업로드하기
+          {isUploading ? '업로드 중...' : '스냅 업로드하기'}
         </Button>
       </div>
     </div>

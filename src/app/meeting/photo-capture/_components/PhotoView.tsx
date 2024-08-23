@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { format } from 'date-fns/format'
 import Image from 'next/image'
 import useUploadSnap from '@/apis/queries/snapQueries'
@@ -21,10 +22,17 @@ type PhotoViewProps = {
 }
 
 function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
-  const showTooltip = useTooltipStore((state) => state.showTooltip)
-  const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
+  const { hideTooltip, showTooltip } = useTooltipStore()
   const { currentMission, missionType, missionId } = useMissionStore()
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
+
+  useEffect(() => {
+    if (currentMission) {
+      hideTooltip()
+    } else {
+      showTooltip('upload')
+    }
+  }, [currentMission, hideTooltip, showTooltip])
 
   const { mutate: uploadSnap, isPending: isUploading } = useUploadSnap({
     onSuccess: () => {
@@ -127,15 +135,15 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
           className="text-white text-body1-semibold w-full relative bg-point-mint"
           disabled={isUploading}
         >
-          {showTooltip && (
-            <Tooltip
-              message="한 번 업로드된 스냅은 삭제가 어려워요!"
-              onClose={() => setShowTooltip(false)}
-              position="top"
-              arrowClassName="left-1/2"
-              className="bottom-16 left-1/3"
-            />
-          )}
+          <Tooltip
+            message="한 번 업로드된 스냅은 삭제가 어려워요!"
+            onClose={hideTooltip}
+            position="top"
+            bgColor="bg-gray-700"
+            textColor="text-white"
+            arrowClassName="left-1/2"
+            className="bottom-16 left-1/3"
+          />
           {isUploading ? '업로드 중...' : '스냅 업로드하기'}
         </Button>
       </div>

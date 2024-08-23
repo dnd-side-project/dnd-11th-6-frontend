@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
@@ -23,10 +24,17 @@ function CameraView({
   onToggleCamera,
   goBack,
 }: CameraViewProps) {
-  const showTooltip = useTooltipStore((state) => state.showTooltip)
-  const setShowTooltip = useTooltipStore((state) => state.setShowTooltip)
+  const { activeTooltip, hideTooltip, showTooltip } = useTooltipStore()
   const currentMission = useMissionStore((state) => state.currentMission)
   const setCurrentMission = useMissionStore((state) => state.setCurrentMission)
+
+  useEffect(() => {
+    if (currentMission) {
+      hideTooltip()
+    } else {
+      showTooltip('mission')
+    }
+  }, [currentMission, hideTooltip, showTooltip])
 
   return (
     <div className="flex flex-col min-h-screen w-full ">
@@ -49,10 +57,10 @@ function CameraView({
                   </>
                 )}
               </div>
-              {!currentMission && showTooltip && (
+              {!currentMission && activeTooltip === 'mission' && (
                 <Tooltip
                   message="내 사진에 미션을 더 해봐요!"
-                  onClose={() => setShowTooltip(false)}
+                  onClose={hideTooltip}
                   position="bottom"
                   arrowClassName="left-12"
                   className="top-12 left-28"

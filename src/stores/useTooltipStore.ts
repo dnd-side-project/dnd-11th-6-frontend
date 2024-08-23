@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type TooltipType = 'password' | 'admin' | null
+type TooltipType = 'password' | 'admin' | 'mission' | 'upload' | null
 
 interface TooltipState {
   activeTooltip: TooltipType

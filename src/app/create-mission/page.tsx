@@ -1,10 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import {
+  useGetCompletedMissions,
+  useGetInCompleteMissions,
+  useGetRandomMissions,
+} from '@/apis/queries/missionQuries'
 import { Button } from '@/components/Button'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
+import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
@@ -26,22 +32,51 @@ const missions = [
 
 function MissionCreationPage() {
   const router = useRouter()
-  const { missionType, setMissionType } = useMissionStore()
+  const {
+    missionId,
+    missionType,
+    currentMission,
+    setMissionId,
+    setMissionType,
+    setCurrentMission,
+  } = useMissionStore()
   const [isSpinning, setIsSpinning] = useState(false)
-  const selectedMission = useMissionStore((state) => state.currentMission)
-  const setSelectedMission = useMissionStore((state) => state.setCurrentMission)
+  const meetingId = useMeetingStore().meetingData?.meetingId
   const [visibleMissions, setVisibleMissions] = useState<string[]>(['?'])
+  const {
+    data: completedMission,
+    isLoading: completedMissionLoading,
+    isError: completedMissionError,
+  } = useGetCompletedMissions(meetingId || 0)
+  const {
+    data: inCompleteMission,
+    isLoading: inCompleteMissionLoading,
+    isError: inCompleteMissionError,
+  } = useGetInCompleteMissions(meetingId || 0)
+  const {
+    data: randomMissions,
+    isLoading: randomMissionLoading,
+    isError: randomMissionError,
+  } = useGetRandomMissions()
 
-  const startSpinning = () => {
+  useEffect(() => {
+    if (randomMissions && randomMissions.data.length > 0) {
+      setVisibleMissions([randomMissions.data[0].content])
+    }
+  }, [randomMissions])
+
+  const startSpinning = async () => {
     setIsSpinning(true)
-    setSelectedMission(null)
+    setCurrentMission(null)
     let counter = 0
     const spinInterval = setInterval(() => {
       setVisibleMissions((prevMissions) => {
         const newMissions = [...prevMissions]
         newMissions.pop()
         newMissions.unshift(
-          missions[Math.floor(Math.random() * missions.length)],
+          randomMissions?.data[
+            Math.floor(Math.random() * randomMissions.data.length)
+          ]?.content || '?',
         )
         return newMissions
       })
@@ -49,23 +84,63 @@ function MissionCreationPage() {
       if (counter >= 30) {
         clearInterval(spinInterval)
         setIsSpinning(false)
-        const randomMission =
-          missions[Math.floor(Math.random() * missions.length)]
-        setSelectedMission(randomMission)
-        setVisibleMissions([randomMission])
+        const selectedMission =
+          randomMissions?.data[
+            Math.floor(Math.random() * randomMissions.data.length)
+          ]
+        if (selectedMission) {
+          setCurrentMission(selectedMission.content)
+          setMissionId(selectedMission.randomMissionId)
+          setVisibleMissions([selectedMission.content])
+        }
       }
     }, 100)
   }
 
-  const selectMission = (mission: string) => {
-    console.log('selected mission: ', mission)
-    setSelectedMission(mission)
+  const selectMission = (mission: {
+    missionId?: number
+    missionType: string
+    currentMission: string
+  }) => {
+    console.log('selected mission: ', mission.currentMission)
+    setCurrentMission(mission.currentMission)
+    if (mission.missionType === 'random' || mission.missionType === 'select') {
+      setMissionType(mission.missionType)
+    } else {
+      console.error('Invalid mission type:', mission.missionType)
+    }
+
+    if (mission.missionId !== null) {
+      setMissionId(mission.missionId ?? 0)
+    }
   }
 
   const performMission = () => {
-    setSelectedMission(null)
+    console.log('selected mission: ', currentMission)
+    setCurrentMission(currentMission)
+    if (missionId !== null) {
+      setMissionId(missionId)
+    }
     setVisibleMissions(['?'])
+    router.back()
   }
+
+  if (
+    completedMissionLoading ||
+    inCompleteMissionLoading ||
+    randomMissionLoading
+  ) {
+    return <div>Loading...</div>
+  }
+  if (completedMissionError || inCompleteMissionError || randomMissionError) {
+    return <div>Error</div>
+  }
+
+  console.log('currentMission: ', currentMission)
+  console.log('missionType: ', missionType)
+  console.log('missionId: ', missionId)
+  console.log('Incomplete Missions:', inCompleteMission)
+  console.log('Completed Missions:', completedMission)
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -83,7 +158,8 @@ function MissionCreationPage() {
         value={missionType === 'select'}
         onChange={(value) => {
           setMissionType(value ? 'select' : 'random')
-          setSelectedMission(null)
+          setCurrentMission(null)
+          setMissionId(null)
         }}
         width="220px"
         activeColor="bg-white"
@@ -112,36 +188,36 @@ function MissionCreationPage() {
         </div>
       ) : (
         <div className="flex-grow p-4 w-full max-w-md">
-          {['DND 로고와 함께 사진찍기', '가장 연장자와 함께 사진찍기'].map(
-            (mission, index) => (
-              <Button
-                type="button"
-                variant="outline"
-                key={index}
-                padding="p-6"
-                className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${selectedMission === mission ? 'border-[3px]' : ''}`}
-                onClick={() => selectMission(mission)}
-              >
-                <div className="w-full flex justify-start">{mission}</div>
-              </Button>
-            ),
-          )}
+          {inCompleteMission?.data.map((mission) => (
+            <Button
+              type="button"
+              variant="outline"
+              key={mission.missionId}
+              padding="px-6 py-5"
+              className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${currentMission === mission.content ? 'border-[3px] border-point-mint' : ''}`}
+              onClick={() =>
+                selectMission({
+                  missionId: mission.missionId,
+                  missionType: 'select',
+                  currentMission: mission.content,
+                })
+              }
+            >
+              <div className="w-full flex justify-start">{mission.content}</div>
+            </Button>
+          ))}
           <div className="text-gray-700 text-sm font-normal mt-5 mb-3">
-            총 3개의 미션을 완료했어요!
+            총 {completedMission?.data.length}개의 미션을 완료했어요!
           </div>
-          {[
-            'DND 로고와 함께 사진찍기',
-            'DND 로고와 함께 사진찍기',
-            'DND 로고와 함께 사진찍기',
-          ].map((mission, index) => (
+          {completedMission?.data.map((mission) => (
             <Button
               type="button"
               variant="light"
-              key={index}
+              key={mission.missionId}
               padding="p-6"
               className="flex justify-between items-center w-full border-none text-gray-900 font-semibold text-base mb-3 cursor-pointer"
             >
-              {mission}
+              {mission.content}
               <Image src={Twinkle} alt="twinkle" />
             </Button>
           ))}
@@ -153,20 +229,20 @@ function MissionCreationPage() {
           <>
             <Button
               type="button"
-              variant={selectedMission ? 'light' : 'primary'}
+              variant={currentMission ? 'light' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
-              className={selectedMission ? 'w-20 px-3' : 'w-full text-white'}
+              className={currentMission ? 'w-20 px-3' : 'w-full text-white'}
             >
               {isSpinning ? (
                 '미션 뽑는 중...'
-              ) : selectedMission ? (
+              ) : currentMission ? (
                 <Image src={Refresh} alt="refresh" className="w-5" />
               ) : (
                 '미션 뽑기'
               )}
             </Button>
-            {selectedMission && (
+            {currentMission && (
               <Button
                 type="button"
                 variant="primary"
@@ -182,7 +258,7 @@ function MissionCreationPage() {
             type="button"
             variant="primary"
             onClick={performMission}
-            disabled={!selectedMission}
+            disabled={!currentMission}
             className="w-full text-white"
           >
             미션 수행하기

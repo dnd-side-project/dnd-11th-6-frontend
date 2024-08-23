@@ -1,6 +1,27 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { apiCall, ApiError, ApiResponse } from '../apiUtils'
 
+type GetRandomMissionsResponse = ApiResponse<
+  Array<{
+    randomMissionId: number
+    content: string
+  }>
+>
+
+type GetCompletedMissionsResponse = ApiResponse<
+  Array<{
+    missionId: number
+    content: string
+  }>
+>
+
+type GetInCompleteMissionResponse = ApiResponse<
+  Array<{
+    missionId: number
+    content: string
+  }>
+>
+
 type GetParticipantMissionsResponse = ApiResponse<
   Array<{
     missionId: number
@@ -14,6 +35,40 @@ type GetLeaderMissionResponse = ApiResponse<
     hasParticipants: boolean
   }>
 >
+
+export const useGetRandomMissions = (
+  options?: UseQueryOptions<GetRandomMissionsResponse, ApiError>,
+) =>
+  useQuery<GetRandomMissionsResponse, ApiError>({
+    queryKey: ['missions', 'random'],
+    queryFn: () => apiCall('/random-missions'),
+    retry: false,
+    ...options,
+  })
+
+export const useGetCompletedMissions = (
+  meetingId: number,
+  options?: UseQueryOptions<GetCompletedMissionsResponse, ApiError>,
+) =>
+  useQuery<GetCompletedMissionsResponse, ApiError>({
+    queryKey: ['missions', meetingId, 'completed'],
+    queryFn: () => apiCall(`/meetings/${meetingId}/missions/completed`),
+    enabled: !!meetingId,
+    retry: false,
+    ...options,
+  })
+
+export const useGetInCompleteMissions = (
+  meetingId: number,
+  options?: UseQueryOptions<GetInCompleteMissionResponse, ApiError>,
+) =>
+  useQuery<GetInCompleteMissionResponse, ApiError>({
+    queryKey: ['missions', meetingId, 'incomplete'],
+    queryFn: () => apiCall(`/meetings/${meetingId}/missions/incomplete`),
+    enabled: !!meetingId,
+    retry: false,
+    ...options,
+  })
 
 export const useGetParticipantMissions = (
   meetingId: number,

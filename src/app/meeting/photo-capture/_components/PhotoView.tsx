@@ -62,9 +62,9 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
     }
 
     if (missionType === 'random') {
-      snapData.randomMissionId = missionId
+      snapData.randomMissionId = missionId ?? undefined
     } else if (missionType === 'select') {
-      snapData.missionId = missionId
+      snapData.missionId = missionId ?? undefined
     }
 
     try {

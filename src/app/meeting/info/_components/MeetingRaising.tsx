@@ -22,12 +22,12 @@ function MeetingRaising() {
   // )
   const meetingId =
     useMeetingStore((state) => state.meetingData?.meetingId) ?? 0
-
   const {
     data: shareData,
     isLoading: isShareDataLoading,
     error: shareDataError,
   } = useShareMeeting(meetingId)
+  console.log(shareData)
 
   const {
     data: missionData,
@@ -47,7 +47,7 @@ function MeetingRaising() {
   const [showQRPopup, setShowQRPopup] = useState(false)
 
   const handleShare = () => {
-    const meetingLink = `https://get-snappy/${shareData?.data.meetingLink}`
+    const meetingLink = `https://get-snappy.co.kr/entry-meeting/${shareData?.data.meetingLink}`
     let shareText = `우리 모임에서 같이 스냅피하자!\n${meetingLink}\n`
 
     if (sharePassword) {
@@ -77,7 +77,7 @@ function MeetingRaising() {
         <div className="flex">
           <Image src={LinkIcon} alt="link" className="mr-2" />
           <div className="text-body2 text-gray-700">
-            https://get-snappy/{shareData?.data.meetingLink}
+            https://get-snappy.co.kr/entry-meeting/{shareData?.data.meetingLink}
           </div>
         </div>
         <div className="flex mt-3">
@@ -170,7 +170,7 @@ function MeetingRaising() {
       </div>
       {showQRPopup && meetingName && (
         <QRPopup
-          qrData={`https://get-snappy/${shareData?.data.meetingLink}`}
+          qrData={`https://get-snappy/entry-meeting/${shareData?.data.meetingLink}`}
           meetingName={meetingName}
           // themeColor={meetingSymbolColor}
           onClose={() => setShowQRPopup(false)}

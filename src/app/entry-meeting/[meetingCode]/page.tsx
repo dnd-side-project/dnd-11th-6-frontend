@@ -19,15 +19,22 @@ function EntryMeeting() {
   const meetingData = useMeetingStore((state) => state.meetingData)
   const setMeetingData = useMeetingStore((state) => state.setMeetingData)
 
-  const meetingCode = params?.meetingCode as string
+  const meetingCode = params?.meetingCode as string | undefined
 
-  const { data, isLoading, isSuccess, isError } =
-    useCheckMeetingLink(meetingCode)
+  const { data, isLoading, isSuccess, isError } = useCheckMeetingLink(
+    meetingCode ?? '',
+    {
+      enabled: !!meetingCode,
+      queryKey: ['checkMeetingLink', meetingCode],
+    },
+  )
 
   useEffect(() => {
     if (meetingCode && isSuccess && data) {
       setMeetingData(data.data)
       setPage(1)
+    } else if (!meetingCode) {
+      setPage(0)
     }
   }, [meetingCode, isSuccess, data, setMeetingData])
 

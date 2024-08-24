@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import { Snapshot } from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
 import useMeetingData from '@/hooks/useMeetingData'
@@ -17,7 +16,6 @@ import {
 } from './_components'
 
 function MeetingHomePage() {
-  const router = useRouter()
   const [activeChip, setActiveChip] = useState('전체')
   const [selectedImages, setSelectedImages] = useState<string[]>([])
   const [isSelecting, setIsSelecting] = useState(false)
@@ -43,8 +41,6 @@ function MeetingHomePage() {
           ? prev.filter((url) => url !== snapshot.snapUrl)
           : [...prev, snapshot.snapUrl],
       )
-    } else {
-      router.push(`/meeting/photo/${snapshot.snapId}`)
     }
   }
 

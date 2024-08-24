@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import useSnapshots, { Snapshot } from '@/apis/getSnapApi'
 import useMeetingStore from '@/stores/useMeetingStore'
 
@@ -43,6 +44,45 @@ const MeetingPhotoGrid = ({
 
   if (snapshotsError) return <div>Error loading snapshots</div>
 
+  const renderImage = (snapshot: Snapshot, index: number) => {
+    const isSelected = selectedImages.includes(snapshot.snapUrl)
+    const imageContent = (
+      <div
+        className={`aspect-square relative ${isSelected ? 'border-4 border-blue-500' : ''}`}
+        ref={index === snapshots.length - 1 ? lastSnapshotElementRef : null}
+      >
+        <Image
+          src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${snapshot.snapUrl}`}
+          alt={`Photo ${snapshot.snapId} ${index + 1}`}
+          layout="fill"
+          objectFit="cover"
+          className="rounded-lg"
+        />
+      </div>
+    )
+
+    if (isSelecting) {
+      return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          key={`${snapshot.snapId}${index}`}
+          onClick={() => onSelectImage(snapshot)}
+          style={{ cursor: 'pointer' }}
+        >
+          {imageContent}
+        </div>
+      )
+    }
+    return (
+      <Link
+        key={`${snapshot.snapId}${index}`}
+        href={`/meeting/photo/${snapshot.snapId}`}
+      >
+        {imageContent}
+      </Link>
+    )
+  }
+
   return (
     <>
       <div>
@@ -52,29 +92,7 @@ const MeetingPhotoGrid = ({
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2 p-4">
-        {snapshots.map((snapshot, index) => {
-          const isSelected = selectedImages.includes(snapshot.snapUrl)
-          return (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-            <div
-              key={`${snapshot.snapId}${index}`}
-              className={`aspect-square relative ${isSelected ? 'border-4 border-blue-500' : ''}`}
-              ref={
-                index === snapshots.length - 1 ? lastSnapshotElementRef : null
-              }
-              onClick={() => onSelectImage(snapshot)}
-              style={{ cursor: isSelecting ? 'pointer' : 'default' }} // 선택 모드일 때만 포인터 표시
-            >
-              <Image
-                src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${snapshot.snapUrl}`}
-                alt={`Photo ${snapshot.snapId} ${index + 1}`}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
-            </div>
-          )
-        })}
+        {snapshots.map((snapshot, index) => renderImage(snapshot, index))}
         {snapshotsLoading && <div>Loading more...</div>}
       </div>
     </>

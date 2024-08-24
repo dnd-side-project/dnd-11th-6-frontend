@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { apiCall, ApiResponse, ApiError } from '../apiUtils'
 
 interface Participant {
@@ -15,6 +15,13 @@ type ParticipantsResponse = ApiResponse<{
   hasNext: boolean
 }>
 
+type GetParticipantsMeResponse = ApiResponse<{
+  participantId: number
+  role: string
+  nickname: string
+  shootCount: number
+}>
+
 export const useParticipants = (meetingId: number, limit: number = 10) =>
   useInfiniteQuery<ParticipantsResponse, ApiError>({
     queryKey: ['participants', meetingId, limit],
@@ -25,6 +32,12 @@ export const useParticipants = (meetingId: number, limit: number = 10) =>
     getNextPageParam: (lastPage) =>
       lastPage.data.hasNext ? lastPage.data.nextCursorId : undefined,
     initialPageParam: 0,
+  })
+
+export const useGetParticipantsMe = (meetingId: number) =>
+  useQuery<GetParticipantsMeResponse, ApiError>({
+    queryKey: ['participants', meetingId, 'me'],
+    queryFn: async () => apiCall(`/meetings/${meetingId}/participants/me`),
   })
 
 export default useParticipants

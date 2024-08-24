@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { format } from 'date-fns/format'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useGetParticipantsMe } from '@/apis/queries/participantsQueries'
 import { useUploadSnap } from '@/apis/queries/snapQueries'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
@@ -10,6 +11,7 @@ import Tooltip from '@/components/Tooltip'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
+import useUserStore from '@/stores/useUserStore'
 import Back from 'public/icons/back.svg'
 import Dice from 'public/icons/dice.svg'
 import base64ToFile from '../_utils/base64ToFile'
@@ -27,6 +29,10 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
   const { hideTooltip, showTooltip } = useTooltipStore()
   const { currentMission, missionType, missionId } = useMissionStore()
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
+  const { setParticipantId, setNickname, setRole, setShootCount } =
+    useUserStore()
+
+  const { refetch: refetchParticipantMe } = useGetParticipantsMe(meetingId ?? 0)
 
   useEffect(() => {
     if (currentMission) {
@@ -37,7 +43,26 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
   }, [currentMission, hideTooltip, showTooltip])
 
   const { mutate: uploadSnap, isPending: isUploading } = useUploadSnap({
-    onSuccess: () => {
+    onSuccess: async () => {
+      try {
+        const { data } = await refetchParticipantMe()
+        console.log('Refetched participant data:', data)
+        if (data?.data) {
+          const { participantId, nickname, role, shootCount } = data.data
+          setParticipantId(participantId)
+          setNickname(nickname)
+          setRole(role as 'LEADER' | 'PARTICIPANT')
+          setShootCount(shootCount)
+          console.log('Updated user info:', {
+            participantId,
+            nickname,
+            role,
+            shootCount,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch updated user info:', error)
+      }
       router.push('/meeting-home')
     },
     onError: (error) => {

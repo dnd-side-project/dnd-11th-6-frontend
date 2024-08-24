@@ -170,7 +170,7 @@ function MeetingRaising() {
       </div>
       {showQRPopup && meetingName && (
         <QRPopup
-          qrData={`https://get-snappy/entry-meeting/${shareData?.data.meetingLink}`}
+          qrData={`https://get-snappy.co.kr/entry-meeting/${shareData?.data.meetingLink}`}
           meetingName={meetingName}
           // themeColor={meetingSymbolColor}
           onClose={() => setShowQRPopup(false)}

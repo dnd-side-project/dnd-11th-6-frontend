@@ -1,12 +1,12 @@
 import React, { useRef, useCallback } from 'react'
 import Image from 'next/image'
-import useSnapshots from '@/apis/getSnapApi'
+import useSnapshots, { Snapshot } from '@/apis/getSnapApi'
 import useMeetingStore from '@/stores/useMeetingStore'
 
 interface PhotoGridProps {
   activeChip: string
   selectedImages: string[]
-  onSelectImage: (imageUrl: string) => void
+  onSelectImage: (imageUrl: Snapshot) => void
   isSelecting: boolean
 }
 
@@ -62,7 +62,7 @@ const MeetingPhotoGrid = ({
               ref={
                 index === snapshots.length - 1 ? lastSnapshotElementRef : null
               }
-              onClick={() => onSelectImage(snapshot.snapUrl)}
+              onClick={() => onSelectImage(snapshot)}
               style={{ cursor: isSelecting ? 'pointer' : 'default' }} // 선택 모드일 때만 포인터 표시
             >
               <Image

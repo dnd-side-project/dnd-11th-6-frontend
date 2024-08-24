@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
-interface Snapshot {
+export interface Snapshot {
   snapId: number
   snapUrl: string
   type: 'SIMPLE' | 'RANDOM_MISSION' | 'MEETING_MISSION'

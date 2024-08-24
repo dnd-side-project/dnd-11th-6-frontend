@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { Snapshot } from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
@@ -15,6 +17,7 @@ import {
 } from './_components'
 
 function MeetingHomePage() {
+  const router = useRouter()
   const [activeChip, setActiveChip] = useState('전체')
   const [selectedImages, setSelectedImages] = useState<string[]>([])
   const [isSelecting, setIsSelecting] = useState(false)
@@ -33,13 +36,15 @@ function MeetingHomePage() {
     { label: '내가찍은', icon: snappy },
   ]
 
-  const handleSelectImage = (imageUrl: string) => {
+  const handleSelectImage = (snapshot: Snapshot) => {
     if (isSelecting) {
       setSelectedImages((prev) =>
-        prev.includes(imageUrl)
-          ? prev.filter((url) => url !== imageUrl)
-          : [...prev, imageUrl],
+        prev.includes(snapshot.snapUrl)
+          ? prev.filter((url) => url !== snapshot.snapUrl)
+          : [...prev, snapshot.snapUrl],
       )
+    } else {
+      router.push(`/meeting/photo/${snapshot.snapId}`)
     }
   }
 

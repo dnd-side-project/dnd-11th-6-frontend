@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { format } from 'date-fns/format'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useUploadSnap } from '@/apis/queries/snapQueries'
 import Refresh from '@/assets/Refresh.svg'
 import Close from '@/assets/close.svg'
@@ -22,6 +23,7 @@ type PhotoViewProps = {
 }
 
 function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
+  const router = useRouter()
   const { hideTooltip, showTooltip } = useTooltipStore()
   const { currentMission, missionType, missionId } = useMissionStore()
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
@@ -36,7 +38,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
 
   const { mutate: uploadSnap, isPending: isUploading } = useUploadSnap({
     onSuccess: () => {
-      goHome()
+      router.push('/meeting-home')
     },
     onError: (error) => {
       console.error('Failed to upload snap:', error)

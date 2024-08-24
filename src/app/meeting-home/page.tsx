@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Chip from '@/components/Chip'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
 import useMeetingStore from '@/stores/useMeetingStore'
@@ -43,18 +44,31 @@ function MeetingHomePage() {
     }
   }
 
-  const handleToggleSelecting = () => {
+  const handleToggleSelecting = async () => {
     if (isSelecting && selectedImages.length > 0) {
-      selectedImages.forEach((imageUrl) => {
-        const link = document.createElement('a')
-        link.href = imageUrl
-        link.download = imageUrl.split('/').pop() || 'download'
-        link.click()
-      })
+      try {
+        const fetchPromises = selectedImages.map(async (imageUrl) => {
+          const fullImageUrl = `${IMAGE_BASE_URL}/${imageUrl}`
+          const response = await fetch(fullImageUrl)
+          const blob = await response.blob()
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `Snappy_${imageUrl.split('/').pop() || 'image.jpg'}`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          window.URL.revokeObjectURL(url)
+        })
+        await Promise.all(fetchPromises)
+      } catch (fetchError) {
+        console.error(`Failed to download images:`, fetchError)
+      }
       setSelectedImages([])
       setIsSelecting(false)
+    } else {
+      setIsSelecting(!isSelecting)
     }
-    setIsSelecting(!isSelecting)
   }
 
   if (isLoading) return <div>Loading...</div>

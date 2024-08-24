@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
+import useMeetingStore from '@/stores/useMeetingStore'
 import Close from 'public/icons/close.svg'
 
 const missionSchema = z.object({
@@ -18,13 +19,10 @@ type MissionFormData = z.infer<typeof missionSchema>
 
 interface NewMissionProps {
   onClose: () => void
-  //   onSuccess: () => void
+  onSuccess: () => void
 }
 
-function NewMission({
-  onClose,
-  // onSuccess
-}: NewMissionProps) {
+function NewMission({ onClose, onSuccess }: NewMissionProps) {
   const {
     control,
     watch,
@@ -39,6 +37,9 @@ function NewMission({
 
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
   const missionValue = watch('content')
+  const meetingId = useMeetingStore(
+    (state) => state.meetingData?.meetingId ?? 0,
+  )
 
   const createMission = useMutation<
     { status: number; data: any },
@@ -46,8 +47,6 @@ function NewMission({
     MissionFormData
   >({
     mutationFn: async (data: MissionFormData) => {
-      // TODO: Replace this with the actual meeting ID
-      const meetingId = '6'
       const response = await fetch(`/api/v1/meetings/${meetingId}/missions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,7 +57,7 @@ function NewMission({
       return result
     },
     onSuccess: () => {
-      // onSuccess()
+      onSuccess()
       onClose()
     },
     onError: (error) => {

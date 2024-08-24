@@ -1,4 +1,10 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 import { apiCall, ApiError, ApiResponse } from '../apiUtils'
 
 type GetRandomMissionsResponse = ApiResponse<
@@ -35,6 +41,8 @@ type GetLeaderMissionResponse = ApiResponse<
     hasParticipants: boolean
   }>
 >
+
+type DeleteMissionResponse = ApiResponse<string>
 
 export const useGetRandomMissions = (
   options?: UseQueryOptions<GetRandomMissionsResponse, ApiError>,
@@ -83,13 +91,38 @@ export const useGetParticipantMissions = (
   })
 
 export const useGetLeaderMission = (
-  missionId: number,
+  meetingId: number,
   options?: UseQueryOptions<GetLeaderMissionResponse, ApiError>,
 ) =>
   useQuery<GetLeaderMissionResponse, ApiError>({
-    queryKey: ['missions', missionId],
-    queryFn: () => apiCall(`/meetings/${missionId}/missions/leader`),
-    enabled: !!missionId,
+    queryKey: ['missions', meetingId, 'leader'],
+    queryFn: () => apiCall(`/meetings/${meetingId}/missions/leader`),
+    enabled: !!meetingId,
     retry: false,
     ...options,
   })
+
+type DeleteMissionVariables = {
+  meetingId: number
+  missionId: number
+}
+
+export const useDeleteMission = (
+  options?: Omit<
+    UseMutationOptions<DeleteMissionResponse, ApiError, DeleteMissionVariables>,
+    'mutationFn'
+  >,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<DeleteMissionResponse, ApiError, DeleteMissionVariables>({
+    mutationFn: ({ meetingId, missionId }) =>
+      apiCall(`/meetings/${meetingId}/missions/${missionId}`, 'DELETE'),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['missions', variables.meetingId, 'leader'],
+      })
+    },
+    ...options,
+  })
+}

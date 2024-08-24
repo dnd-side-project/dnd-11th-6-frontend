@@ -11,8 +11,8 @@ import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import Edit from 'public/icons/edit.svg'
 import LinkIcon from 'public/icons/link.svg'
+import QRCode from 'public/icons/qr-code.svg'
 import Share from 'public/icons/share.svg'
-// import QRCode from 'public/icons/qr-code.svg'
 
 function MeetingRaising() {
   const role = useUserStore((state) => state.role)
@@ -112,7 +112,7 @@ function MeetingRaising() {
             onClick={() => setShowQRPopup(true)}
             className="flex justify-center items-center w-1/2 bg-gray-50 rounded-[14px] p-[14px] text-label-medium text-gray-700"
           >
-            <Image src={Share} alt="share" className="mr-2" />
+            <Image src={QRCode} alt="share" className="mr-2" />
             QR 보기
           </button>
           <div className="w-3" />

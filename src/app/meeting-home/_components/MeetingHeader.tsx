@@ -2,6 +2,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import SnapProgressBar from '@/components/SnapProgressBar'
 import { MeetingDataTypes } from '@/lib/meetingDataTypes'
 import useUserStore from '@/stores/useUserStore'
@@ -15,6 +16,7 @@ interface MeetingHeaderProps {
 }
 
 const MeetingHeader = ({ meetingInfo, scrollPosition }: MeetingHeaderProps) => {
+  const router = useRouter()
   const { nickname } = useUserStore()
   let meetingStatus = ''
   if (dayjs().isBefore(meetingInfo.startDate, 'day')) {
@@ -41,9 +43,13 @@ const MeetingHeader = ({ meetingInfo, scrollPosition }: MeetingHeaderProps) => {
           height={52}
           className="rounded-lg mr-3"
         />
+
         <div className="flex justify-between w-full">
           <h1 className="text-2xl font-bold">{meetingInfo.name}</h1>
-          <Image src={Right} alt="Right Arrow" width={24} height={24} />
+          <button onClick={() => router.push('/meeting/info')}>
+            {' '}
+            <Image src={Right} alt="Right Arrow" width={24} height={24} />
+          </button>
         </div>
       </div>
       <div

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import useMeetingStore from '@/stores/useMeetingStore'
 import Back from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
@@ -9,16 +10,20 @@ import MeetingDetail from './_components/MeetingDetail'
 import MeetingRaising from './_components/MeetingRaising'
 
 function MeetingInfo() {
+  const router = useRouter()
   const [isMenuDetail, setIsMenuDetail] = useState(false)
   const meetingData = useMeetingStore((state) => state.meetingData)
 
+  console.log(meetingData)
   return (
     <div className="flex flex-col h-screen w-full">
       <div className="flex-none">
         <div className="p-4">
           <div className="flex items-center justify-center relative h-[50px]">
             <div className="absolute left-0">
-              <Image src={Back} alt="back" className="" />
+              <button onClick={() => router.push('/meeting-home')}>
+                <Image src={Back} alt="back" />
+              </button>
             </div>
             <div className="text-center">모임 정보</div>
           </div>

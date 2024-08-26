@@ -93,19 +93,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Publish to Chromatic
+        id: chromatic
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      - name: Publish Summary
-        if: success() && steps.chromatic.outputs.buildUrl != ''
-        run: |
-          echo "### Chromatic Deployment Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Results | |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build Results | [${{steps.chromatic.outputs.buildUrl}}](${{steps.chromatic.outputs.buildUrl}}) |" >> $GITHUB_STEP_SUMMARY
-          echo "| Storybook Preview | [${{steps.chromatic.outputs.storybookUrl}}](${{steps.chromatic.outputs.storybookUrl}}) |" >> $GITHUB_STEP_SUMMARY
-          echo "| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY
+          token: ${{ secrets.GITHUB_TOKEN }}
+          buildScriptName: build-storybook
+      - name: comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: '🎉 Storybook 미리보기: ${{ steps.chromatic.outputs.storybookUrl }}'
 
   docker:
     runs-on: ubuntu-latest

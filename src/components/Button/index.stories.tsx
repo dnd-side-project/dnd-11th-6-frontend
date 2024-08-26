@@ -53,13 +53,13 @@ Short.args = {
 
 export const HalfWidth = Template.bind({})
 HalfWidth.args = {
-  children: 'half width button',
+  children: 'Half width button',
   width: '50%',
 }
 
 export const FullWidth = Template.bind({})
 FullWidth.args = {
-  children: 'full width button',
+  children: 'Full width button',
   fullWidth: true,
 }
 

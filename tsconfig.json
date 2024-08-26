@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.config.ts",
-    "jest.setup.js",
+    "jest.setup.ts",
     "src",
     "next.config.mjs",
     "server.mjs"

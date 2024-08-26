@@ -29,4 +29,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           buildScriptName: build-storybook
       - name: Publish Summary
-        run: echo -e "| Results |  |\n| --- | --- |\n| Build Results | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY
+        if: success() && steps.chromatic.outputs.buildUrl != ''
+        run: |
+          echo "### Chromatic Deployment Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Results | |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Results | [${{steps.chromatic.outputs.buildUrl}}](${{steps.chromatic.outputs.buildUrl}}) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Storybook Preview | [${{steps.chromatic.outputs.storybookUrl}}](${{steps.chromatic.outputs.storybookUrl}}) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY

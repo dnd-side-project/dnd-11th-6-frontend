@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
-import { Input } from '@/components/Inputs'
+import { TextInput } from '@/components/Inputs/TextInput'
 import useMeetingStore from '@/stores/useMeetingStore'
 import Close from 'public/icons/close.svg'
 
@@ -103,7 +103,7 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col flex-grow"
       >
-        <Input
+        <TextInput
           name="content"
           control={control}
           rules={{ required: '링크를 입력해주세요' }}

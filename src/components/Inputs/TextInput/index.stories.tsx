@@ -1,7 +1,8 @@
-import React, { ComponentProps } from 'react'
+// src/components/Inputs/TextInput/TextInput.stories.tsx
+import React from 'react'
 import { useForm } from 'react-hook-form'
 import { StoryFn, Meta } from '@storybook/react'
-import { TextInput } from '.'
+import { TextInput, TextInputProps } from './index'
 
 export default {
   title: 'Components/Inputs/TextInput',
@@ -10,6 +11,10 @@ export default {
     name: { control: 'text' },
     label: { control: 'text' },
     placeholder: { control: 'text' },
+    type: {
+      control: 'select',
+      options: ['text', 'password'],
+    },
     error: { control: 'text' },
     success: { control: 'boolean' },
     checking: { control: 'boolean' },
@@ -17,7 +22,7 @@ export default {
   },
 } as Meta<typeof TextInput>
 
-const Template: StoryFn<ComponentProps<typeof TextInput>> = (args) => {
+const Template: StoryFn<TextInputProps<any>> = (args) => {
   const { control } = useForm()
   return <TextInput {...args} control={control} />
 }
@@ -29,28 +34,12 @@ Default.args = {
   placeholder: 'Enter text...',
 }
 
-export const WithError = Template.bind({})
-WithError.args = {
-  name: 'withError',
-  label: 'Input with Error',
-  placeholder: 'Enter text...',
-  error: 'This field has an error',
+export const Password = Template.bind({})
+Password.args = {
+  name: 'password',
+  label: 'Password Input',
+  type: 'password',
+  placeholder: 'Enter password...',
 }
 
-export const WithSuccess = Template.bind({})
-WithSuccess.args = {
-  name: 'withSuccess',
-  label: 'Input with Success',
-  placeholder: 'Enter text...',
-  success: true,
-  successMessage: '알맞는 링크를 찾았어요!',
-}
-
-export const Checking = Template.bind({})
-Checking.args = {
-  name: 'checking',
-  label: 'Input while Checking',
-  placeholder: 'Enter text...',
-  checking: true,
-  checkingMessage: '확인 중...',
-}
+// ... 기존의 다른 스토리들

@@ -1,5 +1,6 @@
 import React from 'react'
-import { Input } from '@/components/Inputs'
+import { TextInput } from '@/components/Inputs/TextInput'
+import { TextareaInput } from '@/components/Inputs/TextareaInput'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingLayout from './MeetingLayout'
 
@@ -19,7 +20,7 @@ function MeetingInfo() {
       isValid={isValid}
       showBackButton={false}
     >
-      <Input
+      <TextInput
         name="name"
         control={control}
         label="모임 이름"
@@ -28,12 +29,11 @@ function MeetingInfo() {
         maxLength={15}
         showCharCount
       />
-      <Input
+      <TextareaInput
         name="description"
         control={control}
         label="모임 설명"
         placeholder="최대 150자까지 입력 가능해요"
-        as="textarea"
         error={errors.description?.message}
         maxLength={150}
         showCharCount

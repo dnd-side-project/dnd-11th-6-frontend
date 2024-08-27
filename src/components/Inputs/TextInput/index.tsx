@@ -1,11 +1,13 @@
+import React, { useState } from 'react'
 import { Controller, FieldValues } from 'react-hook-form'
 import Image from 'next/image'
-import Check from 'public/icons/check.svg'
-import Meatballs from 'public/icons/meatballs.svg'
 import { BaseInputProps } from '../types'
+
+const getIcon = (name: string) => `/icons/${name}.svg`
 
 export interface TextInputProps<T extends FieldValues>
   extends BaseInputProps<T> {
+  type?: 'text' | 'password'
   success?: boolean
   checking?: boolean
   successMessage?: string
@@ -19,6 +21,7 @@ export function TextInput<T extends FieldValues>({
   control,
   label,
   placeholder,
+  type = 'text',
   error = null,
   success,
   checking,
@@ -29,21 +32,14 @@ export function TextInput<T extends FieldValues>({
   maxLength,
   showCharCount,
 }: TextInputProps<T>) {
+  const [showPassword, setShowPassword] = useState(false)
+
   const inputClassName = `w-full py-4 px-[18px] border rounded-[14px] text-[18px] focus:outline-none focus:ring-0 ${className} ${
     error ? 'border-red-500' : 'border-gray-600'
   }`
 
   const renderInput = (field: any) => {
-    const props = {
-      ...field,
-      id: name,
-      type: 'text',
-      placeholder,
-      className: inputClassName,
-      maxLength,
-    }
-
-    const charCount = field.value?.length || 0
+    const inputType = type === 'password' && !showPassword ? 'password' : 'text'
 
     return (
       <div className="mb-6">
@@ -54,11 +50,32 @@ export function TextInput<T extends FieldValues>({
             </label>
           </div>
           <div className="relative">
-            <input {...props} />
+            <input
+              {...field}
+              id={name}
+              type={inputType}
+              placeholder={placeholder}
+              className={inputClassName}
+              maxLength={maxLength}
+            />
             {description && (
               <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm">
                 {description}
               </span>
+            )}
+            {type === 'password' && (
+              <button
+                type="button"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <Image
+                  src={getIcon(showPassword ? 'eye-off' : 'eye')}
+                  alt={showPassword ? 'Hide password' : 'Show password'}
+                  width={20}
+                  height={20}
+                />
+              </button>
             )}
           </div>
         </div>
@@ -70,13 +87,23 @@ export function TextInput<T extends FieldValues>({
           )}
           {success && (
             <div className="flex">
-              <Image src={Check} alt="Check" className="mt-1" />
+              <Image
+                src={getIcon('check')}
+                alt="Check"
+                width={20}
+                height={20}
+              />
               <p className="text-green-600 text-sm ml-1">{successMessage}</p>
             </div>
           )}
           {checking && (
             <div className="flex">
-              <Image src={Meatballs} alt="Meatballs" className="mt-1" />
+              <Image
+                src={getIcon('meatballs')}
+                alt="Meatballs"
+                width={20}
+                height={20}
+              />
               <p className="text-gray-700 text-sm mt-1 ml-1">
                 {checkingMessage}
               </p>
@@ -84,7 +111,7 @@ export function TextInput<T extends FieldValues>({
           )}
           {showCharCount && maxLength && (
             <span className="text-sm text-gray-600 flex justify-end">
-              {charCount}/{maxLength}
+              {field.value?.length || 0}/{maxLength}
             </span>
           )}
         </div>

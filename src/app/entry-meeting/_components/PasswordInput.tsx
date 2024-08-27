@@ -8,7 +8,7 @@ import {
   useValidatePassword,
 } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
-import { Input } from '@/components/Inputs'
+import { TextInput } from '@/components/Inputs/TextInput'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
@@ -217,11 +217,11 @@ function PasswordInput({
       />
 
       <div className="mt-6">
-        <Input
+        <TextInput
           name="password"
           control={control}
-          type="password"
           label="모임 암호"
+          type="password"
           placeholder="암호를 입력해주세요"
           success={isPasswordValid}
           successMessage="비밀번호 입력 완료!"
@@ -229,7 +229,7 @@ function PasswordInput({
           checking={validatePassword.isPending}
         />
         {isLeader && (
-          <Input
+          <TextInput
             name="leaderAuthKey"
             control={control}
             type="password"

@@ -1,9 +1,16 @@
-import { PropsWithChildren } from 'react'
+// src/components/Inputs/__tests__/TextInput.test.tsx
+import React from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+// import Image from 'next/image'
 import { TextInput } from '../TextInput'
 
-const TestWrapper = ({ children }: PropsWithChildren) => {
+// jest.mock('next/image', () => ({
+//   __esModule: true,
+//   default: (props: any) => <Image {...props} />,
+// }))
+
+const TestWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const methods = useForm()
   return <FormProvider {...methods}>{children}</FormProvider>
 }
@@ -40,6 +47,7 @@ describe('TextInput', () => {
       </TestWrapper>,
     )
     expect(screen.getByText('Success!')).toBeInTheDocument()
+    expect(screen.getByAltText('Check')).toBeInTheDocument()
   })
 
   it('displays checking message', () => {
@@ -54,5 +62,28 @@ describe('TextInput', () => {
       </TestWrapper>,
     )
     expect(screen.getByText('Checking...')).toBeInTheDocument()
+    expect(screen.getByAltText('Meatballs')).toBeInTheDocument()
+  })
+
+  it('renders password input correctly', () => {
+    render(
+      <TestWrapper>
+        <TextInput name="password" label="Password" type="password" />
+      </TestWrapper>,
+    )
+    const input = screen.getByLabelText('Password') as HTMLInputElement
+    expect(input).toBeInTheDocument()
+    expect(input.type).toBe('password')
+
+    const toggleButton = screen.getByAltText('Show password')
+    expect(toggleButton).toBeInTheDocument()
+
+    fireEvent.click(toggleButton)
+    expect(input.type).toBe('text')
+    expect(screen.getByAltText('Hide password')).toBeInTheDocument()
+
+    fireEvent.click(toggleButton)
+    expect(input.type).toBe('password')
+    expect(screen.getByAltText('Show password')).toBeInTheDocument()
   })
 })

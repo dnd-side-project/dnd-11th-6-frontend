@@ -24,13 +24,16 @@
       "error",
       {
         "devDependencies": [
-          "**/*.stories.@(ts|tsx|js|jsx)",
-          "**/*.test.@(ts|tsx|js|jsx)",
-          "**/next.config.js",
-          "**/next.config.mjs"
-        ]
+          "test.{ts,tsx}",
+          "test-*.{ts,tsx}",
+          "**/*{.,_}{test,spec}.{ts,tsx}",
+          "**/jest.config.ts",
+          "**/jest.setup.ts"
+        ],
+        "optionalDependencies": false
       }
     ],
+
     "jsx-a11y/media-has-caption": "off",
     "no-nested-ternary": "off",
     "no-console": "off",

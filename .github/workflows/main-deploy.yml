@@ -1,11 +1,11 @@
-name: Deploy to Docker Hub
+name: Main Branch Deployment
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build-and-push:
+  build-and-push-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -27,8 +27,8 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/snappy:latest
 
-  deploy:
-    needs: build-and-push
+  deploy-to-server:
+    needs: build-and-push-docker
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,3 +55,39 @@ jobs:
             docker-compose down
             docker-compose up -d
             docker image prune -f
+
+  chromatic-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Publish to Chromatic
+        id: chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          buildScriptName: build-storybook
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: '🎉 Storybook 미리보기: ${{ steps.chromatic.outputs.storybookUrl }}'
+          pr_number: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

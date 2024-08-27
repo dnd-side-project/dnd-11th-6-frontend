@@ -1,4 +1,3 @@
-import React from 'react'
 import { Controller, FieldValues } from 'react-hook-form'
 import Image from 'next/image'
 import Check from 'public/icons/check.svg'

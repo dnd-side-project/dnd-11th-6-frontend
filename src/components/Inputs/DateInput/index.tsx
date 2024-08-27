@@ -1,4 +1,3 @@
-import React from 'react'
 import { Controller, FieldValues } from 'react-hook-form'
 import { BaseInputProps } from '../types'
 

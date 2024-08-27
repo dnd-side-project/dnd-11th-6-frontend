@@ -8,7 +8,7 @@ import {
   useValidatePassword,
 } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
-import { Input } from '@/components/Input'
+import { Input } from '@/components/Inputs'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'

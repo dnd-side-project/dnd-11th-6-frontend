@@ -1,57 +1,35 @@
 import React from 'react'
-import {
-  Controller,
-  Control,
-  FieldValues,
-  Path,
-  RegisterOptions,
-  FieldError,
-} from 'react-hook-form'
+import { Controller, FieldValues } from 'react-hook-form'
 import Image from 'next/image'
 import Check from 'public/icons/check.svg'
 import Meatballs from 'public/icons/meatballs.svg'
+import { BaseInputProps } from '../types'
 
-export interface InputProps<T extends FieldValues> {
-  name: Path<T>
-  control?: Control<T>
-  rules?: RegisterOptions
-  label?: string
-  type?: string
-  placeholder?: string
-  error?: string | FieldError | null
+export interface TextInputProps<T extends FieldValues>
+  extends BaseInputProps<T> {
   success?: boolean
   checking?: boolean
-  className?: string
-  as?: 'input' | 'textarea' | 'checkbox' | 'date' | 'datetime'
-  errorMessage?: string
   successMessage?: string
   checkingMessage?: string
-  description?: string
   maxLength?: number
   showCharCount?: boolean
-  min?: string // for date and datetime inputs
-  max?: string // for date and datetime inputs
 }
 
-export function Input<T extends FieldValues>({
+export function TextInput<T extends FieldValues>({
   name,
   control,
   label,
-  type = 'text',
   placeholder,
   error = null,
   success,
   checking,
   className = '',
-  as = 'input',
   successMessage = '알맞은 링크를 찾았어요!',
   checkingMessage = '확인중',
   description,
   maxLength,
   showCharCount,
-  min,
-  max,
-}: InputProps<T>) {
+}: TextInputProps<T>) {
   const inputClassName = `w-full py-4 px-[18px] border rounded-[14px] text-[18px] focus:outline-none focus:ring-0 ${className} ${
     error ? 'border-red-500' : 'border-gray-600'
   }`
@@ -60,44 +38,13 @@ export function Input<T extends FieldValues>({
     const props = {
       ...field,
       id: name,
-      type:
-        as === 'date' ? 'date' : as === 'datetime' ? 'datetime-local' : type,
+      type: 'text',
       placeholder,
-      className: as === 'checkbox' ? 'mr-2' : inputClassName,
+      className: inputClassName,
       maxLength,
-      min,
-      max,
     }
 
     const charCount = field.value?.length || 0
-
-    const inputElement = () => {
-      switch (as) {
-        case 'textarea':
-          return <textarea rows={3} {...props} />
-        case 'checkbox':
-          return (
-            <label htmlFor={name} className="flex items-center">
-              <input {...props} />
-              <span>{label}</span>
-            </label>
-          )
-        case 'date':
-        case 'datetime':
-          return <input {...props} min={min} />
-        default:
-          return (
-            <div className="relative">
-              <input {...props} />
-              {description && (
-                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm">
-                  {description}
-                </span>
-              )}
-            </div>
-          )
-      }
-    }
 
     return (
       <div className="mb-6">
@@ -107,7 +54,14 @@ export function Input<T extends FieldValues>({
               {label}
             </label>
           </div>
-          {inputElement()}
+          <div className="relative">
+            <input {...props} />
+            {description && (
+              <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 text-sm">
+                {description}
+              </span>
+            )}
+          </div>
         </div>
         <div className={`${error ? 'flex justify-between' : 'w-full'}`}>
           {error && (
@@ -139,17 +93,13 @@ export function Input<T extends FieldValues>({
     )
   }
 
-  return (
-    <div>
-      {control ? (
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => renderInput(field)}
-        />
-      ) : (
-        renderInput({ name })
-      )}
-    </div>
+  return control ? (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => renderInput(field)}
+    />
+  ) : (
+    renderInput({ name })
   )
 }

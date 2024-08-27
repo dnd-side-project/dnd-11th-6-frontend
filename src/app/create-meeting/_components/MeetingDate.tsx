@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { Input } from '@/components/Input'
+import { Input } from '@/components/Inputs'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingLayout from './MeetingLayout'
 

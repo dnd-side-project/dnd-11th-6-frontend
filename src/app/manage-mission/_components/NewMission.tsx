@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
-import { Input } from '@/components/Input'
+import { Input } from '@/components/Inputs'
 import useMeetingStore from '@/stores/useMeetingStore'
 import Close from 'public/icons/close.svg'
 

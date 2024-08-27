@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input } from '@/components/Input'
+import { Input } from '@/components/Inputs'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingLayout from './MeetingLayout'
 

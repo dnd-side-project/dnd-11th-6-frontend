@@ -15,8 +15,9 @@ describe('DateInput', () => {
         <DateInput name="test" label="Test Date" />
       </TestWrapper>,
     )
-    expect(screen.getByLabelText('Test Date')).toBeInTheDocument()
-    expect(screen.getByRole('textbox')).toHaveAttribute('type', 'date')
+    const dateInput = screen.getByLabelText('Test Date')
+    expect(dateInput).toBeInTheDocument()
+    expect(dateInput).toHaveAttribute('type', 'date')
   })
 
   it('displays error message', () => {
@@ -26,5 +27,21 @@ describe('DateInput', () => {
       </TestWrapper>,
     )
     expect(screen.getByText('This is an error')).toBeInTheDocument()
+  })
+
+  it('applies min and max attributes', () => {
+    render(
+      <TestWrapper>
+        <DateInput
+          name="test"
+          label="Test Date"
+          min="2023-01-01"
+          max="2023-12-31"
+        />
+      </TestWrapper>,
+    )
+    const dateInput = screen.getByLabelText('Test Date')
+    expect(dateInput).toHaveAttribute('min', '2023-01-01')
+    expect(dateInput).toHaveAttribute('max', '2023-12-31')
   })
 })

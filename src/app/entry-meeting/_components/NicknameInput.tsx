@@ -168,7 +168,6 @@ function NicknameInput({
           type="button"
           variant="light"
           className="mr-2 w-28"
-          padding="px-6"
           onClick={onBackClick}
         >
           이전

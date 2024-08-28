@@ -37,7 +37,6 @@ const MeetingLayout = ({
               type="button"
               variant="light"
               fullWidth={false}
-              width="50%"
             >
               이전
             </Button>

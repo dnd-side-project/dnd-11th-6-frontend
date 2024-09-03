@@ -1,10 +1,16 @@
 import type { Config } from '@jest/types'
+import nextJest from 'next/jest'
+
+const createJestConfig = nextJest({
+  dir: './',
+})
 
 const config: Config.InitialOptions = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.svg$': '<rootDir>/__mocks__/svgMock.tsx',
   },
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -18,4 +24,4 @@ const config: Config.InitialOptions = {
   },
 }
 
-export default config
+export default createJestConfig(config)

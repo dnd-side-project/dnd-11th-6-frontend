@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import Callout from '@/components/Callout'
-import { Input } from '@/components/Input'
+import { TextInput } from '@/components/Inputs/TextInput'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
@@ -81,7 +81,7 @@ function LinkInput({ onEnterClick, onHomeClick }: LinkInputProps) {
         프라이빗한 모임 앨범을 위해 입력이 필요해요.
       </div>
 
-      <Input
+      <TextInput
         name="link"
         control={control}
         rules={{ required: '링크를 입력해주세요' }}

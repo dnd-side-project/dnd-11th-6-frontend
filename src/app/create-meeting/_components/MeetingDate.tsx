@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { Input } from '@/components/Input'
+import { DateInput } from '@/components/Inputs/DateInput'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingLayout from './MeetingLayout'
 
@@ -31,24 +31,20 @@ function MeetingDate() {
       onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
     >
-      <Input
+      <DateInput
         name="date"
         control={control}
         label="모임 시작"
-        as="datetime"
-        placeholder="시작일 입력"
         min={dayjs().format('YYYY-MM-DDTHH:mm')}
         error={errors.date?.message}
       />
 
-      <Input
+      <DateInput
         name="endDate"
         control={control}
         min={dayjs().format('YYYY-MM-DDTHH:mm')}
         max={maxEndDate}
         label="모집 종료"
-        placeholder="종료일 입력"
-        as="datetime"
         error={errors.endDate?.message}
       />
       <div className="flex bg-gray-50 py-3 px-4 rounded">

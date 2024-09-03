@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { z } from 'zod'
 import { useCheckNickname, useJoinMeeting } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
-import { Input } from '@/components/Input'
+import { TextInput } from '@/components/Inputs/TextInput'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
@@ -151,7 +151,7 @@ function NicknameInput({
         특수문자, 공백은 사용할 수 없어요.
       </div>
       <div className="mb-10" />
-      <Input
+      <TextInput
         name="nickname"
         control={control}
         rules={{ required: '닉네임을 입력해주세요' }}

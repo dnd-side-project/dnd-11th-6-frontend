@@ -12,8 +12,11 @@ export default {
         options: ['primary', 'light', 'outline'],
       },
     },
-    width: {
-      control: 'text',
+    size: {
+      control: {
+        type: 'select',
+        options: ['sm', 'md', 'lg'],
+      },
     },
     fullWidth: {
       control: 'boolean',
@@ -29,37 +32,46 @@ const Template: StoryFn<typeof Button> = (args) => <Button {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  children: 'primary button',
+  children: 'Primary Button',
   variant: 'primary',
+  size: 'md',
 }
 
 export const Light = Template.bind({})
 Light.args = {
-  children: 'light button',
+  children: 'Light Button',
   variant: 'light',
+  size: 'md',
 }
 
 export const Outline = Template.bind({})
 Outline.args = {
-  children: 'outline button',
+  children: 'Outline Button',
   variant: 'outline',
+  size: 'md',
 }
 
-export const Short = Template.bind({})
-Short.args = {
-  children: 'short',
-  width: '100px',
+export const Small = Template.bind({})
+Small.args = {
+  children: 'Small Button',
+  size: 'sm',
 }
 
-export const HalfWidth = Template.bind({})
-HalfWidth.args = {
-  children: 'Half width button',
-  width: '50%',
+export const Medium = Template.bind({})
+Medium.args = {
+  children: 'Medium Button',
+  size: 'md',
+}
+
+export const Large = Template.bind({})
+Large.args = {
+  children: 'Large Button',
+  size: 'lg',
 }
 
 export const FullWidth = Template.bind({})
 FullWidth.args = {
-  children: 'Full width button',
+  children: 'Full Width Button',
   fullWidth: true,
 }
 
@@ -86,3 +98,7 @@ export const WithIcon: StoryFn<typeof Button> = (args) => (
     Button with Icon
   </Button>
 )
+WithIcon.args = {
+  variant: 'primary',
+  size: 'md',
+}

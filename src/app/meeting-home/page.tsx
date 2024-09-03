@@ -87,7 +87,7 @@ function MeetingHomePage() {
             <Chip
               key={chip.label}
               label={chip.label}
-              active={activeChip === chip.label}
+              variant={activeChip === chip.label ? 'active' : 'default'}
               onClick={() => setActiveChip(chip.label)}
               chipImage={chip.icon}
             />

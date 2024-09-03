@@ -30,12 +30,7 @@ function Popup({
             className={`flex ${cancelText !== '' && confirmText !== '' && 'space-x-2'} `}
           >
             {cancelText && (
-              <Button
-                variant="light"
-                fullWidth
-                padding="py-3"
-                onClick={onCancel}
-              >
+              <Button variant="light" fullWidth onClick={onCancel}>
                 {cancelText}
               </Button>
             )}
@@ -43,7 +38,6 @@ function Popup({
               <Button
                 variant="primary"
                 fullWidth
-                padding="py-3"
                 onClick={onConfirm}
                 className="text-white"
               >

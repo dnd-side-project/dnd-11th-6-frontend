@@ -186,7 +186,6 @@ function MissionCreationPage() {
               type="button"
               variant="outline"
               key={mission.missionId}
-              padding="px-6 py-5"
               className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${currentMission === mission.content ? 'border-[3px] border-point-mint' : ''}`}
               onClick={() =>
                 selectMission({
@@ -207,7 +206,6 @@ function MissionCreationPage() {
               type="button"
               variant="light"
               key={mission.missionId}
-              padding="p-6"
               className="flex justify-between items-center w-full border-none text-gray-900 font-semibold text-base mb-3 cursor-pointer"
             >
               {mission.content}
@@ -225,7 +223,6 @@ function MissionCreationPage() {
               variant={currentMission ? 'light' : 'primary'}
               onClick={startSpinning}
               disabled={isSpinning}
-              padding="py-[14px] px-7"
               className={
                 currentMission ? 'w-20' : 'w-full text-white bg-point-mint'
               }

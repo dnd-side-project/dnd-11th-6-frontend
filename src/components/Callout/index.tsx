@@ -25,6 +25,15 @@ function Callout({
   function toggleExpand() {
     setIsExpanded(!isExpanded)
   }
+
+  const renderContent = (text: string) =>
+    text.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        {index !== text.split('\n').length - 1 && <br />}
+      </React.Fragment>
+    ))
+
   return (
     <div className={`bg-gray-50 rounded-lg overflow-hidden ${className}`}>
       <div
@@ -55,10 +64,9 @@ function Callout({
         `}
       >
         <div className="p-4 bg-gray-50">
-          <p
-            className="text-gray-700 font-normal mb-4 text-xs"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <p className="text-gray-700 font-normal mb-4 text-xs">
+            {renderContent(content)}
+          </p>
           <Button
             variant="outline"
             onClick={onButtonClick}

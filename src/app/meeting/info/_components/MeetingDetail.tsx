@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import useParticipants from '@/apis/queries/participantsQueries'
+import { useParticipants } from '@/apis/queries/participantsQueries'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import Edit from 'public/icons/edit.svg'
@@ -11,6 +11,7 @@ function MeetingDetail() {
   const meetingData = useMeetingStore((state) => state.meetingData)
   const [isExpanded, setIsExpanded] = useState(false)
   const [showToggle, setShowToggle] = useState(false)
+  const [totalParticipants, setTotalParticipants] = useState(0)
   const description = meetingData?.description ?? ''
   const MAX_LENGTH = 80
 
@@ -23,6 +24,12 @@ function MeetingDetail() {
     hasNextPage,
     isFetching,
   } = useParticipants(meetingData?.meetingId ?? 0, limit)
+
+  useEffect(() => {
+    if (participantsData?.pages[0]?.data.count) {
+      setTotalParticipants(participantsData.pages[0].data.count)
+    }
+  }, [participantsData])
 
   const observer = useRef<IntersectionObserver | null>(null)
   const lastParticipantRef = useCallback(
@@ -86,7 +93,9 @@ function MeetingDetail() {
           <div className="text-body1-semibold text-gray-800 mr-2">
             참여자 정보
           </div>
-          <div className="text-label text-point-mint">총 20명</div>
+          <div className="text-label text-point-mint">
+            총 {participantsData ? totalParticipants : '-'}명
+          </div>
         </div>
         <hr className="h-[1px] w-full bg-gray-800 mt-3 mb-3" />
         <div>

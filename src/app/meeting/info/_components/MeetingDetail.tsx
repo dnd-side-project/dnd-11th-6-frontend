@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import useParticipants from '@/apis/queries/participantsQueries'
+import { useParticipants } from '@/apis/queries/participantsQueries'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import Edit from 'public/icons/edit.svg'

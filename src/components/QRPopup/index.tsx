@@ -10,12 +10,7 @@ type QRPopupProps = {
   onClose: () => void
 }
 
-export function QRPopup({
-  qrData,
-  meetingName,
-  themeColor,
-  onClose,
-}: QRPopupProps) {
+function QRPopup({ qrData, meetingName, themeColor, onClose }: QRPopupProps) {
   const [qrCodeImage, setQRCodeImage] = useState<string>('')
   const themeColorClass = themeColor ? `bg-${themeColor}` : 'bg-point-mint'
 

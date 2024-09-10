@@ -9,4 +9,6 @@ const COLORS = [
   '#5FEAFF',
 ] as const
 
+export type ColorType = (typeof COLORS)[number]
+
 export default COLORS

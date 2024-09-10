@@ -2,7 +2,7 @@ import React from 'react'
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import { ColorType } from '@/constant/color'
 
-interface ColorPickerProps<T extends FieldValues> {
+export interface ColorPickerProps<T extends FieldValues> {
   name: Path<T>
   control: Control<T>
   colors: readonly ColorType[]
@@ -25,7 +25,7 @@ function ColorPicker<T extends FieldValues>({
           control={control}
           rules={rules}
           render={({ field }) => (
-            <>
+            <div>
               {colors.map((color) => (
                 <button
                   key={color}
@@ -40,7 +40,7 @@ function ColorPicker<T extends FieldValues>({
                   aria-label={`Select ${color} color`}
                 />
               ))}
-            </>
+            </div>
           )}
         />
       </div>

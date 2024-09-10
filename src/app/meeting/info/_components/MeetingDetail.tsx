@@ -86,7 +86,9 @@ function MeetingDetail() {
           <div className="text-body1-semibold text-gray-800 mr-2">
             참여자 정보
           </div>
-          <div className="text-label text-point-mint">총 20명</div>
+          <div className="text-label text-point-mint">
+            총 {participantsData?.pages[0]?.data.count ?? '-'}명
+          </div>
         </div>
         <hr className="h-[1px] w-full bg-gray-800 mt-3 mb-3" />
         <div>

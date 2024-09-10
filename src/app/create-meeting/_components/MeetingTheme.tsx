@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { Controller } from 'react-hook-form'
 import Image from 'next/image'
+import ColorPicker from '@/components/ColorPicker'
 import COLORS from '@/constant/color'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingLayout from './MeetingLayout'
@@ -80,27 +81,17 @@ function MeetingTheme() {
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-[18px] my-10 place-items-center">
-        <Controller
-          name="color"
-          control={control}
-          rules={{ required: '색상을 선택해주세요.' }}
-          render={({ field }) => (
-            <>
-              {COLORS.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  className={`w-12 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${field.value === color ? 'ring-2 ring-offset-2 ring-black' : ''}`}
-                  style={{ backgroundColor: color, height: '48px' }}
-                  onClick={() => field.onChange(color)}
-                  aria-label={`Select ${color} color`}
-                />
-              ))}
-            </>
-          )}
-        />
-      </div>
+      <Controller
+        name="color"
+        control={control}
+        rules={{ required: '색상을 선택해주세요.' }}
+        render={({ field }) => (
+          <ColorPicker
+            selectedColor={field.value as (typeof COLORS)[number] | null}
+            onColorSelect={(color) => field.onChange(color)}
+          />
+        )}
+      />
       {errors.color && (
         <p className="text-red-500 mb-4">{errors.color.message}</p>
       )}

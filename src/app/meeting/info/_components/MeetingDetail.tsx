@@ -15,8 +15,6 @@ function MeetingDetail() {
   const description = meetingData?.description ?? ''
   const MAX_LENGTH = 80
 
-  console.log('meetingData:', meetingData)
-
   const limit = 10
   const {
     data: participantsData,

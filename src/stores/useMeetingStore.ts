@@ -20,12 +20,14 @@ export interface MeetingData {
 interface MeetingState {
   meetingData: MeetingData | null
   photos: Photo[]
+  meetingUpdated: boolean
 }
 
 interface MeetingActions {
   setMeetingData: (meetingData: MeetingData | null) => void
   setMeetingId: (meetingId: number) => void
   setPhotos: (photos: Photo[]) => void
+  setMeetingUpdated: (meetingUpdated: boolean) => void
 }
 
 interface MeetingStore extends MeetingState, MeetingActions {}
@@ -35,6 +37,7 @@ const useMeetingStore = create(
     (set) => ({
       meetingData: null,
       photos: [],
+      meetingUpdated: false,
       setMeetingData: (meetingData) => set({ meetingData }),
       setMeetingId: (meetingId) =>
         set((state) => ({
@@ -43,6 +46,7 @@ const useMeetingStore = create(
             : null,
         })),
       setPhotos: (photos) => set({ photos }),
+      setMeetingUpdated: (meetingUpdated) => set({ meetingUpdated }),
     }),
     {
       name: 'meeting-storage',

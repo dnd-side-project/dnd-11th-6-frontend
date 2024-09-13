@@ -17,3 +17,10 @@ export const Default: Story = {
     selectedColor: null,
   },
 }
+
+export const WithLabel: Story = {
+  args: {
+    label: '모임 테마',
+    selectedColor: null,
+  },
+}

@@ -79,7 +79,7 @@ function Toast({
       style={{ transitionProperty: 'opacity, transform' }}
     >
       <div
-        className={`flex items-center px-[18px] py-[14px] rounded-[14px] ${getTypeStyles()}`}
+        className={`flex items-center px-[18px] py-[14px] rounded-[14px] ${getTypeStyles()} whitespace-nowrap`}
       >
         {type === 'info' && (
           <Image

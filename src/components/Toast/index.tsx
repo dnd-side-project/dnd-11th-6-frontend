@@ -65,7 +65,7 @@ function Toast({
 
   if (!shouldRender) return null
 
-  const positionClass = position === 'top' ? 'top-0' : 'bottom-0'
+  const positionClass = position === 'top' ? 'top-5' : 'bottom-2'
   const visibilityClass = isVisible ? 'opacity-100' : 'opacity-0'
   const transformClass = isVisible
     ? 'translate-y-0'

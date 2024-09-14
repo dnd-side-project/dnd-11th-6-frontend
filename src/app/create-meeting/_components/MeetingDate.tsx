@@ -12,7 +12,6 @@ function MeetingDate() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
-    getValues,
   } = meetingDateForm
 
   const startDate = watch('date')

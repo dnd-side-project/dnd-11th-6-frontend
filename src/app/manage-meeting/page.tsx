@@ -73,6 +73,7 @@ function ManageMeeting() {
           '모임 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.',
         )
       }
+      console.log(apiErrorMessage)
     },
   })
 

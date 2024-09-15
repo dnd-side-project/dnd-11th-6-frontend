@@ -13,13 +13,11 @@ import { TextInput } from '@/components/Inputs/TextInput'
 import { TextareaInput } from '@/components/Inputs/TextareaInput'
 import Popup from '@/components/Popup'
 import { ToastContainer } from '@/components/Toast'
-import COLORS from '@/constant/color'
+import COLORS, { ColorType } from '@/constant/color'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useToastStore from '@/stores/useToastStore'
 import getUserErrorMessage from '@/utils/errorMessages'
 import Back from 'public/icons/back.svg'
-
-type ColorType = (typeof COLORS)[number]
 
 const meetingSchema = z.object({
   meetingName: z
@@ -40,11 +38,8 @@ function ManageMeeting() {
   const { meetingData } = useMeetingStore()
   const { setToast, showToast, message } = useToastStore()
 
-  const defaultSymbolColor: ColorType = COLORS.includes(
-    meetingData?.symbolColor as ColorType,
-  )
-    ? (meetingData?.symbolColor as ColorType)
-    : COLORS[0]
+  const defaultSymbolColor: ColorType =
+    COLORS.find((color) => color === meetingData?.symbolColor) || COLORS[0]
 
   const {
     control,

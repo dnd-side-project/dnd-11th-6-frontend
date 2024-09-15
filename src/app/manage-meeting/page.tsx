@@ -78,21 +78,10 @@ function ManageMeeting() {
       router.back()
     },
     onError: (error) => {
-<<<<<<< HEAD
-      if (error.error?.message) {
-        setApiErrorMessage(error.error.message)
-      } else {
-        setApiErrorMessage(
-          '모임 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.',
-        )
-      }
-      console.log(apiErrorMessage)
-=======
       const errorMessage = getUserErrorMessage(error)
       setToast(errorMessage, { type: 'warning' })
       showToast()
       console.error('API Error:', error)
->>>>>>> 18a6179 (feat: 모임 수정 오류 메세지 토스트로 렌더링하도록 구현)
     },
   })
 

@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
-import Toast from '@/components/Toast'
+import { ToastContainer } from '@/components/Toast'
 import useMeetingStore from '@/stores/useMeetingStore'
+import useToastStore from '@/stores/useToastStore'
 import Back from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
 import MeetingDetail from './_components/MeetingDetail'
@@ -14,9 +15,8 @@ import MeetingRaising from './_components/MeetingRaising'
 function MeetingInfo() {
   const router = useRouter()
   const [isMenuDetail, setIsMenuDetail] = useState(true)
-  const { meetingData, setMeetingData, meetingUpdated, setMeetingUpdated } =
-    useMeetingStore()
-  const [showToast, setShowToast] = useState(false)
+  const { meetingData, setMeetingData } = useMeetingStore()
+  const { message, showToast } = useToastStore()
 
   const { data, isLoading, error } = useCheckMeetingId(
     meetingData?.meetingId ?? 0,
@@ -34,11 +34,10 @@ function MeetingInfo() {
   }, [data, setMeetingData])
 
   useEffect(() => {
-    if (meetingUpdated) {
-      setShowToast(true)
-      setMeetingUpdated(false)
+    if (message) {
+      showToast()
     }
-  }, [meetingUpdated, setMeetingUpdated])
+  }, [message, showToast])
 
   if (isLoading) {
     return <div>Loading...</div>
@@ -48,7 +47,6 @@ function MeetingInfo() {
     return <div>Error: {error.error?.message}</div>
   }
 
-  console.log(meetingData)
   return (
     <div className="flex flex-col h-screen w-full">
       <div className="flex-none">
@@ -98,15 +96,7 @@ function MeetingInfo() {
       <div className="flex-grow overflow-y-auto">
         {isMenuDetail ? <MeetingDetail /> : <MeetingRaising />}
       </div>
-      {showToast && (
-        <Toast
-          duration={3000}
-          message="모임정보 변경 완료되었어요!"
-          position="bottom"
-          type="default"
-          onClose={() => setShowToast(false)}
-        />
-      )}
+      <ToastContainer />
     </div>
   )
 }

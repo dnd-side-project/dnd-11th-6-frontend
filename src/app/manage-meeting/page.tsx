@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
@@ -12,8 +12,11 @@ import ColorPicker from '@/components/ColorPicker'
 import { TextInput } from '@/components/Inputs/TextInput'
 import { TextareaInput } from '@/components/Inputs/TextareaInput'
 import Popup from '@/components/Popup'
+import { ToastContainer } from '@/components/Toast'
 import COLORS from '@/constant/color'
 import useMeetingStore from '@/stores/useMeetingStore'
+import useToastStore from '@/stores/useToastStore'
+import getUserErrorMessage from '@/utils/errorMessages'
 import Back from 'public/icons/back.svg'
 
 type ColorType = (typeof COLORS)[number]
@@ -34,7 +37,8 @@ type MeetingFormData = z.infer<typeof meetingSchema>
 
 function ManageMeeting() {
   const router = useRouter()
-  const { meetingData, setMeetingUpdated } = useMeetingStore()
+  const { meetingData } = useMeetingStore()
+  const { setToast, showToast, message } = useToastStore()
 
   const defaultSymbolColor: ColorType = COLORS.includes(
     meetingData?.symbolColor as ColorType,
@@ -57,15 +61,24 @@ function ManageMeeting() {
     mode: 'onChange',
   })
 
-  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
   const [isPopupOpen, setIsPopupOpen] = useState(false)
+
+  useEffect(() => {
+    if (message) {
+      showToast()
+    }
+  }, [message, showToast])
 
   const modifyMeeting = useModifyMeeting({
     onSuccess: () => {
-      setMeetingUpdated(true)
+      setToast('모임정보 변경 완료되었어요!', {
+        position: 'bottom',
+      })
+      showToast()
       router.back()
     },
     onError: (error) => {
+<<<<<<< HEAD
       if (error.error?.message) {
         setApiErrorMessage(error.error.message)
       } else {
@@ -74,6 +87,12 @@ function ManageMeeting() {
         )
       }
       console.log(apiErrorMessage)
+=======
+      const errorMessage = getUserErrorMessage(error)
+      setToast(errorMessage, { type: 'warning' })
+      showToast()
+      console.error('API Error:', error)
+>>>>>>> 18a6179 (feat: 모임 수정 오류 메세지 토스트로 렌더링하도록 구현)
     },
   })
 
@@ -172,6 +191,7 @@ function ManageMeeting() {
           </span>
         }
       />
+      <ToastContainer />
     </div>
   )
 }

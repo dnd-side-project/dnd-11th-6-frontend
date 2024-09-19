@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
+import { ToastContainer } from '@/components/Toast'
 import useMeetingStore from '@/stores/useMeetingStore'
+import useToastStore from '@/stores/useToastStore'
 import Back from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
 import MeetingDetail from './_components/MeetingDetail'
@@ -11,10 +14,39 @@ import MeetingRaising from './_components/MeetingRaising'
 
 function MeetingInfo() {
   const router = useRouter()
-  const [isMenuDetail, setIsMenuDetail] = useState(false)
-  const meetingData = useMeetingStore((state) => state.meetingData)
+  const [isMenuDetail, setIsMenuDetail] = useState(true)
+  const { meetingData, setMeetingData } = useMeetingStore()
+  const { message, showToast } = useToastStore()
 
-  console.log(meetingData)
+  const { data, isLoading, error } = useCheckMeetingId(
+    meetingData?.meetingId ?? 0,
+    {
+      queryKey: ['checkMeetingId', meetingData?.meetingId],
+      enabled: !!meetingData?.meetingId,
+      refetchOnWindowFocus: false,
+    },
+  )
+
+  useEffect(() => {
+    if (data?.data) {
+      setMeetingData(data.data)
+    }
+  }, [data, setMeetingData])
+
+  useEffect(() => {
+    if (message) {
+      showToast()
+    }
+  }, [message, showToast])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error.error?.message}</div>
+  }
+
   return (
     <div className="flex flex-col h-screen w-full">
       <div className="flex-none">
@@ -63,7 +95,8 @@ function MeetingInfo() {
       </div>
       <div className="flex-grow overflow-y-auto">
         {isMenuDetail ? <MeetingDetail /> : <MeetingRaising />}
-      </div>{' '}
+      </div>
+      <ToastContainer />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import useToastStore from '@/stores/useToastStore'
 import AlertInfo from '../../../public/icons/alert-circle.svg'
 
 type ToastType = 'default' | 'info' | 'warning' | 'success'
@@ -65,7 +66,7 @@ function Toast({
 
   if (!shouldRender) return null
 
-  const positionClass = position === 'top' ? 'top-0' : 'bottom-0'
+  const positionClass = position === 'top' ? 'top-5' : 'bottom-2'
   const visibilityClass = isVisible ? 'opacity-100' : 'opacity-0'
   const transformClass = isVisible
     ? 'translate-y-0'
@@ -79,7 +80,7 @@ function Toast({
       style={{ transitionProperty: 'opacity, transform' }}
     >
       <div
-        className={`flex items-center px-[18px] py-[14px] rounded-[14px] ${getTypeStyles()}`}
+        className={`flex items-center px-[18px] py-[14px] rounded-[14px] ${getTypeStyles()} whitespace-nowrap`}
       >
         {type === 'info' && (
           <Image
@@ -103,6 +104,23 @@ function Toast({
         )}
       </div>
     </div>
+  )
+}
+
+export function ToastContainer() {
+  const { message, options, isVisible, hideToast } = useToastStore()
+
+  if (!isVisible || !message) return null
+
+  return (
+    <Toast
+      message={message}
+      type={options.type}
+      position={options.position}
+      duration={options.duration}
+      onClose={hideToast}
+      link={options.link}
+    />
   )
 }
 

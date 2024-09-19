@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useParticipants } from '@/apis/queries/participantsQueries'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
@@ -13,8 +14,6 @@ function MeetingDetail() {
   const [showToggle, setShowToggle] = useState(false)
   const description = meetingData?.description ?? ''
   const MAX_LENGTH = 80
-
-  console.log('meetingData:', meetingData)
 
   const limit = 10
   const {
@@ -48,7 +47,11 @@ function MeetingDetail() {
       <div className="flex flex-col px-5 py-4">
         <div className="flex justify-between items-center">
           <div className=" text-body1-semibold">우리는 이런 모임이에요!</div>
-          {role === 'LEADER' && <Image src={Edit} alt="edit" />}
+          {role === 'LEADER' && (
+            <Link href="/manage-meeting">
+              <Image src={Edit} alt="edit" />
+            </Link>
+          )}
         </div>
         <hr className="h-[1px] w-full bg-gray-800 mt-3 mb-3" />
         <div>{}</div>

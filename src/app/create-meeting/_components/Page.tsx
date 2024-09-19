@@ -3,7 +3,6 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import ProgressBar from '@/components/ProgressBar'
 import useMeetStore from '@/stores/useMeetStore'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingDate from './MeetingDate'
@@ -14,7 +13,7 @@ import MeetingTheme from './MeetingTheme'
 
 function CreateMeetingPage() {
   const { step, resetForm } = useMeetStore()
-  const { isLoading } = useMeetingForm()
+  const { isLoading, isError } = useMeetingForm()
 
   const renderStep = () => {
     switch (step) {
@@ -33,60 +32,35 @@ function CreateMeetingPage() {
     }
   }
 
+  if (isError) {
+    return <div>Error...</div>
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <div className="flex flex-col my-10 max-h-screen">
-      <div className="px-4">
-        {!isLoading && (
-          <div
-            className={`${step !== 5 ? 'items-center' : ''} flex  justify-between mb-6`}
-          >
-            <button className="p-1">
-              <Link href="/" onClick={() => resetForm()}>
-                <Image
-                  src="/icons/close.svg"
-                  width={24}
-                  height={24}
-                  alt="close"
-                />
-              </Link>
-            </button>
-            {step !== 5 ? (
-              <h1 className="text-xl font-bold flex-grow text-center">
-                {step !== 5 && '모임 생성'}
-              </h1>
-            ) : (
-              <button className="p-1">
-                <Link href="/" onClick={() => resetForm()}>
-                  <Image
-                    src="/icons/home.svg"
-                    width={24}
-                    height={24}
-                    alt="home"
-                  />
-                </Link>
-              </button>
-            )}
-          </div>
-        )}
-
-        {step !== 5 && !isLoading ? (
-          <ProgressBar currentStep={step} totalSteps={4} />
-        ) : null}
-
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Image
-              src="/icons/createLoading.svg"
-              width={48}
-              height={48}
-              alt="loading"
-            />
-            <p className="mt-4 text-lg">모임을 생성하고 있습니다...</p>
-          </div>
+    <div className="flex flex-col max-h-screen w-full p-4">
+      <div
+        className={`${step !== 5 && 'items-center'} flex  justify-between mb-6`}
+      >
+        <button className="p-1">
+          <Link href="/" onClick={() => resetForm()}>
+            <Image src="/icons/close.svg" width={24} height={24} alt="close" />
+          </Link>
+        </button>
+        {step !== 5 ? (
+          <h1 className="text-xl font-bold flex-grow text-center">모임 생성</h1>
         ) : (
-          <>{renderStep()}</>
+          <button className="p-1">
+            <Link href="/" onClick={() => resetForm()}>
+              <Image src="/icons/home.svg" width={24} height={24} alt="home" />
+            </Link>
+          </button>
         )}
       </div>
+      {renderStep()}
     </div>
   )
 }

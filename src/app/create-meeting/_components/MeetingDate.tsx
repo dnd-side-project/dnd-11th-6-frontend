@@ -12,7 +12,6 @@ function MeetingDate() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
-    getValues,
   } = meetingDateForm
 
   const startDate = watch('date')
@@ -44,7 +43,7 @@ function MeetingDate() {
         control={control}
         min={dayjs().format('YYYY-MM-DDTHH:mm')}
         max={maxEndDate}
-        label="모집 종료"
+        label="모집 종료(링크 유효 기간)"
         error={errors.endDate?.message}
       />
       <div className="flex bg-gray-50 py-3 px-4 rounded">
@@ -60,9 +59,6 @@ function MeetingDate() {
           <p>모임에 맞게 종료일을 선택해주세요.</p>
         </div>
       </div>
-      <span className="bg-gray-50 text-sm font-semibold my-3 p-[10px] rounded text-center text-gray-700">
-        {`링크는 ${getValues('endDate') ? dayjs(getValues('endDate').toString()).format('YYYY-MM-DD') : '모집 종료 설정 시간'} 까지 유효합니다.`}
-      </span>
     </MeetingLayout>
   )
 }

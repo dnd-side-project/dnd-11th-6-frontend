@@ -40,3 +40,21 @@ export const SingleButton: Story = {
     cancelText: '',
   },
 }
+
+// only one button
+export const WithCloseButton: Story = {
+  args: {
+    isOpen: true,
+    title: (
+      <>
+        <div>해당 미션을</div>
+        <div>정말 삭제하시겠어요?</div>
+      </>
+    ),
+    onConfirm: () => console.log('Confirmed'),
+    onCancel: () => console.log('Cancelled'),
+    onClose: () => console.log('Closed'),
+    hasCloseButton: true,
+    closeColor: '#fff',
+  },
+}

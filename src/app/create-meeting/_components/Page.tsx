@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import useMeetStore from '@/stores/useMeetStore'
+import CloseSvg from 'public/icons/CloseSvg'
 import useMeetingForm from '../_hooks/useMeetingForm'
 import MeetingDate from './MeetingDate'
 import MeetingInfo from './MeetingInfo'
@@ -45,9 +46,9 @@ function CreateMeetingPage() {
       <div
         className={`${step !== 5 && 'items-center'} flex  justify-between mb-6`}
       >
-        <button className="p-1">
+        <button className="p-1" aria-label="close">
           <Link href="/" onClick={() => resetForm()}>
-            <Image src="/icons/close.svg" width={24} height={24} alt="close" />
+            <CloseSvg size={24} />
           </Link>
         </button>
         {step !== 5 ? (

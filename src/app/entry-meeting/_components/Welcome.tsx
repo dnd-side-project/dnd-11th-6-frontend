@@ -1,5 +1,4 @@
 import Lottie from 'lottie-react'
-import Image from 'next/image'
 import { Button } from '@/components/Button'
 import useUserStore from '@/stores/useUserStore'
 import CloseSvg from 'public/icons/CloseSvg'

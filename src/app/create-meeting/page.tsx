@@ -8,6 +8,7 @@ import useMeetStore from '@/stores/useMeetStore'
 import CloseSvg from 'public/icons/CloseSvg'
 import useMeetingForm from './_hooks/useMeetingForm'
 
+// dynamic import로 처리했음 MeetingTheme에서는 File을 이용한 문법을 사용하고 있어서 추후 코드에서 개선해야할 필요가 있음
 const MeetingInfo = dynamic(() => import('./_components/MeetingInfo'))
 const MeetingDate = dynamic(() => import('./_components/MeetingDate'))
 const MeetingTheme = dynamic(() => import('./_components/MeetingTheme'))

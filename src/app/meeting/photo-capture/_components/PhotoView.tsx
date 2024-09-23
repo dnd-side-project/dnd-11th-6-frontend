@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useGetParticipantsMe } from '@/apis/queries/participantsQueries'
 import { useUploadSnap } from '@/apis/queries/snapQueries'
 import Refresh from '@/assets/Refresh.svg'
-import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
 import useUserStore from '@/stores/useUserStore'
+import CloseSvg from 'public/icons/CloseSvg'
 import Back from 'public/icons/back.svg'
 import Dice from 'public/icons/dice.svg'
 import base64ToFile from '../_utils/base64ToFile'
@@ -112,8 +112,8 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
         <div className="flex-1 flex justify-center items-center">
           <div className="text-body1-semibold text-gray-900">스냅 확인하기</div>
         </div>
-        <button onClick={goHome} className="cursor-pointer">
-          <Image src={Close} alt="Close Button" className="w-4 h-4" />
+        <button onClick={goHome} className="cursor-pointer" aria-label="close">
+          <CloseSvg size={16} />
         </button>
       </div>
 

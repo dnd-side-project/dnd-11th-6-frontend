@@ -1,5 +1,4 @@
 import withPWA from 'next-pwa'
-import { API_BASE_URL, IMAGE_BASE_URL } from '@/constant/base_url'
 
 const nextConfig = {
   reactStrictMode: true,
@@ -10,7 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: IMAGE_BASE_URL.replace(/^https?:\/\//, ''),
+        hostname: 'https://cdn.get-snappy.co.kr'.replace(/^https?:\/\//, ''),
         port: '',
       },
     ],
@@ -19,7 +18,7 @@ const nextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: `${API_BASE_URL}/:path*`,
+        destination: `https://api.get-snappy.co.kr/api/v1/:path*`,
       },
     ]
   },

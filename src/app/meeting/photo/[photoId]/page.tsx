@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useGetSnapDetail } from '@/apis/queries/snapQueries'
-import Close from '@/assets/close.svg'
 import { Button } from '@/components/Button'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
+import CloseSvg from 'public/icons/CloseSvg'
 import Dice from 'public/icons/dice.svg'
 import Download from 'public/icons/download.svg'
 import formatCaptureTime from './formatCaptureTime'
@@ -54,8 +54,12 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
             {photographer.nickname}님의 스냅
           </div>
         </div>
-        <button onClick={() => router.back()} className="cursor-pointer">
-          <Image src={Close} alt="Close Button" className="w-4 h-4" />
+        <button
+          onClick={() => router.back()}
+          className="cursor-pointer"
+          aria-label="close"
+        >
+          <CloseSvg size={16} />
         </button>
       </div>
 

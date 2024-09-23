@@ -24,8 +24,6 @@ function MeetingInfo({
   const meetingData = useMeetingStore((state) => state.meetingData)
   const setMeetingData = useMeetingStore((state) => state.setMeetingData)
 
-  console.log('meetingData:', meetingData)
-
   const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
 
   useEffect(() => {

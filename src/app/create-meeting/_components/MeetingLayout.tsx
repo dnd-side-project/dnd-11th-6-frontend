@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Button } from '@/components/Button'
+import ProgressBar from '@/components/ProgressBar'
 import useMeetStore from '@/stores/useMeetStore'
 
 interface MeetingLayoutProps {
@@ -19,20 +20,22 @@ const MeetingLayout = ({
   isValid,
   showBackButton = true,
 }: MeetingLayoutProps) => {
-  const { setStep } = useMeetStore()
+  const { step, setStep } = useMeetStore()
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="mb-[42px]">
+    <div className="flex flex-col h-screen">
+      {step !== 5 && <ProgressBar currentStep={step} totalSteps={4} />}
+      <div className="mb-[42px] px-1">
         <h2 className="text-xl font-bold mb-2">{title}</h2>
         <p className="text-sm text-gray-600">{description}</p>
       </div>
-      <form onSubmit={onSubmit} className="flex-grow flex flex-col">
+      <form onSubmit={onSubmit} className="flex flex-col flex-grow">
         <div className="flex-grow">{children}</div>
-        <div className="flex gap-2 mt-auto">
+
+        <div className="flex mb-5 mt-auto">
           {showBackButton && (
             <Button
-              className="text-gray-700"
+              className="text-gray-700 mr-2 w-28"
               onClick={() => setStep((prev) => prev - 1)}
               type="button"
               variant="light"

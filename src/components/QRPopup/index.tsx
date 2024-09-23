@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import generateQRCode from '@/utils/qrCode'
-import Close from 'public/icons/close.svg'
+import CloseSvg from 'public/icons/CloseSvg'
 
 type QRPopupProps = {
   qrData: string
@@ -10,12 +10,7 @@ type QRPopupProps = {
   onClose: () => void
 }
 
-export function QRPopup({
-  qrData,
-  meetingName,
-  themeColor,
-  onClose,
-}: QRPopupProps) {
+function QRPopup({ qrData, meetingName, themeColor, onClose }: QRPopupProps) {
   const [qrCodeImage, setQRCodeImage] = useState<string>('')
   const themeColorClass = themeColor ? `bg-${themeColor}` : 'bg-point-mint'
 
@@ -33,8 +28,9 @@ export function QRPopup({
         <button
           onClick={onClose}
           className="absolute top-[-36px] right-2 text-gray-500 hover:text-gray-700"
+          aria-label="close"
         >
-          <Image src={Close} alt="close" />
+          <CloseSvg size={24} />
         </button>
         <div className="flex flex-col items-center">
           <div className="w-3/4 h-3/4 bg-gray-200 flex items-center justify-center mb-4">

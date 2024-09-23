@@ -3,10 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
 import CameraSwitchButton from '@/assets/CameraSwitchButton.svg'
-import Close from '@/assets/close.svg'
 import Tooltip from '@/components/Tooltip'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
+import CloseSvg from 'public/icons/CloseSvg'
 import PlusGray from 'public/icons/plus-gray.svg'
 
 type CameraViewProps = {
@@ -77,8 +77,9 @@ function CameraView({
               if (e.key === 'Enter' || e.key === ' ') goBack()
             }}
             className="flex-1 flex justify-end items-center cursor-pointer"
+            aria-label="close"
           >
-            <Image src={Close} alt="Close Button" className="w-6 h-6" />
+            <CloseSvg size={24} />
           </div>
         </div>
       </div>

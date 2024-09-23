@@ -1,4 +1,4 @@
-export async function base64ToFile(
+async function base64ToFile(
   base64String: string,
   filename: string,
 ): Promise<File> {

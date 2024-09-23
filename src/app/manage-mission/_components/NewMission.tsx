@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
-import Image from 'next/image'
 import { z } from 'zod'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/Inputs/TextInput'
 import useMeetingStore from '@/stores/useMeetingStore'
-import Close from 'public/icons/close.svg'
+import CloseSvg from 'public/icons/CloseSvg'
 
 const missionSchema = z.object({
   content: z
@@ -89,8 +88,8 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex justify-end">
-        <button type="button" className="" onClick={onClose}>
-          <Image src={Close} alt="close" />
+        <button type="button" className="" onClick={onClose} aria-label="close">
+          <CloseSvg size={24} />
         </button>
       </div>
       <div className="text-gray-900 font-bold text-[22px] mt-9">

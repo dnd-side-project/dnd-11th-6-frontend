@@ -1,4 +1,4 @@
-export const formatCaptureTime = (date: Date | null): string => {
+const formatCaptureTime = (date: Date | null): string => {
   if (date === null) {
     return ''
   }

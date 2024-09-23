@@ -18,6 +18,12 @@ type MeetingPasswordResponse = ApiResponse<{
   password: string
   leaderAuthKey?: string
 }>
+type ModifyMeetingResponse = ApiResponse<{
+  meetingId: number
+  name: string
+  description: string
+  symbolColor: string
+}>
 
 export const useCheckNickname = (
   meetingId: number,
@@ -136,5 +142,36 @@ export const useGetMeetingPassword = (
     queryFn: () => apiCall(`/meetings/${meetingId}/password`),
     enabled: !!meetingId,
     retry: false,
+    ...options,
+  })
+
+export const useModifyMeeting = (
+  options?: UseMutationOptions<
+    ModifyMeetingResponse,
+    ApiError,
+    {
+      meetingId: number
+      name: string
+      description: string
+      symbolColor: string
+    }
+  >,
+) =>
+  useMutation<
+    ModifyMeetingResponse,
+    ApiError,
+    {
+      meetingId: number
+      name: string
+      description: string
+      symbolColor: string
+    }
+  >({
+    mutationFn: ({ meetingId, name, description, symbolColor }) =>
+      apiCall(`/meetings/${meetingId}`, 'PATCH', {
+        name,
+        description,
+        symbolColor,
+      }),
     ...options,
   })

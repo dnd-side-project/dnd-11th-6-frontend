@@ -1,8 +1,7 @@
 import Lottie from 'lottie-react'
-import Image from 'next/image'
 import { Button } from '@/components/Button'
 import useUserStore from '@/stores/useUserStore'
-import Close from 'public/icons/close.svg'
+import CloseSvg from 'public/icons/CloseSvg'
 import welcomeAnimation from 'public/lotties/welcome.json'
 
 interface WelcomeProps {
@@ -16,8 +15,8 @@ function Welcome({ onEnterClick, onBackClick }: WelcomeProps) {
   return (
     <div className="flex flex-col min-h-screen w-full p-4">
       <div className="flex justify-end">
-        <button type="button" onClick={onBackClick} className="">
-          <Image src={Close} alt="close" />
+        <button type="button" onClick={onBackClick} aria-label="close">
+          <CloseSvg size={24} />
         </button>
       </div>
       <div className="text-gray-900 font-bold text-[22px] mt-9">

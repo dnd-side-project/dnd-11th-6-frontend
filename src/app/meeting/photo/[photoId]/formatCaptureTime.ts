@@ -1,4 +1,4 @@
-export const formatCaptureTime = (dateString: string): string => {
+const formatCaptureTime = (dateString: string): string => {
   const date = new Date(dateString)
   if (Number.isNaN(date.getTime())) {
     return ''

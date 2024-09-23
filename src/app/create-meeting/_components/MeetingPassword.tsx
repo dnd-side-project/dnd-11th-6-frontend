@@ -31,7 +31,7 @@ function MeetingPassword() {
     <button
       type="button"
       key={`keypad-${number}`}
-      className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-semibold focus:outline-none"
+      className="w-20 h-[80px] rounded-full flex items-center justify-center text-2xl font-semibold focus:outline-none"
       onClick={() => typeof number === 'number' && handleNumberClick(number)}
     >
       {number}
@@ -45,7 +45,7 @@ function MeetingPassword() {
       onSubmit={handleSubmit(onSubmit)}
       isValid={isValid}
     >
-      <div className="flex justify-between mb-10">
+      <div className="flex justify-between px-1 mb-10">
         <Controller
           name="password"
           control={control}
@@ -72,7 +72,7 @@ function MeetingPassword() {
         <button
           key="delete-button"
           type="button"
-          className="w-20 h-20 rounded-full flex items-center justify-center text-[28px] font-semibold focus:outline-none"
+          className="w-20 h-[80px] rounded-full flex items-center justify-center text-[28px] font-semibold focus:outline-none"
           onClick={handleDelete}
         >
           <Image

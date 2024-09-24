@@ -24,10 +24,7 @@ const meetingSchema = z.object({
     .string()
     .min(1, '모임 이름을 입력해주세요')
     .max(20, '최대 20자까지 입력이 가능해요'),
-  meetingDescription: z
-    .string()
-    .nonempty('모임 소개을 입력해주세요')
-    .max(150, '최대 150자까지 입력이 가능해요'),
+  meetingDescription: z.string().max(150, '최대 150자까지 입력이 가능해요'),
   meetingSymbolColor: z.enum(COLORS),
 })
 
@@ -142,7 +139,6 @@ function ManageMeeting() {
           control={control}
           render={({ field }) => (
             <ColorPicker
-              label="모임 테마"
               onColorSelect={(color: ColorType) => {
                 field.onChange(color)
                 setValue('meetingSymbolColor', color, { shouldDirty: true })

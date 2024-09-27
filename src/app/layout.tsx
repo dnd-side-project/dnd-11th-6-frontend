@@ -1,6 +1,12 @@
 import type { Metadata } from 'next'
 import '../styles/globals.css'
+import dynamic from 'next/dynamic'
 import Providers from './providers'
+
+const PasswordPopup = dynamic(() => import('@/apis/PasswordPopup'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+})
 
 export const metadata: Metadata = {
   title: 'Snappy',
@@ -22,7 +28,10 @@ export default function RootLayout({
       <body className="min-h-screen bg-white">
         <div className="flex justify-center">
           <div className="w-full max-w-md">
-            <Providers>{children}</Providers>
+            <Providers>
+              {children}
+              <PasswordPopup />
+            </Providers>
           </div>
         </div>
       </body>

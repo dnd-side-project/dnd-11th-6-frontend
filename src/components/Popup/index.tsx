@@ -3,14 +3,16 @@ import CloseSvg from 'public/icons/CloseSvg'
 
 export interface PopupProps {
   title: React.ReactNode
-  onConfirm: () => void
-  onCancel: () => void
+  onConfirm?: () => void
+  onCancel?: () => void
   onClose?: () => void
   confirmText?: string
   cancelText?: string
   isOpen: boolean
   hasCloseButton?: boolean
   closeColor?: string
+  children?: React.ReactNode
+  confirmDisabled?: boolean
 }
 
 function Popup({
@@ -23,6 +25,8 @@ function Popup({
   isOpen,
   hasCloseButton = false,
   closeColor = '#4E5256',
+  confirmDisabled = false,
+  children,
 }: PopupProps) {
   if (!isOpen) return null
 
@@ -43,6 +47,7 @@ function Popup({
           <p className="text-center text-lg text-gray-700 font-medium mb-6">
             {title}
           </p>
+          {children}
           <div
             className={`flex ${cancelText !== '' && confirmText !== '' && 'space-x-2'} `}
           >
@@ -56,6 +61,7 @@ function Popup({
                 variant="primary"
                 fullWidth
                 onClick={onConfirm}
+                disabled={confirmDisabled}
                 className="text-white"
               >
                 {confirmText}

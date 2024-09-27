@@ -50,12 +50,7 @@ const handleExpiredToken = () => {
     }
   }
 
-  const onClose = () => {
-    usePasswordPopupStore.getState().closePopup()
-    window.location.href = '/'
-  }
-
-  usePasswordPopupStore.getState().openPopup(meetingId, onConfirm, onClose)
+  usePasswordPopupStore.getState().openPopup(meetingId, onConfirm)
 }
 
 const refreshToken = async (): Promise<void> => {

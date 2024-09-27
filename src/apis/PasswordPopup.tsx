@@ -22,7 +22,7 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 function PasswordPopup() {
-  const { isOpen, meetingId, onConfirm, onClose, closePopup } =
+  const { isOpen, meetingId, onConfirm, closePopup, closePopupAndRedirect } =
     usePasswordPopupStore()
   const [isPasswordValid, setIsPasswordValid] = useState(false)
   const [isReentering, setIsReentering] = useState(false)
@@ -98,13 +98,6 @@ function PasswordPopup() {
     }
   }, [isPasswordValid, meetingId, passwordValue, onConfirm, closePopup])
 
-  const handleClose = useCallback(() => {
-    if (onClose) {
-      onClose()
-    }
-    closePopup()
-  }, [onClose, closePopup])
-
   const errorMessage =
     errors.password?.message ||
     (validatePassword.isError && debouncedPassword === lastCheckedPassword
@@ -116,7 +109,7 @@ function PasswordPopup() {
       isOpen={isOpen}
       cancelText=""
       confirmText={isReentering ? '재입장 중...' : '입장하기'}
-      onClose={handleClose}
+      onClose={closePopupAndRedirect}
       onConfirm={handleConfirm}
       title="다시 오셨네요!"
       hasCloseButton

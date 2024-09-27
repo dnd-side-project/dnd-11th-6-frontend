@@ -33,7 +33,6 @@
         "optionalDependencies": false
       }
     ],
-
     "jsx-a11y/media-has-caption": "off",
     "no-nested-ternary": "off",
     "no-console": "off",
@@ -46,6 +45,7 @@
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-use-before-define": "off",
     "import/order": [
       "error",
       {

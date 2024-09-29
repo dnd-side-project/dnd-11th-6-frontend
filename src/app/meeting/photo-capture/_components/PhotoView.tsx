@@ -103,7 +103,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
   }
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen ">
+    <div className="flex flex-col items-center w-full min-h-screen">
       {/* header */}
       <div className="flex justify-between items-center h-12 w-full p-4">
         <button onClick={onRetake} className="cursor-pointer">
@@ -117,16 +117,16 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
         </button>
       </div>
 
-      <div className="mt-6">
-        {currentMission && (
-          <div className=" rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] text-body2-medium text-gray-900">
-            {currentMission}
-          </div>
-        )}
-      </div>
-
       {/* photo */}
-      <div className="w-full mt-auto mb-auto">
+      <div className="w-full mt-auto mb-auto relative">
+        <div className="absolute left-0 right-0 flex justify-center z-10 transform -translate-y-[calc(100%+28px)]">
+          {currentMission && (
+            <div className="rounded-[14px] px-[18px] py-[10px] bg-[#F2F5F5] text-body2-medium text-gray-900">
+              {currentMission}
+            </div>
+          )}
+        </div>
+
         <div className="relative w-full pb-[100%] overflow-hidden rounded-[14px]">
           <Image src={photo} alt="찍은 사진" fill className="object-cover" />
         </div>

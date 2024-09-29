@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 
 function useCamera(setPhoto: (photo: string | null) => void) {
   const [isCameraOpen, setIsCameraOpen] = useState(false)
@@ -6,7 +6,7 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const openCamera = async () => {
+  const openCamera = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       alert('미디어 장치가 지원되지 않는 브라우저입니다.')
       return
@@ -15,14 +15,18 @@ function useCamera(setPhoto: (photo: string | null) => void) {
     setIsCameraOpen(true)
     setPhoto(null)
 
-    const constraints = {
-      video: {
-        facingMode: isRearCamera ? 'environment' : 'user',
-      },
-    }
-
     try {
+      const constraints = {
+        video: {
+          facingMode: isRearCamera ? 'environment' : 'user',
+          width: { ideal: 1080 },
+          height: { ideal: 1080 },
+          aspectRatio: { exact: 1 },
+        },
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia(constraints)
+
       if (videoRef.current) {
         if (videoRef.current.srcObject) {
           const existingStream = videoRef.current.srcObject as MediaStream
@@ -32,22 +36,20 @@ function useCamera(setPhoto: (photo: string | null) => void) {
 
         videoRef.current.srcObject = stream
 
-        videoRef.current.onloadeddata = async () => {
-          try {
-            if (videoRef.current) {
-              await videoRef.current.play()
-            }
-          } catch (err) {
-            console.error('비디오를 재생할 수 없습니다:', err)
+        videoRef.current.onloadedmetadata = () => {
+          if (videoRef.current) {
+            videoRef.current.play().catch((err) => {
+              console.error('비디오를 재생할 수 없습니다:', err)
+            })
           }
         }
       }
     } catch (err) {
       console.error('카메라를 열 수 없습니다:', err)
     }
-  }
+  }, [isRearCamera])
 
-  const takePicture = () => {
+  const takePicture = useCallback(() => {
     const canvas = canvasRef.current
     const video = videoRef.current
     if (canvas && video) {
@@ -90,15 +92,15 @@ function useCamera(setPhoto: (photo: string | null) => void) {
       stream.getTracks().forEach((track) => track.stop())
       setIsCameraOpen(false)
     }
-  }
+  }, [isRearCamera])
 
-  const toggleCamera = () => {
+  const toggleCamera = useCallback(() => {
     setIsRearCamera((prevState) => !prevState)
-  }
+  }, [])
 
   useEffect(() => {
     openCamera()
-  }, [isRearCamera])
+  }, [isRearCamera, openCamera])
 
   return {
     isCameraOpen,

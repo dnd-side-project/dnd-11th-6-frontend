@@ -51,59 +51,39 @@ function useCamera(setPhoto: (photo: string | null) => void) {
     const canvas = canvasRef.current
     const video = videoRef.current
     if (canvas && video) {
-      canvas.width = 360
-      canvas.height = 480
+      const dpr = window.devicePixelRatio || 1
+      const videoRect = video.getBoundingClientRect()
+      const size = Math.min(videoRect.width, videoRect.height)
+
+      canvas.width = size * dpr
+      canvas.height = size * dpr
+      canvas.style.width = `${size}px`
+      canvas.style.height = `${size}px`
+
       const context = canvas.getContext('2d')
-      const { videoWidth, videoHeight } = video
-      const aspectRatio = videoWidth / videoHeight
-      const desiredAspectRatio = 360 / 480
-
-      let sx = 0
-      let sy = 0
-      let sWidth = videoWidth
-      let sHeight = videoHeight
-
-      if (aspectRatio > desiredAspectRatio) {
-        sHeight = videoHeight
-        sWidth = videoHeight * desiredAspectRatio
-        sx = (videoWidth - sWidth) / 2
-        sy = 0
-      } else {
-        sWidth = videoWidth
-        sHeight = videoWidth / desiredAspectRatio
-        sx = 0
-        sy = (videoHeight - sHeight) / 2
+      if (context) {
+        context.scale(dpr, dpr)
       }
+
+      const scaleX = video.videoWidth / videoRect.width
+      const scaleY = video.videoHeight / videoRect.height
+
+      const centerX = videoRect.width / 2
+      const centerY = videoRect.height / 2
+
+      const sx = (centerX - size / 2) * scaleX
+      const sy = (centerY - size / 2) * scaleY
+      const sSize = size * scaleX
 
       if (!isRearCamera) {
         context?.scale(-1, 1)
-        context?.drawImage(
-          video,
-          sx,
-          sy,
-          sWidth,
-          sHeight,
-          -canvas.width,
-          0,
-          canvas.width,
-          canvas.height,
-        )
+        context?.drawImage(video, sx, sy, sSize, sSize, -size, 0, size, size)
         context?.scale(-1, 1)
       } else {
-        context?.drawImage(
-          video,
-          sx,
-          sy,
-          sWidth,
-          sHeight,
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-        )
+        context?.drawImage(video, sx, sy, sSize, sSize, 0, 0, size, size)
       }
 
-      const dataUrl = canvas.toDataURL('image/png')
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.95)
       setPhoto(dataUrl)
 
       const stream = video.srcObject as MediaStream

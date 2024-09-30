@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
@@ -25,8 +25,44 @@ function CameraView({
   goBack,
 }: CameraViewProps) {
   const { activeTooltip, hideTooltip, showTooltip } = useTooltipStore()
-  const currentMission = useMissionStore((state) => state.currentMission)
-  const setCurrentMission = useMissionStore((state) => state.setCurrentMission)
+  const { currentMission, setCurrentMission } = useMissionStore()
+
+  const adjustVideoSize = useCallback(() => {
+    if (videoRef.current) {
+      const video = videoRef.current
+      const container = video.parentElement
+      if (container) {
+        const containerAspect = container.clientWidth / container.clientHeight
+        const videoAspect = video.videoWidth / video.videoHeight
+
+        if (containerAspect > videoAspect) {
+          video.style.width = '100%'
+          video.style.height = 'auto'
+        } else {
+          video.style.width = 'auto'
+          video.style.height = '100%'
+        }
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('resize', adjustVideoSize)
+    return () => {
+      window.removeEventListener('resize', adjustVideoSize)
+    }
+  }, [adjustVideoSize])
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.addEventListener('loadedmetadata', adjustVideoSize)
+    }
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.removeEventListener('loadedmetadata', adjustVideoSize)
+      }
+    }
+  }, [adjustVideoSize])
 
   useEffect(() => {
     if (currentMission) {
@@ -68,9 +104,8 @@ function CameraView({
               )}
             </Link>
           </div>
-          <div className="flex-1">{} </div>
-          <div
-            role="button"
+          <div className="flex-1" />
+          <button
             tabIndex={0}
             onClick={goBack}
             onKeyDown={(e) => {
@@ -80,7 +115,7 @@ function CameraView({
             aria-label="close"
           >
             <CloseSvg size={24} />
-          </div>
+          </button>
         </div>
       </div>
 
@@ -128,15 +163,17 @@ function CameraView({
               className="w-6 h-6"
             />
           </button>
-          <div className="flex items-center justify-center w-1/3">
-            <button type="button" onClick={onCapture}>
-              <Image
-                src={CameraCaptureButton}
-                alt="Camera Capture Button"
-                className="w-16 h-16"
-              />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onCapture}
+            className="flex items-center justify-center w-1/3"
+          >
+            <Image
+              src={CameraCaptureButton}
+              alt="Camera Capture Button"
+              className="w-16 h-16"
+            />
+          </button>
           <div className="w-1/3" />
         </div>
       </div>

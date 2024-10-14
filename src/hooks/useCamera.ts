@@ -38,6 +38,26 @@ function useCamera(setPhoto: (photo: string | null) => void) {
     }
   }, [isRearCamera])
 
+  const drawImageOnCanvas = useCallback(
+    (
+      context: CanvasRenderingContext2D,
+      video: HTMLVideoElement,
+      size: number,
+      sx: number,
+      sy: number,
+      sSize: number,
+    ) => {
+      if (!isRearCamera) {
+        context.scale(-1, 1)
+        context.drawImage(video, sx, sy, sSize, sSize, -size, 0, size, size)
+        context.scale(-1, 1)
+      } else {
+        context.drawImage(video, sx, sy, sSize, sSize, 0, 0, size, size)
+      }
+    },
+    [isRearCamera],
+  )
+
   const takePicture = useCallback(() => {
     const canvas = canvasRef.current
     const video = videoRef.current
@@ -54,32 +74,24 @@ function useCamera(setPhoto: (photo: string | null) => void) {
       const context = canvas.getContext('2d')
       if (context) {
         context.scale(dpr, dpr)
+
+        const scaleX = video.videoWidth / videoRect.width
+        const scaleY = video.videoHeight / videoRect.height
+        const centerX = videoRect.width / 2
+        const centerY = videoRect.height / 2
+        const sx = (centerX - size / 2) * scaleX
+        const sy = (centerY - size / 2) * scaleY
+        const sSize = size * scaleX
+
+        drawImageOnCanvas(context, video, size, sx, sy, sSize)
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95)
+        setPhoto(dataUrl)
+
+        const stream = video.srcObject as MediaStream
+        stream.getTracks().forEach((track) => track.stop())
+        setIsCameraOpen(false)
       }
-
-      const scaleX = video.videoWidth / videoRect.width
-      const scaleY = video.videoHeight / videoRect.height
-
-      const centerX = videoRect.width / 2
-      const centerY = videoRect.height / 2
-
-      const sx = (centerX - size / 2) * scaleX
-      const sy = (centerY - size / 2) * scaleY
-      const sSize = size * scaleX
-
-      if (!isRearCamera) {
-        context?.scale(-1, 1)
-        context?.drawImage(video, sx, sy, sSize, sSize, -size, 0, size, size)
-        context?.scale(-1, 1)
-      } else {
-        context?.drawImage(video, sx, sy, sSize, sSize, 0, 0, size, size)
-      }
-
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.95)
-      setPhoto(dataUrl)
-
-      const stream = video.srcObject as MediaStream
-      stream.getTracks().forEach((track) => track.stop())
-      setIsCameraOpen(false)
     }
   }, [isRearCamera])
 

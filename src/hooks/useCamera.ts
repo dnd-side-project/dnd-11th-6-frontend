@@ -5,6 +5,8 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   const [isRearCamera, setIsRearCamera] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const isMountedRef = useRef(true)
 
   const openCamera = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -27,27 +29,53 @@ function useCamera(setPhoto: (photo: string | null) => void) {
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-      if (videoRef.current) {
-        if (videoRef.current.srcObject) {
-          const existingStream = videoRef.current.srcObject as MediaStream
-          existingStream.getTracks().forEach((track) => track.stop())
-          videoRef.current.srcObject = null
-        }
+      if (!isMountedRef.current) {
+        stream.getTracks().forEach((track) => track.stop())
+        return
+      }
 
+      streamRef.current = stream
+
+      if (videoRef.current && isMountedRef.current) {
         videoRef.current.srcObject = stream
-
-        videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current) {
-            videoRef.current.play().catch((err) => {
-              console.error('비디오를 재생할 수 없습니다:', err)
-            })
+        try {
+          await videoRef.current.play()
+        } catch (playError) {
+          if (playError instanceof Error && playError.name !== 'AbortError') {
+            console.error('비디오 재생 중 오류 발생:', playError)
           }
         }
       }
     } catch (err) {
-      console.error('카메라를 열 수 없습니다:', err)
+      if (
+        isMountedRef.current &&
+        err instanceof Error &&
+        err.name !== 'AbortError'
+      ) {
+        console.error('카메라를 열 수 없습니다:', err)
+      }
     }
   }, [isRearCamera])
+
+  const drawImageOnCanvas = useCallback(
+    (
+      context: CanvasRenderingContext2D,
+      video: HTMLVideoElement,
+      size: number,
+      sx: number,
+      sy: number,
+      sSize: number,
+    ) => {
+      if (!isRearCamera) {
+        context.scale(-1, 1)
+        context.drawImage(video, sx, sy, sSize, sSize, -size, 0, size, size)
+        context.scale(-1, 1)
+      } else {
+        context.drawImage(video, sx, sy, sSize, sSize, 0, 0, size, size)
+      }
+    },
+    [isRearCamera],
+  )
 
   const takePicture = useCallback(() => {
     const canvas = canvasRef.current
@@ -65,41 +93,43 @@ function useCamera(setPhoto: (photo: string | null) => void) {
       const context = canvas.getContext('2d')
       if (context) {
         context.scale(dpr, dpr)
+
+        const scaleX = video.videoWidth / videoRect.width
+        const scaleY = video.videoHeight / videoRect.height
+        const centerX = videoRect.width / 2
+        const centerY = videoRect.height / 2
+        const sx = (centerX - size / 2) * scaleX
+        const sy = (centerY - size / 2) * scaleY
+        const sSize = size * scaleX
+
+        drawImageOnCanvas(context, video, size, sx, sy, sSize)
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95)
+        setPhoto(dataUrl)
+
+        const stream = video.srcObject as MediaStream
+        stream.getTracks().forEach((track) => track.stop())
+        setIsCameraOpen(false)
       }
-
-      const scaleX = video.videoWidth / videoRect.width
-      const scaleY = video.videoHeight / videoRect.height
-
-      const centerX = videoRect.width / 2
-      const centerY = videoRect.height / 2
-
-      const sx = (centerX - size / 2) * scaleX
-      const sy = (centerY - size / 2) * scaleY
-      const sSize = size * scaleX
-
-      if (!isRearCamera) {
-        context?.scale(-1, 1)
-        context?.drawImage(video, sx, sy, sSize, sSize, -size, 0, size, size)
-        context?.scale(-1, 1)
-      } else {
-        context?.drawImage(video, sx, sy, sSize, sSize, 0, 0, size, size)
-      }
-
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.95)
-      setPhoto(dataUrl)
-
-      const stream = video.srcObject as MediaStream
-      stream.getTracks().forEach((track) => track.stop())
-      setIsCameraOpen(false)
     }
   }, [isRearCamera])
 
   const toggleCamera = useCallback(() => {
-    setIsRearCamera((prevState) => !prevState)
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+    }
+    setIsRearCamera((prev) => !prev)
   }, [])
 
   useEffect(() => {
+    isMountedRef.current = true
     openCamera()
+    return () => {
+      isMountedRef.current = false
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop())
+      }
+    }
   }, [isRearCamera, openCamera])
 
   return {

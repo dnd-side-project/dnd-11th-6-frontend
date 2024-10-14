@@ -6,6 +6,7 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const isMountedRef = useRef(true)
 
   const openCamera = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -27,14 +28,32 @@ function useCamera(setPhoto: (photo: string | null) => void) {
       }
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints)
+
+      if (!isMountedRef.current) {
+        stream.getTracks().forEach((track) => track.stop())
+        return
+      }
+
       streamRef.current = stream
 
-      if (videoRef.current) {
+      if (videoRef.current && isMountedRef.current) {
         videoRef.current.srcObject = stream
-        await videoRef.current.play()
+        try {
+          await videoRef.current.play()
+        } catch (playError) {
+          if (playError instanceof Error && playError.name !== 'AbortError') {
+            console.error('비디오 재생 중 오류 발생:', playError)
+          }
+        }
       }
     } catch (err) {
-      console.error('카메라를 열 수 없습니다:', err)
+      if (
+        isMountedRef.current &&
+        err instanceof Error &&
+        err.name !== 'AbortError'
+      ) {
+        console.error('카메라를 열 수 없습니다:', err)
+      }
     }
   }, [isRearCamera])
 
@@ -103,8 +122,10 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   }, [])
 
   useEffect(() => {
+    isMountedRef.current = true
     openCamera()
     return () => {
+      isMountedRef.current = false
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop())
       }

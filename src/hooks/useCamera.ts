@@ -5,6 +5,7 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   const [isRearCamera, setIsRearCamera] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
 
   const openCamera = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -26,23 +27,11 @@ function useCamera(setPhoto: (photo: string | null) => void) {
       }
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints)
+      streamRef.current = stream
 
       if (videoRef.current) {
-        if (videoRef.current.srcObject) {
-          const existingStream = videoRef.current.srcObject as MediaStream
-          existingStream.getTracks().forEach((track) => track.stop())
-          videoRef.current.srcObject = null
-        }
-
         videoRef.current.srcObject = stream
-
-        videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current) {
-            videoRef.current.play().catch((err) => {
-              console.error('비디오를 재생할 수 없습니다:', err)
-            })
-          }
-        }
+        await videoRef.current.play()
       }
     } catch (err) {
       console.error('카메라를 열 수 없습니다:', err)
@@ -95,11 +84,19 @@ function useCamera(setPhoto: (photo: string | null) => void) {
   }, [isRearCamera])
 
   const toggleCamera = useCallback(() => {
-    setIsRearCamera((prevState) => !prevState)
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+    }
+    setIsRearCamera((prev) => !prev)
   }, [])
 
   useEffect(() => {
     openCamera()
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop())
+      }
+    }
   }, [isRearCamera, openCamera])
 
   return {

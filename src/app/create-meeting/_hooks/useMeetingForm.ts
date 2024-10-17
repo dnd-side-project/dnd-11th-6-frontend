@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import createMeeting from '@/apis/meetingApi'
 import useZodForm from '@/hooks/useZodForm'
 import {
@@ -39,9 +40,16 @@ function useMeetingForm() {
   })
 
   const updateFormData = useCallback(() => {
+    const meetingDateValues = meetingDateForm.getValues()
+
+    const formattedMeetingDate = {
+      date: dayjs(meetingDateValues.date).format('YYYY-MM-DDTHH:mm'),
+      endDate: dayjs(meetingDateValues.endDate).format('YYYY-MM-DDTHH:mm'),
+    }
+
     setFormData({
       meeting: meetingForm.getValues(),
-      meetingDate: meetingDateForm.getValues(),
+      meetingDate: formattedMeetingDate,
       theme: themeForm.getValues(),
       password: passwordForm.getValues(),
     })

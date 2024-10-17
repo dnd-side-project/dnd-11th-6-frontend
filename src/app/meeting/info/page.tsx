@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
 import { ToastContainer } from '@/components/Toast'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useToastStore from '@/stores/useToastStore'
 import Back from 'public/icons/back.svg'
@@ -72,10 +73,27 @@ function MeetingInfo() {
               </div>
             </div>
 
-            <div
-              className="flex bg-point-mint rounded-full w-[75px] h-[75px] bg-cover bg-center"
-              style={{ backgroundImage: `url(${Logo.src})` }}
-            />
+            <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden">
+              {meetingData?.thumbnailUrl ? (
+                <Image
+                  loader={({ src }) => src}
+                  src={`${IMAGE_BASE_URL}/${meetingData?.thumbnailUrl}`}
+                  alt="thumbnail"
+                  layout="fill"
+                  objectFit="cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full bg-point-mint flex items-center justify-center">
+                  <Image
+                    src={Logo}
+                    alt="thumbnail"
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex ">

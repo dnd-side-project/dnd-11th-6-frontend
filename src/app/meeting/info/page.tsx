@@ -63,7 +63,12 @@ function MeetingInfo() {
           <div className="flex justify-between pt-3 pb-5">
             <div className="flex flex-col">
               <div className="flex justify-start">
-                <div className="bg-point-mint text-white text-caption-medium px-[10px] py-1 rounded-lg ">
+                <div
+                  className="text-white text-caption-medium px-[10px] py-1 rounded-lg "
+                  style={{
+                    backgroundColor: meetingData?.symbolColor,
+                  }}
+                >
                   모임 진행 중
                 </div>
               </div>
@@ -84,7 +89,10 @@ function MeetingInfo() {
                   unoptimized
                 />
               ) : (
-                <div className="w-full h-full bg-point-mint flex items-center justify-center">
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{ backgroundColor: meetingData?.symbolColor }}
+                >
                   <Image
                     src={Logo}
                     alt="thumbnail"
@@ -99,13 +107,25 @@ function MeetingInfo() {
         <div className="flex ">
           <button
             onClick={() => setIsMenuDetail(true)}
-            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${isMenuDetail ? 'text-point-mint  border-b-2 border-point-mint' : ''}`}
+            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
+              isMenuDetail ? 'border-b-2' : ''
+            }`}
+            style={{
+              color: isMenuDetail ? meetingData?.symbolColor : '',
+              borderColor: isMenuDetail ? meetingData?.symbolColor : '',
+            }}
           >
             모임 상세
           </button>
           <button
             onClick={() => setIsMenuDetail(false)}
-            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${!isMenuDetail ? 'text-point-mint  border-b-2 border-point-mint' : ''}`}
+            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
+              !isMenuDetail ? 'border-b-2' : ''
+            }`}
+            style={{
+              color: !isMenuDetail ? meetingData?.symbolColor : '',
+              borderColor: !isMenuDetail ? meetingData?.symbolColor : '',
+            }}
           >
             모임 키우기
           </button>

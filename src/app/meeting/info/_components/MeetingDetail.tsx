@@ -94,7 +94,10 @@ function MeetingDetail() {
           <div className="text-body1-semibold text-gray-800 mr-2">
             참여자 정보
           </div>
-          <div className="text-label text-point-mint">
+          <div
+            className="text-label "
+            style={{ color: meetingData?.symbolColor }}
+          >
             총 {participantsData?.pages[0]?.data.count ?? '-'}명
           </div>
         </div>
@@ -124,7 +127,7 @@ function MeetingDetail() {
                   <div className="text-label text-gray-800">촬영 완료</div>
                 ) : (
                   <div className="px-2 bg-gray-50 text-label-semibold text-gray-700">
-                    <span className="text-point-mint">
+                    <span style={{ color: meetingData?.symbolColor }}>
                       {participant.shootCount}
                     </span>{' '}
                     / 10

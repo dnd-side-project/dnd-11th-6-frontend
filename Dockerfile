@@ -1,5 +1,5 @@
 # 빌드 스테이지
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 RUN npm install -g pnpm
 
@@ -15,7 +15,7 @@ COPY . .
 RUN pnpm build
 
 # 프로덕션 스테이지
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production

@@ -2,6 +2,7 @@ import React, { useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import useSnapshots, { Snapshot } from '@/apis/getSnapApi'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 
 interface PhotoGridProps {
@@ -52,7 +53,7 @@ const MeetingPhotoGrid = ({
         ref={index === snapshots.length - 1 ? lastSnapshotElementRef : null}
       >
         <Image
-          src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${snapshot.snapUrl}`}
+          src={`${IMAGE_BASE_URL}/${snapshot.snapUrl}`}
           alt={`Photo ${snapshot.snapId} ${index + 1}`}
           layout="fill"
           objectFit="cover"

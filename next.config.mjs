@@ -9,10 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com'.replace(
-          /^https?:\/\//,
-          '',
-        ),
+        hostname: 'https://cdn.get-snappy.co.kr'.replace(/^https?:\/\//, ''),
         port: '',
       },
     ],
@@ -21,7 +18,7 @@ const nextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: 'https://api.get-snappy.co.kr/api/v1/:path*',
+        destination: `https://api.get-snappy.co.kr/api/v1/:path*`,
       },
     ]
   },

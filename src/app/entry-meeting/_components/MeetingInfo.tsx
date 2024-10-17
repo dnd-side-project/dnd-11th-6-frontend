@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import dayjs from 'dayjs'
 import Image from 'next/image'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
@@ -88,7 +89,7 @@ function MeetingInfo({
             모임 진행 중
           </div>
           <div className="text-white text-label-light">
-            {meetingData?.endDate}
+            {dayjs(meetingData?.endDate).format('YYYY.MM.DD')}
           </div>
         </div>
         <div className="h-[1px] w-full bg-white mt-4" />

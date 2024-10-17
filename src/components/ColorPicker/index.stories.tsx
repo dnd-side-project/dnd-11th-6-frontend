@@ -20,7 +20,6 @@ export const Default: Story = {
 
 export const WithLabel: Story = {
   args: {
-    label: '모임 테마',
     selectedColor: null,
   },
 }

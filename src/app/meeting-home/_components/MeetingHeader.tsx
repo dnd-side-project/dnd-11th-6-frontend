@@ -4,6 +4,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import SnapProgressBar from '@/components/SnapProgressBar'
+import { IMAGE_BASE_URL } from '@/constant/base_url'
 import { MeetingDataTypes } from '@/lib/meetingDataTypes'
 import useUserStore from '@/stores/useUserStore'
 import Right from '../../../../public/icons/right.svg'
@@ -37,7 +38,7 @@ const MeetingHeader = ({ meetingInfo, scrollPosition }: MeetingHeaderProps) => {
     >
       <div className="flex items-center py-[18px]">
         <Image
-          src={`https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/${meetingInfo.thumbnailUrl}`}
+          src={`${IMAGE_BASE_URL}/${meetingInfo.thumbnailUrl}`}
           alt="Meeting Thumbnail"
           width={52}
           height={52}

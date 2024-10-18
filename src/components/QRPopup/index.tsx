@@ -12,7 +12,6 @@ type QRPopupProps = {
 
 function QRPopup({ qrData, meetingName, themeColor, onClose }: QRPopupProps) {
   const [qrCodeImage, setQRCodeImage] = useState<string>('')
-  const themeColorClass = themeColor ? `bg-${themeColor}` : 'bg-point-mint'
 
   useEffect(() => {
     const generateQR = async () => {
@@ -41,7 +40,8 @@ function QRPopup({ qrData, meetingName, themeColor, onClose }: QRPopupProps) {
             )}
           </div>
           <div
-            className={`text-center text-white text-heading1-semibold ${themeColorClass} px-5 py-[6px] rounded-full`}
+            className="text-center text-white text-heading1-semibold px-5 py-[6px] rounded-full"
+            style={{ backgroundColor: themeColor || '#000000' }}
           >
             {meetingName}
           </div>

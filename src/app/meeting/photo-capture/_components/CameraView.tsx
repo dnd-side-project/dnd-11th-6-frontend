@@ -33,17 +33,18 @@ function CameraView({
       const video = videoRef.current
       const container = video.parentElement
       if (container) {
-        const containerAspect = container.clientWidth / container.clientHeight
+        const containerWidth = container.clientWidth
+        const containerHeight = container.clientHeight
         const videoAspect = video.videoWidth / video.videoHeight
 
         let newWidth
         let newHeight
 
-        if (containerAspect > videoAspect) {
-          newHeight = container.clientHeight
+        if (containerWidth / containerHeight > videoAspect) {
+          newHeight = containerHeight
           newWidth = newHeight * videoAspect
         } else {
-          newWidth = container.clientWidth
+          newWidth = containerWidth
           newHeight = newWidth / videoAspect
         }
 
@@ -51,6 +52,25 @@ function CameraView({
       }
     }
   }, [videoRef])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (video) {
+      const resizeObserver = new ResizeObserver(() => {
+        adjustVideoSize()
+      })
+      resizeObserver.observe(video)
+      return () => resizeObserver.disconnect()
+    }
+    return undefined
+  }, [videoRef, adjustVideoSize])
+
+  const handleToggleCamera = useCallback(() => {
+    onToggleCamera()
+    setTimeout(() => {
+      adjustVideoSize()
+    }, 100)
+  }, [onToggleCamera, adjustVideoSize])
 
   useEffect(() => {
     const video = videoRef.current
@@ -77,6 +97,14 @@ function CameraView({
     }
     return undefined
   }, [currentMission, hideTooltip, showTooltip])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      adjustVideoSize()
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [adjustVideoSize])
 
   const missionButton = useMemo(
     () => (
@@ -167,7 +195,7 @@ function CameraView({
         <div className="flex items-center justify-center w-full mt-5">
           <button
             type="button"
-            onClick={onToggleCamera}
+            onClick={handleToggleCamera}
             className="flex items-center justify-center w-1/3"
           >
             <Image

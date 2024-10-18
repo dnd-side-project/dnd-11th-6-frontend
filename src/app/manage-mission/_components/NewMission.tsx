@@ -11,7 +11,7 @@ const missionSchema = z.object({
   content: z
     .string()
     .nonempty('미션 내용을 입력해주세요')
-    .max(20, '20자 이내로 입력해주세요'),
+    .max(15, '15자 이내로 입력해주세요'),
 })
 
 type MissionFormData = z.infer<typeof missionSchema>
@@ -105,13 +105,13 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
         <TextInput
           name="content"
           control={control}
-          rules={{ required: '링크를 입력해주세요' }}
-          placeholder="링크 입력"
+          rules={{ required: '미션 내용을 입력해주세요' }}
+          placeholder="미션 내용을 입력해주세요"
           className="mt-10"
           error={errorMessage}
         />
         <div className="text-sm text-gray-500 flex justify-end">
-          {missionValue.length} / 20
+          {missionValue.length} / 15
         </div>
         <div className="flex-grow" />
 

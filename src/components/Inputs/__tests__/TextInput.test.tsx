@@ -75,15 +75,15 @@ describe('TextInput', () => {
     expect(input).toBeInTheDocument()
     expect(input.type).toBe('password')
 
-    const toggleButton = screen.getByAltText('Show password')
+    const toggleButton = screen.getByAltText('Hide password')
     expect(toggleButton).toBeInTheDocument()
 
     fireEvent.click(toggleButton)
     expect(input.type).toBe('text')
-    expect(screen.getByAltText('Hide password')).toBeInTheDocument()
+    expect(screen.getByAltText('Show password')).toBeInTheDocument()
 
     fireEvent.click(toggleButton)
     expect(input.type).toBe('password')
-    expect(screen.getByAltText('Show password')).toBeInTheDocument()
+    expect(screen.getByAltText('Hide password')).toBeInTheDocument()
   })
 })

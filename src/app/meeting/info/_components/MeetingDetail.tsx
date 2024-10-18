@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import dayjs from 'dayjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParticipants } from '@/apis/queries/participantsQueries'
@@ -14,6 +15,11 @@ function MeetingDetail() {
   const [showToggle, setShowToggle] = useState(false)
   const description = meetingData?.description ?? ''
   const MAX_LENGTH = 80
+
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '-'
+    return dayjs(dateString).format('YYYY.MM.DD A hh:mm')
+  }
 
   const limit = 10
   const {
@@ -68,17 +74,16 @@ function MeetingDetail() {
         </div>
         <div className="flex mt-4">
           <div className="flex flex-col w-1/2 bg-gray-50 rounded-[14px] p-3">
-            {' '}
             <div className="text-label-semibold text-gray-700">시작</div>
             <div className="text-caption mt-1 text-gray-500">
-              {meetingData?.startDate}
+              {formatDate(meetingData?.startDate)}
             </div>
           </div>
           <div className="w-3" />
           <div className="flex flex-col w-1/2 bg-gray-50 rounded-[14px] p-3">
             <div className="text-label-semibold text-gray-700">종료</div>
             <div className="text-caption mt-1 text-gray-500">
-              {meetingData?.endDate}
+              {formatDate(meetingData?.endDate)}
             </div>
           </div>
         </div>
@@ -89,7 +94,10 @@ function MeetingDetail() {
           <div className="text-body1-semibold text-gray-800 mr-2">
             참여자 정보
           </div>
-          <div className="text-label text-point-mint">
+          <div
+            className="text-label "
+            style={{ color: meetingData?.symbolColor }}
+          >
             총 {participantsData?.pages[0]?.data.count ?? '-'}명
           </div>
         </div>
@@ -119,7 +127,7 @@ function MeetingDetail() {
                   <div className="text-label text-gray-800">촬영 완료</div>
                 ) : (
                   <div className="px-2 bg-gray-50 text-label-semibold text-gray-700">
-                    <span className="text-point-mint">
+                    <span style={{ color: meetingData?.symbolColor }}>
                       {participant.shootCount}
                     </span>{' '}
                     / 10

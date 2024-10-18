@@ -17,9 +17,9 @@ import Share from 'public/icons/share.svg'
 function MeetingRaising() {
   const role = useUserStore((state) => state.role)
   const meetingName = useMeetingStore((state) => state.meetingData?.name)
-  // const meetingSymbolColor = useMeetingStore(
-  //   (state) => state.meetingData?.symbolColor,
-  // )
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const meetingId =
     useMeetingStore((state) => state.meetingData?.meetingId) ?? 0
   const {
@@ -84,9 +84,10 @@ function MeetingRaising() {
           <label className="mr-5 flex items-center">
             <input
               type="checkbox"
-              className="mr-2 cursor-pointer accent-point-mint"
+              className="mr-2 cursor-pointer"
               checked={sharePassword}
               onChange={(e) => setSharePassword(e.target.checked)}
+              style={{ accentColor: meetingSymbolColor || '#000000' }}
             />
             <span className="text-body2 text-gray-700">
               비밀번호 {passwordData?.data.password}
@@ -96,9 +97,10 @@ function MeetingRaising() {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                className="mr-2 cursor-pointer accent-point-mint"
+                className="mr-2 cursor-pointer"
                 checked={shareAdminKey}
                 onChange={(e) => setShareAdminKey(e.target.checked)}
+                style={{ accentColor: meetingSymbolColor || '#000000' }}
               />
               <span className="text-body2 text-gray-700">
                 관리자키 {passwordData?.data.leaderAuthKey}
@@ -132,7 +134,10 @@ function MeetingRaising() {
             <div className="text-body1-semibold text-gray-800 mr-2">
               등록된 모임 미션
             </div>
-            <div className="text-label text-point-mint">
+            <div
+              className="text-label"
+              style={{ color: meetingSymbolColor || '#000000' }}
+            >
               {missionData?.data.length}개
             </div>
           </div>
@@ -172,7 +177,7 @@ function MeetingRaising() {
         <QRPopup
           qrData={`https://get-snappy.co.kr/entry-meeting/${shareData?.data.meetingLink}`}
           meetingName={meetingName}
-          // themeColor={meetingSymbolColor}
+          themeColor={meetingSymbolColor}
           onClose={() => setShowQRPopup(false)}
         />
       )}

@@ -70,8 +70,8 @@ export function TextInput<T extends FieldValues>({
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <Image
-                  src={getIcon(showPassword ? 'eye-off' : 'eye')}
-                  alt={showPassword ? 'Hide password' : 'Show password'}
+                  src={getIcon(showPassword ? 'eye' : 'eye-off')}
+                  alt={showPassword ? 'Show password' : 'Hide password'}
                   width={20}
                   height={20}
                 />

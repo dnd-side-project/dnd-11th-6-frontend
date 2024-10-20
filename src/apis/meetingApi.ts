@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+import dayjs from 'dayjs'
 import { API_BASE_URL } from '@/constant/base_url'
 import { MeetingFormData } from '@/lib/meetingTypes'
 
@@ -7,8 +8,8 @@ const createMeeting = async (formData: MeetingFormData) => {
   const meetingData = {
     name: formData.meeting.name,
     description: formData.meeting.description,
-    startDate: formData.meetingDate.date,
-    endDate: formData.meetingDate.endDate,
+    startDate: dayjs(formData.meetingDate.date).format('YYYY-MM-DDTHH:mm'),
+    endDate: dayjs(formData.meetingDate.endDate).format('YYYY-MM-DDTHH:mm'),
     symbolColor: formData.theme.color,
     password: formData.password.password,
   }

@@ -15,14 +15,14 @@ function MeetingDate() {
   } = meetingDateForm
 
   const startDate = watch('date')
-
   const maxEndDate = useMemo(() => {
     if (startDate) {
-      return dayjs(startDate).add(7, 'day').format('YYYY-MM-DDTHH:mm')
+      return dayjs(startDate).add(7, 'day').format('YYYY-MM-DD')
     }
     return undefined
   }, [startDate])
 
+  console.log(startDate, maxEndDate)
   return (
     <MeetingLayout
       title="모임은 언제 진행되나요?"
@@ -34,14 +34,18 @@ function MeetingDate() {
         name="date"
         control={control}
         label="모임 시작"
-        min={dayjs().format('YYYY-MM-DDTHH:mm')}
+        min={dayjs().format('YYYY-MM-DD')}
         error={errors.date?.message}
       />
 
       <DateInput
         name="endDate"
         control={control}
-        min={dayjs().format('YYYY-MM-DDTHH:mm')}
+        min={
+          startDate === 'Invalid Date'
+            ? dayjs().format('YYYY-MM-DD')
+            : startDate
+        }
         max={maxEndDate}
         label="모집 종료(링크 유효 기간)"
         error={errors.endDate?.message}

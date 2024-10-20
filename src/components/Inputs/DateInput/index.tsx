@@ -28,14 +28,13 @@ export function DateInput<T extends FieldValues>({
       min,
       max,
     }
-
     return (
       <div className="mb-6">
         <div className="mb-2">
           <label htmlFor={name} className="block text-gray-600 text-sm mb-2">
             {label}
           </label>
-          <input {...props} />
+          <input {...props} type="date" min={min} max={max} />
         </div>
         {error && (
           <p className="text-red-600 text-sm">

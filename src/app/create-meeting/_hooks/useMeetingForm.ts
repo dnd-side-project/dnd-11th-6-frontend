@@ -41,10 +41,9 @@ function useMeetingForm() {
 
   const updateFormData = useCallback(() => {
     const meetingDateValues = meetingDateForm.getValues()
-
     const formattedMeetingDate = {
-      date: dayjs(meetingDateValues.date).format('YYYY-MM-DDTHH:mm'),
-      endDate: dayjs(meetingDateValues.endDate).format('YYYY-MM-DDTHH:mm'),
+      date: dayjs(meetingDateValues.date).format('YYYY-MM-DD'),
+      endDate: dayjs(meetingDateValues.endDate).format('YYYY-MM-DD'),
     }
 
     setFormData({

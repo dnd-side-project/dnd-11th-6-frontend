@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
@@ -7,6 +7,9 @@ import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
+import { handleExpiredToken } from '@/apis/apiUtils'
+import useUserStore from '@/stores/useUserStore'
+import { usePreviousUser } from '@/hooks/usePreviousUser'
 
 interface MeetingInfoProps {
   meetingCode?: string
@@ -22,10 +25,33 @@ function MeetingInfo({
   onHomeClick,
 }: MeetingInfoProps) {
   const maxLength = 75
-  const meetingData = useMeetingStore((state) => state.meetingData)
-  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
-
+  const { meetingData, setMeetingData } = useMeetingStore((state) => ({
+    meetingData: state.meetingData,
+    setMeetingData: state.setMeetingData,
+  }))
   const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
+  const { data: isPreviousUserData } = usePreviousUser(
+    meetingData?.meetingId ?? 0,
+  )
+  const { participantId, nickname } = useUserStore((state) => ({
+    participantId: state.participantId,
+    nickname: state.nickname,
+  }))
+
+  const handleEnterClick = useCallback(() => {
+    if (
+      isPreviousUserData.isPreviousUser &&
+      participantId &&
+      nickname &&
+      meetingData
+    ) {
+      // re-enter meeting
+      handleExpiredToken(false) // shouldRedirectOnClose: false
+    } else {
+      // join meeting
+      onEnterClick()
+    }
+  }, [isPreviousUserData, onEnterClick])
 
   useEffect(() => {
     if (meetingCode && isSuccess && data) {
@@ -106,7 +132,7 @@ function MeetingInfo({
           이전
         </Button>
         <Button
-          onClick={onEnterClick}
+          onClick={handleEnterClick}
           fullWidth
           variant="primary"
           className="text-white"

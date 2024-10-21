@@ -46,7 +46,7 @@ const useMeetingStore = create(
     }),
     {
       name: 'meeting-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 )

@@ -4,7 +4,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { MeetingData } from '@/stores/useMeetingStore'
+import useMeetingStore, { MeetingData } from '@/stores/useMeetingStore'
 import { apiCall, ApiResponse, ApiError } from '../apiUtils'
 
 type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>
@@ -64,26 +64,40 @@ export const useJoinMeeting = (
 export const useCheckMeetingLink = (
   link: string,
   options?: UseQueryOptions<CheckMeetLinkResponse, ApiError>,
-) =>
-  useQuery<CheckMeetLinkResponse, ApiError>({
+) => {
+  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
+
+  return useQuery<CheckMeetLinkResponse, ApiError>({
     queryKey: ['meeting', link],
-    queryFn: () => apiCall(`/meetings?meetingLink=${link}`),
+    queryFn: async () => {
+      const response = await apiCall(`/meetings?meetingLink=${link}`)
+      setMeetingData(response.data)
+      return response
+    },
     enabled: !!link,
     retry: false,
     ...options,
   })
+}
 
 export const useCheckMeetingId = (
   meetingId: number,
   options?: UseQueryOptions<CheckMeetIdResponse, ApiError>,
-) =>
-  useQuery<CheckMeetIdResponse, ApiError>({
+) => {
+  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
+  return useQuery<CheckMeetIdResponse, ApiError>({
     queryKey: ['meeting', meetingId],
-    queryFn: () => apiCall(`/meetings/${meetingId}`),
+    queryFn: async () => {
+      const response = await apiCall(`/meetings/${meetingId}`)
+      setMeetingData(response.data)
+
+      return response
+    },
     enabled: !!meetingId,
     retry: false,
     ...options,
   })
+}
 
 export const useValidatePassword = (
   options?: UseMutationOptions<

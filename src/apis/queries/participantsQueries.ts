@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import useUserStore from '@/stores/useUserStore'
 import { apiCall, ApiResponse, ApiError } from '../apiUtils'
 
 interface Participant {
@@ -34,10 +35,24 @@ export const useParticipants = (meetingId: number, limit: number = 10) =>
     initialPageParam: 0,
   })
 
-export const useGetParticipantsMe = (meetingId: number) =>
-  useQuery<GetParticipantsMeResponse, ApiError>({
+export const useGetParticipantsMe = (meetingId: number) => {
+  const { setParticipantId, setNickname, setRole, setShootCount } =
+    useUserStore()
+
+  return useQuery<GetParticipantsMeResponse, ApiError>({
     queryKey: ['participants', meetingId, 'me'],
-    queryFn: async () => apiCall(`/meetings/${meetingId}/participants/me`),
+    queryFn: async () => {
+      const response = await apiCall(`/meetings/${meetingId}/participants/me`)
+      const { participantId, nickname, role, shootCount } = response.data
+      setParticipantId(participantId)
+      setNickname(nickname)
+      setRole(role as 'LEADER' | 'PARTICIPANT')
+      setShootCount(shootCount)
+
+      return response
+    },
+    enabled: !!meetingId,
   })
+}
 
 export default useParticipants

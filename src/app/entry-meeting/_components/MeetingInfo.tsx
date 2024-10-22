@@ -1,15 +1,15 @@
 import { useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
+import { handleExpiredToken } from '@/apis/apiUtils'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { Button } from '@/components/Button'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
+import usePreviousUser from '@/hooks/usePreviousUser'
 import useMeetingStore from '@/stores/useMeetingStore'
+import useUserStore from '@/stores/useUserStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
-import { handleExpiredToken } from '@/apis/apiUtils'
-import useUserStore from '@/stores/useUserStore'
-import { usePreviousUser } from '@/hooks/usePreviousUser'
 
 interface MeetingInfoProps {
   meetingCode?: string

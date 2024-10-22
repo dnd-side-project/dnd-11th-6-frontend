@@ -31,9 +31,7 @@ function PasswordPopup() {
   const [lastCheckedPassword, setLastCheckedPassword] = useState('')
   const router = useRouter()
 
-  const { data: participantData } = useGetParticipantsMe(
-    meetingId ? meetingId : 0,
-  )
+  const { data: participantData } = useGetParticipantsMe(meetingId || 0)
 
   const {
     control,
@@ -83,11 +81,12 @@ function PasswordPopup() {
     }
   }, [isOpen, reset])
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       closePopup()
-    }
-  }, [closePopup])
+    },
+    [closePopup],
+  )
 
   const handleConfirm = useCallback(async () => {
     if (isPasswordValid && meetingId) {

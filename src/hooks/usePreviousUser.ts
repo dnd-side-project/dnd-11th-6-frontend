@@ -10,7 +10,7 @@ const checkPreviousUser = async (meetingId: number) => {
   return response.json()
 }
 
-export function usePreviousUser(meetingId: number) {
+export default function usePreviousUser(meetingId: number) {
   return useQuery({
     queryKey: ['previousUser'],
     queryFn: () => checkPreviousUser(meetingId),

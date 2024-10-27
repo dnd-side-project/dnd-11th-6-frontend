@@ -44,7 +44,7 @@ function Popup({
         )}
 
         <div className="p-5">
-          <p className="text-center text-lg text-gray-700 font-medium mb-6">
+          <p className="text-center text-gray-700 text-heading1-semibold mb-4">
             {title}
           </p>
           {children}

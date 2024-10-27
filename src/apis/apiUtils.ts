@@ -24,7 +24,7 @@ const clearToken = (meetingId: number) => {
   useUserStore.persist.clearStorage()
 }
 
-const handleExpiredToken = () => {
+export const handleExpiredToken = (shouldRedirectOnClose: boolean = true) => {
   const meetingId = useMeetingStore.getState().meetingData?.meetingId
   if (!meetingId) {
     console.error('Meeting ID not found')
@@ -50,7 +50,9 @@ const handleExpiredToken = () => {
     }
   }
 
-  usePasswordPopupStore.getState().openPopup(meetingId, onConfirm)
+  usePasswordPopupStore
+    .getState()
+    .openPopup(meetingId, onConfirm, shouldRedirectOnClose)
 }
 
 const refreshToken = async (): Promise<void> => {

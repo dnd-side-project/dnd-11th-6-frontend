@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import { reenterMeeting } from '@/apis/apiUtils'
 import { TextInput } from '@/components/Inputs/TextInput/index'
@@ -10,6 +11,7 @@ import useDebounce from '@/hooks/useDebounce'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
 import Popup from '../components/Popup/index'
 import { useValidatePassword } from './queries/meetingQueries'
+import { useGetParticipantsMe } from './queries/participantsQueries'
 
 const passwordSchema = z.object({
   password: z
@@ -22,11 +24,14 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 function PasswordPopup() {
-  const { isOpen, meetingId, onConfirm, closePopup, closePopupAndRedirect } =
+  const { isOpen, meetingId, onConfirm, closePopup, shouldRedirectOnClose } =
     usePasswordPopupStore()
   const [isPasswordValid, setIsPasswordValid] = useState(false)
   const [isReentering, setIsReentering] = useState(false)
   const [lastCheckedPassword, setLastCheckedPassword] = useState('')
+  const router = useRouter()
+
+  const { data: participantData } = useGetParticipantsMe(meetingId || 0)
 
   const {
     control,
@@ -76,6 +81,13 @@ function PasswordPopup() {
     }
   }, [isOpen, reset])
 
+  useEffect(
+    () => () => {
+      closePopup()
+    },
+    [closePopup],
+  )
+
   const handleConfirm = useCallback(async () => {
     if (isPasswordValid && meetingId) {
       setIsReentering(true)
@@ -86,6 +98,7 @@ function PasswordPopup() {
             onConfirm(passwordValue)
           }
           closePopup()
+          router.push('/meeting-home')
         } else {
           throw new Error('재입장 실패')
         }
@@ -109,12 +122,27 @@ function PasswordPopup() {
       isOpen={isOpen}
       cancelText=""
       confirmText={isReentering ? '재입장 중...' : '입장하기'}
-      onClose={closePopupAndRedirect}
+      onClose={() => {
+        closePopup()
+        if (shouldRedirectOnClose) {
+          router.push('/')
+        }
+      }}
       onConfirm={handleConfirm}
-      title="다시 오셨네요!"
+      title={
+        <>
+          {participantData?.data.nickname || ''}님<br />
+          다시 오셨네요!
+        </>
+      }
       hasCloseButton
       confirmDisabled={!isPasswordValid || isReentering}
     >
+      <p className="text-center text-body1 text-gray-500 mb-4">
+        진입을 위해서
+        <br />
+        모임 암호를 입력해주세요.
+      </p>
       <TextInput
         name="password"
         control={control}

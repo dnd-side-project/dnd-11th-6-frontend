@@ -1,6 +1,5 @@
 import useMeetingStore from '@/stores/useMeetingStore'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
-import useUserStore from '@/stores/useUserStore'
 
 export interface ApiResponse<T = null> {
   status: number
@@ -16,22 +15,12 @@ export interface ApiError {
   }
 }
 
-const clearToken = (meetingId: number) => {
-  document.cookie = `ACCESS_TOKEN_${meetingId}=; max-age=0; path=/api/;`
-  document.cookie = `REFRESH_TOKEN_${meetingId}=; max-age=0; path=/api/;`
-
-  useMeetingStore.persist.clearStorage()
-  useUserStore.persist.clearStorage()
-}
-
 export const handleExpiredToken = (shouldRedirectOnClose: boolean = true) => {
   const meetingId = useMeetingStore.getState().meetingData?.meetingId
   if (!meetingId) {
     console.error('Meeting ID not found')
     return
   }
-
-  clearToken(meetingId)
 
   const onConfirm = async (password: string) => {
     try {
@@ -69,20 +58,9 @@ const refreshToken = async (): Promise<void> => {
 
   const result = await response.json()
   if (!response.ok) {
-    switch (result.error.code) {
-      case 'UNAUTHORIZED':
-      case 'JWT_EXPIRED_ERROR':
-      case 'FORBIDDEN':
-        handleExpiredToken()
-        break
-      default:
-        throw new Error(`Failed to refresh token: ${result.error.message}`)
-    }
+    throw result
   }
 }
-
-let refreshAttempts = 0
-const MAX_REFRESH_ATTEMPTS = 3
 
 export const apiCall = async (
   endpoint: string,
@@ -102,23 +80,15 @@ export const apiCall = async (
     })
 
     if (response.status === 401 || response.status === 403) {
-      if (refreshAttempts >= MAX_REFRESH_ATTEMPTS) {
-        refreshAttempts = 0
-        handleExpiredToken()
-        throw new Error('Max refresh attempts reached')
-      }
       try {
-        refreshAttempts += 1
         await refreshToken()
         return await makeRequest()
       } catch (error) {
-        console.error('Error refreshing token:', error)
         handleExpiredToken()
         throw error
       }
     }
 
-    refreshAttempts = 0
     const result = await response.json()
     if (!response.ok) throw result
     return result
@@ -130,6 +100,15 @@ export const apiCall = async (
 export const reenterMeeting = async (meetingId: number, password: string) => {
   try {
     await apiCall(`/meetings/${meetingId}/auth/login`, 'POST', { password })
+    const newMeetingData = await fetchMeetingData(meetingId)
+    const meetingStorage = localStorage.getItem('meeting-storage')
+    if (meetingStorage) {
+      const parsedStorage = JSON.parse(meetingStorage)
+      parsedStorage.state.meetingData = newMeetingData
+      const updatedStorage = JSON.stringify(parsedStorage)
+      localStorage.setItem('meeting-storage', updatedStorage)
+      document.cookie = `meeting-storage=${encodeURIComponent(updatedStorage)}; path=/;`
+    }
     return true
   } catch (error) {
     console.error('Failed to re-enter meeting:', error)

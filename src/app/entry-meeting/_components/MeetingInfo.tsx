@@ -6,7 +6,7 @@ import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { useGetParticipantsMe } from '@/apis/queries/participantsQueries'
 import { Button } from '@/components/Button'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
-import usePreviousUser from '@/hooks/usePreviousUser'
+import useTokens from '@/hooks/useTokens'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
@@ -31,29 +31,37 @@ function MeetingInfo({
     setMeetingData: state.setMeetingData,
   }))
   const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
-  const { data: isPreviousUserData } = usePreviousUser(
+  const { data: tokenData, isSuccess: tokenCheckSuccess } = useTokens(
     meetingData?.meetingId ?? 0,
   )
 
   const { refetch: checkMyInfo } = useGetParticipantsMe(
     meetingData?.meetingId ?? 0,
+    tokenData?.hasTokens ?? false,
+    false,
   )
 
   const handleEnterClick = useCallback(async () => {
-    if (!meetingData?.meetingId) return
+    if (!meetingData?.meetingId || !tokenCheckSuccess) return
 
-    if (isPreviousUserData.isPreviousUser) {
+    // check if user has token
+    if (tokenData?.hasTokens) {
+      // has token(existing user)
       try {
-        await checkMyInfo()
-        router.push('/meeting-home')
+        const result = await checkMyInfo()
+        if (result.data) {
+          router.push('/meeting-home')
+        }
       } catch (error) {
-        console.error('Error checking token validity:', error)
+        console.error('Error checking user info:', error)
       }
     } else {
+      // new user
       onEnterClick()
     }
   }, [
-    isPreviousUserData,
+    tokenData?.hasTokens,
+    tokenCheckSuccess,
     meetingData?.meetingId,
     router,
     onEnterClick,

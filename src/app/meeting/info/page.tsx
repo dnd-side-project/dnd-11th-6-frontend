@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
+import AuthGuard from '@/app/AuthGuard'
 import { ToastContainer } from '@/components/Toast'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
@@ -49,93 +50,95 @@ function MeetingInfo() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full">
-      <div className="flex-none">
-        <div className="p-4">
-          <div className="flex items-center justify-center relative h-[50px]">
-            <div className="absolute left-0">
-              <button onClick={() => router.push('/meeting-home')}>
-                <Image src={Back} alt="back" />
-              </button>
+    <AuthGuard>
+      <div className="flex flex-col h-screen w-full">
+        <div className="flex-none">
+          <div className="p-4">
+            <div className="flex items-center justify-center relative h-[50px]">
+              <div className="absolute left-0">
+                <button onClick={() => router.push('/meeting-home')}>
+                  <Image src={Back} alt="back" />
+                </button>
+              </div>
+              <div className="text-center">모임 정보</div>
             </div>
-            <div className="text-center">모임 정보</div>
-          </div>
-          <div className="flex justify-between pt-3 pb-5">
-            <div className="flex flex-col">
-              <div className="flex justify-start">
-                <div
-                  className="text-white text-caption-medium px-[10px] py-1 rounded-lg "
-                  style={{
-                    backgroundColor: meetingData?.symbolColor,
-                  }}
-                >
-                  모임 진행 중
+            <div className="flex justify-between pt-3 pb-5">
+              <div className="flex flex-col">
+                <div className="flex justify-start">
+                  <div
+                    className="text-white text-caption-medium px-[10px] py-1 rounded-lg "
+                    style={{
+                      backgroundColor: meetingData?.symbolColor,
+                    }}
+                  >
+                    모임 진행 중
+                  </div>
+                </div>
+
+                <div className=" font-bold text-[22px] mt-3">
+                  {meetingData?.name}
                 </div>
               </div>
 
-              <div className=" font-bold text-[22px] mt-3">
-                {meetingData?.name}
-              </div>
-            </div>
-
-            <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden">
-              {meetingData?.thumbnailUrl ? (
-                <Image
-                  loader={({ src }) => src}
-                  src={`${IMAGE_BASE_URL}/${meetingData?.thumbnailUrl}`}
-                  alt="thumbnail"
-                  layout="fill"
-                  objectFit="cover"
-                  unoptimized
-                />
-              ) : (
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ backgroundColor: meetingData?.symbolColor }}
-                >
+              <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden">
+                {meetingData?.thumbnailUrl ? (
                   <Image
-                    src={Logo}
+                    loader={({ src }) => src}
+                    src={`${IMAGE_BASE_URL}/${meetingData?.thumbnailUrl}`}
                     alt="thumbnail"
                     layout="fill"
-                    objectFit="contain"
+                    objectFit="cover"
+                    unoptimized
                   />
-                </div>
-              )}
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: meetingData?.symbolColor }}
+                  >
+                    <Image
+                      src={Logo}
+                      alt="thumbnail"
+                      layout="fill"
+                      objectFit="contain"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+          <div className="flex ">
+            <button
+              onClick={() => setIsMenuDetail(true)}
+              className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
+                isMenuDetail ? 'border-b-2' : ''
+              }`}
+              style={{
+                color: isMenuDetail ? meetingData?.symbolColor : '',
+                borderColor: isMenuDetail ? meetingData?.symbolColor : '',
+              }}
+            >
+              모임 상세
+            </button>
+            <button
+              onClick={() => setIsMenuDetail(false)}
+              className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
+                !isMenuDetail ? 'border-b-2' : ''
+              }`}
+              style={{
+                color: !isMenuDetail ? meetingData?.symbolColor : '',
+                borderColor: !isMenuDetail ? meetingData?.symbolColor : '',
+              }}
+            >
+              모임 키우기
+            </button>
+          </div>
         </div>
-        <div className="flex ">
-          <button
-            onClick={() => setIsMenuDetail(true)}
-            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
-              isMenuDetail ? 'border-b-2' : ''
-            }`}
-            style={{
-              color: isMenuDetail ? meetingData?.symbolColor : '',
-              borderColor: isMenuDetail ? meetingData?.symbolColor : '',
-            }}
-          >
-            모임 상세
-          </button>
-          <button
-            onClick={() => setIsMenuDetail(false)}
-            className={`text-gray-600 border-b-[1px] text-body1-semibold w-1/2 flex justify-center py-3 ${
-              !isMenuDetail ? 'border-b-2' : ''
-            }`}
-            style={{
-              color: !isMenuDetail ? meetingData?.symbolColor : '',
-              borderColor: !isMenuDetail ? meetingData?.symbolColor : '',
-            }}
-          >
-            모임 키우기
-          </button>
+        <div className="flex-grow overflow-y-auto">
+          {isMenuDetail ? <MeetingDetail /> : <MeetingRaising />}
         </div>
+        <ToastContainer />
       </div>
-      <div className="flex-grow overflow-y-auto">
-        {isMenuDetail ? <MeetingDetail /> : <MeetingRaising />}
-      </div>
-      <ToastContainer />
-    </div>
+    </AuthGuard>
   )
 }
 

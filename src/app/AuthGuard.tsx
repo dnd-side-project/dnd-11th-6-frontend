@@ -41,13 +41,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       }
 
       // if tokens found, check if user is authenticated
-      if (tokenData.hasTokens) {
-        try {
-          await checkAuth()
-          setIsAuthenticated(true)
-        } catch (error) {
-          console.error('Auth validation failed:', error)
-        }
+      try {
+        await checkAuth()
+        setIsAuthenticated(true)
+      } catch (error) {
+        console.error('Auth validation failed:', error)
       }
     }
 
@@ -71,6 +69,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (tokenCheckLoading) {
     return <Loading />
+  }
+
+  if (!tokenData?.hasTokens) {
+    router.push('/')
+    return null
   }
 
   if (!isAuthenticated) {

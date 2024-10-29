@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
 import AuthGuard from '@/app/AuthGuard'
+import Loading from '@/components/Loading'
 import { ToastContainer } from '@/components/Toast'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
@@ -42,7 +43,7 @@ function MeetingInfo() {
   }, [message, showToast])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   if (error) {

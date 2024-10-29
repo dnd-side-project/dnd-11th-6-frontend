@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParticipants } from '@/apis/queries/participantsQueries'
+import Loading from '@/components/Loading'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
 import Edit from 'public/icons/edit.svg'
@@ -136,7 +137,7 @@ function MeetingDetail() {
               </div>
             )),
           )}
-          {isFetching && <div>Loading...</div>}
+          {isFetching && <Loading fullScreen={false} />}
         </div>
       </div>
     </div>

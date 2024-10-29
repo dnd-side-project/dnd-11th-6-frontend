@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import '../styles/globals.css'
 import dynamic from 'next/dynamic'
+import Loading from '@/components/Loading'
 import Providers from './providers'
 
 const PasswordPopup = dynamic(() => import('@/apis/PasswordPopup'), {
   ssr: false,
-  loading: () => <div>Loading...</div>,
+  loading: () => <Loading />,
 })
 
 export const metadata: Metadata = {

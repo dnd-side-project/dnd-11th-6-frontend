@@ -8,6 +8,7 @@ import {
   useGetLeaderMission,
 } from '@/apis/queries/missionQuries'
 import { Button } from '@/components/Button'
+import Loading from '@/components/Loading'
 import useMeetingStore from '@/stores/useMeetingStore'
 import Back from 'public/icons/back.svg'
 import PlusGray from 'public/icons/plus-gray.svg'
@@ -63,7 +64,7 @@ function ManageMission() {
     deleteMission.mutate({ meetingId, missionId })
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loading />
   if (apiErrorMessage) return <div>{apiErrorMessage}</div>
 
   return (

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useGetSnapDetail } from '@/apis/queries/snapQueries'
 import AuthGuard from '@/app/AuthGuard'
 import { Button } from '@/components/Button'
+import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import CloseSvg from 'public/icons/CloseSvg'
@@ -40,7 +41,7 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
     }
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loading />
   if (isError) return <div>Error loading snap details</div>
   if (!snapData) return <div>No data available</div>
 

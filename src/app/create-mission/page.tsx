@@ -9,6 +9,7 @@ import {
   useGetRandomMissions,
 } from '@/apis/queries/missionQuries'
 import { Button } from '@/components/Button'
+import Loading from '@/components/Loading'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
@@ -124,7 +125,7 @@ function MissionCreationPage() {
     inCompleteMissionLoading ||
     randomMissionLoading
   ) {
-    return <div>Loading...</div>
+    return <Loading />
   }
   if (completedMissionError || inCompleteMissionError || randomMissionError) {
     return <div>Error</div>

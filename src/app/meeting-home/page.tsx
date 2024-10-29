@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Snapshot } from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
+import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
@@ -73,7 +74,7 @@ function MeetingHomePage() {
     }
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loading />
   if (error) return <div>An error has occurred: {error.message}</div>
 
   return (

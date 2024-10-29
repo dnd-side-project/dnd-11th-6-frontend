@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
 import { useGetParticipantsMe } from '@/apis/queries/participantsQueries'
 import { Button } from '@/components/Button'
+import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useTokens from '@/hooks/useTokens'
 import useMeetingStore from '@/stores/useMeetingStore'
@@ -80,7 +81,7 @@ function MeetingInfo({
       : meetingData?.description
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   return (

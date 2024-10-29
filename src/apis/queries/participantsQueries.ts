@@ -35,7 +35,11 @@ export const useParticipants = (meetingId: number, limit: number = 10) =>
     initialPageParam: 0,
   })
 
-export const useGetParticipantsMe = (meetingId: number) => {
+export const useGetParticipantsMe = (
+  meetingId: number,
+  hasTokens: boolean,
+  isEnabled: boolean = false,
+) => {
   const { setParticipantId, setNickname, setRole, setShootCount } =
     useUserStore()
 
@@ -51,7 +55,9 @@ export const useGetParticipantsMe = (meetingId: number) => {
 
       return response
     },
-    enabled: !!meetingId,
+    enabled: !!meetingId && isEnabled && hasTokens === true,
+    retry: false,
+    refetchOnWindowFocus: false,
   })
 }
 

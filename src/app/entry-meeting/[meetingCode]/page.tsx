@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
+import { useCheckMeetingLink } from '@/apis/meetingApi'
 import Loading from '@/components/Loading'
 import useMeetingStore from '@/stores/useMeetingStore'
 import {

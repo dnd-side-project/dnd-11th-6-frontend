@@ -5,7 +5,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { apiCall, ApiError, ApiResponse } from '../apiUtils'
+import { apiCall, ApiError, ApiResponse } from './apiUtils'
 
 type GetRandomMissionsResponse = ApiResponse<
   Array<{

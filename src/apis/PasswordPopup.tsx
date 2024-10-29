@@ -11,7 +11,7 @@ import useDebounce from '@/hooks/useDebounce'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
 import useUserStore from '@/stores/useUserStore'
 import Popup from '../components/Popup/index'
-import { useValidatePassword } from './queries/meetingQueries'
+import { useValidatePassword } from './meetingApi'
 
 const passwordSchema = z.object({
   password: z

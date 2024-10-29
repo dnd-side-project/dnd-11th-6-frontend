@@ -7,7 +7,7 @@ import {
   useGetCompletedMissions,
   useGetInCompleteMissions,
   useGetRandomMissions,
-} from '@/apis/queries/missionQuries'
+} from '@/apis/missionApi'
 import { Button } from '@/components/Button'
 import Loading from '@/components/Loading'
 import { ToggleSwitch } from '@/components/ToogleSwitch'

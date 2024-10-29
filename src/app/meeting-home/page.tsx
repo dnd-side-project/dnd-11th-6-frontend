@@ -79,7 +79,6 @@ function MeetingHomePage() {
 
   return (
     <AuthGuard>
-      {' '}
       <div className="pb-20">
         <MeetingHeader
           meetingInfo={meetingInfo!}

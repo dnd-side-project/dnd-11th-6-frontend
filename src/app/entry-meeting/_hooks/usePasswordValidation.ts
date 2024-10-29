@@ -5,7 +5,7 @@ import { z } from 'zod'
 import {
   useValidateLeaderAuthKey,
   useValidatePassword,
-} from '@/apis/queries/meetingQueries'
+} from '@/apis/meetingApi'
 import useDebounce from '@/hooks/useDebounce'
 
 const passwordSchema = z.object({

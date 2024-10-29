@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useCheckMeetingId } from '@/apis/queries/meetingQueries'
+import { useCheckMeetingId } from '@/apis/meetingApi'
 import AuthGuard from '@/app/AuthGuard'
 import Loading from '@/components/Loading'
 import { ToastContainer } from '@/components/Toast'

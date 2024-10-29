@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import useUserStore from '@/stores/useUserStore'
-import { apiCall, ApiResponse, ApiError } from '../apiUtils'
+import { apiCall, ApiResponse, ApiError } from './apiUtils'
 
 interface Participant {
   participantId: number
@@ -37,8 +37,8 @@ export const useParticipants = (meetingId: number, limit: number = 10) =>
 
 export const useGetParticipantsMe = (
   meetingId: number,
-  hasTokens: boolean,
-  isEnabled: boolean = false,
+  hasTokens: boolean = true,
+  isEnabled: boolean = true,
 ) => {
   const { setParticipantId, setNickname, setRole, setShootCount } =
     useUserStore()

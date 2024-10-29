@@ -31,6 +31,9 @@ function MeetingInfo({
     meetingData: state.meetingData,
     setMeetingData: state.setMeetingData,
   }))
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
   const { data: tokenData, isSuccess: tokenCheckSuccess } = useTokens(
     meetingData?.meetingId ?? 0,
@@ -97,7 +100,10 @@ function MeetingInfo({
       <div className="text-gray-900 font-bold text-[22px]">
         모임 앨범에 입장하시겠어요?
       </div>
-      <div className="flex flex-col bg-point-mint rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
+      <div
+        className="flex flex-col rounded-[14px] mx-6 my-auto px-5 py-7 text-white"
+        style={{ backgroundColor: meetingSymbolColor || '#000000' }}
+      >
         <div className="flex w-full">
           <div className="w-11 max-h-11 mr-3 relative">
             {meetingData?.thumbnailUrl ? (

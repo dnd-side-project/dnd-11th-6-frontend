@@ -31,6 +31,9 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
   const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
   const { setParticipantId, setNickname, setRole, setShootCount } =
     useUserStore()
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
 
   const { refetch: refetchParticipantMe } = useGetParticipantsMe(meetingId ?? 0)
 
@@ -159,7 +162,8 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
           type="button"
           onClick={handleUpload}
           variant="primary"
-          className="text-white text-body1-semibold w-full relative bg-point-mint"
+          className="text-white text-body1-semibold w-full relative"
+          style={{ backgroundColor: meetingSymbolColor || '#000000' }}
           disabled={isUploading}
         >
           <Tooltip

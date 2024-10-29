@@ -29,6 +29,9 @@ function MissionCreationPage() {
     setMissionType,
     setCurrentMission,
   } = useMissionStore()
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const [isSpinning, setIsSpinning] = useState(false)
   const meetingId = useMeetingStore().meetingData?.meetingId
   const [visibleMissions, setVisibleMissions] = useState<string[]>(['?'])
@@ -189,7 +192,14 @@ function MissionCreationPage() {
                 type="button"
                 variant="outline"
                 key={mission.missionId}
-                className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${currentMission === mission.content ? 'border-[3px] border-point-mint' : ''}`}
+                className={`w-full cursor-pointer text-gray-900 mb-3 font-semibold text-base ${
+                  currentMission === mission.content ? 'border-[3px]' : ''
+                }`}
+                style={
+                  currentMission === mission.content
+                    ? { borderColor: meetingSymbolColor || '#000000' }
+                    : undefined
+                }
                 onClick={() =>
                   selectMission({
                     missionId: mission.missionId,
@@ -228,9 +238,12 @@ function MissionCreationPage() {
                 variant={currentMission ? 'light' : 'primary'}
                 onClick={startSpinning}
                 disabled={isSpinning}
-                className={
-                  currentMission ? 'w-20' : 'w-full text-white bg-point-mint'
-                }
+                className={currentMission ? 'w-20' : 'w-full text-white'}
+                style={{
+                  backgroundColor: currentMission
+                    ? undefined
+                    : meetingSymbolColor || '#000000',
+                }}
               >
                 {isSpinning ? (
                   '미션 뽑는 중...'
@@ -245,7 +258,8 @@ function MissionCreationPage() {
                   type="button"
                   variant="primary"
                   onClick={performMission}
-                  className="w-full text-white bg-point-mint"
+                  className="w-full text-white"
+                  style={{ backgroundColor: meetingSymbolColor || '#000000' }}
                 >
                   미션 수행하기
                 </Button>
@@ -257,7 +271,8 @@ function MissionCreationPage() {
               variant="primary"
               onClick={performMission}
               disabled={!currentMission}
-              className="w-full text-white bg-point-mint"
+              className="w-full text-white"
+              style={{ backgroundColor: meetingSymbolColor || '#000000' }}
             >
               미션 수행하기
             </Button>

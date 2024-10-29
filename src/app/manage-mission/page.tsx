@@ -25,6 +25,9 @@ function ManageMission() {
   const meetingId = useMeetingStore(
     (state) => state.meetingData?.meetingId ?? 0,
   )
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const [apiErrorMessage] = useState<string | null>(null)
 
   const {
@@ -113,7 +116,13 @@ function ManageMission() {
                       <Image src={Trash} alt="trash" />
                     </button>
                   ) : (
-                    <div className="text-point-mint bg-point-mint bg-opacity-10 rounded-full px-[6px] py-[3px] text-caption2-light">
+                    <div
+                      className="bg-opacity-10 rounded-full px-[6px] py-[3px] text-caption2-light"
+                      style={{
+                        backgroundColor: meetingSymbolColor || '#000000',
+                        color: meetingSymbolColor || '#FFFFFF',
+                      }}
+                    >
                       진행중
                     </div>
                   )}

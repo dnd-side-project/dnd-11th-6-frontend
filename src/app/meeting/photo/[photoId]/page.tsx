@@ -16,6 +16,9 @@ import formatCaptureTime from './formatCaptureTime'
 function PhotoDetail({ params }: { params: { photoId: string } }) {
   const router = useRouter()
   const meetingId = useMeetingStore().meetingData?.meetingId
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const {
     data: snapData,
     isLoading,
@@ -102,7 +105,8 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
             onClick={handleDownload}
             type="button"
             variant="primary"
-            className="text-white text-body1-semibold w-full relative bg-point-mint"
+            className="text-white text-body1-semibold w-full relative"
+            style={{ backgroundColor: meetingSymbolColor || '#000000' }}
           >
             <Image
               src={Download}

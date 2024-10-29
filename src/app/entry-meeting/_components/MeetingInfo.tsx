@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { handleExpiredToken } from '@/apis/apiUtils'
+import { useRouter } from 'next/navigation'
 import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
+import { useGetParticipantsMe } from '@/apis/queries/participantsQueries'
 import { Button } from '@/components/Button'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import usePreviousUser from '@/hooks/usePreviousUser'
 import useMeetingStore from '@/stores/useMeetingStore'
-import useUserStore from '@/stores/useUserStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
 
@@ -25,6 +25,7 @@ function MeetingInfo({
   onHomeClick,
 }: MeetingInfoProps) {
   const maxLength = 75
+  const router = useRouter()
   const { meetingData, setMeetingData } = useMeetingStore((state) => ({
     meetingData: state.meetingData,
     setMeetingData: state.setMeetingData,
@@ -33,25 +34,31 @@ function MeetingInfo({
   const { data: isPreviousUserData } = usePreviousUser(
     meetingData?.meetingId ?? 0,
   )
-  const { participantId, nickname } = useUserStore((state) => ({
-    participantId: state.participantId,
-    nickname: state.nickname,
-  }))
 
-  const handleEnterClick = useCallback(() => {
-    if (
-      isPreviousUserData.isPreviousUser &&
-      participantId &&
-      nickname &&
-      meetingData
-    ) {
-      // re-enter meeting
-      handleExpiredToken(false) // shouldRedirectOnClose: false
+  const { refetch: checkMyInfo } = useGetParticipantsMe(
+    meetingData?.meetingId ?? 0,
+  )
+
+  const handleEnterClick = useCallback(async () => {
+    if (!meetingData?.meetingId) return
+
+    if (isPreviousUserData.isPreviousUser) {
+      try {
+        await checkMyInfo()
+        router.push('/meeting-home')
+      } catch (error) {
+        console.error('Error checking token validity:', error)
+      }
     } else {
-      // join meeting
       onEnterClick()
     }
-  }, [isPreviousUserData, onEnterClick])
+  }, [
+    isPreviousUserData,
+    meetingData?.meetingId,
+    router,
+    onEnterClick,
+    checkMyInfo,
+  ])
 
   useEffect(() => {
     if (meetingCode && isSuccess && data) {

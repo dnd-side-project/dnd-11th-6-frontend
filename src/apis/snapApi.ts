@@ -4,7 +4,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { ApiResponse, ApiError, apiCall } from '../apiUtils'
+import { ApiResponse, ApiError, apiCall } from './apiUtils'
 
 type UploadSnapResponse = ApiResponse<{ snapId: number; snapUrl: string }>
 

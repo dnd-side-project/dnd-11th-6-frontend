@@ -1,13 +1,14 @@
 import { useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { handleExpiredToken } from '@/apis/apiUtils'
-import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
+import { useRouter } from 'next/navigation'
+import { useCheckMeetingLink } from '@/apis/meetingApi'
+import { useGetParticipantsMe } from '@/apis/participantsApi'
 import { Button } from '@/components/Button'
+import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
-import usePreviousUser from '@/hooks/usePreviousUser'
+import useTokens from '@/hooks/useTokens'
 import useMeetingStore from '@/stores/useMeetingStore'
-import useUserStore from '@/stores/useUserStore'
 import BackIcon from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
 
@@ -25,33 +26,51 @@ function MeetingInfo({
   onHomeClick,
 }: MeetingInfoProps) {
   const maxLength = 75
+  const router = useRouter()
   const { meetingData, setMeetingData } = useMeetingStore((state) => ({
     meetingData: state.meetingData,
     setMeetingData: state.setMeetingData,
   }))
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
-  const { data: isPreviousUserData } = usePreviousUser(
+  const { data: tokenData, isSuccess: tokenCheckSuccess } = useTokens(
     meetingData?.meetingId ?? 0,
   )
-  const { participantId, nickname } = useUserStore((state) => ({
-    participantId: state.participantId,
-    nickname: state.nickname,
-  }))
 
-  const handleEnterClick = useCallback(() => {
-    if (
-      isPreviousUserData.isPreviousUser &&
-      participantId &&
-      nickname &&
-      meetingData
-    ) {
-      // re-enter meeting
-      handleExpiredToken(false) // shouldRedirectOnClose: false
+  const { refetch: checkMyInfo } = useGetParticipantsMe(
+    meetingData?.meetingId ?? 0,
+    tokenData?.hasTokens ?? false,
+    false,
+  )
+
+  const handleEnterClick = useCallback(async () => {
+    if (!meetingData?.meetingId || !tokenCheckSuccess) return
+
+    // check if user has token
+    if (tokenData?.hasTokens) {
+      // has token(existing user)
+      try {
+        const result = await checkMyInfo()
+        if (result.data) {
+          router.push('/meeting-home')
+        }
+      } catch (error) {
+        console.error('Error checking user info:', error)
+      }
     } else {
-      // join meeting
+      // new user
       onEnterClick()
     }
-  }, [isPreviousUserData, onEnterClick])
+  }, [
+    tokenData?.hasTokens,
+    tokenCheckSuccess,
+    meetingData?.meetingId,
+    router,
+    onEnterClick,
+    checkMyInfo,
+  ])
 
   useEffect(() => {
     if (meetingCode && isSuccess && data) {
@@ -65,7 +84,7 @@ function MeetingInfo({
       : meetingData?.description
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   return (
@@ -81,7 +100,10 @@ function MeetingInfo({
       <div className="text-gray-900 font-bold text-[22px]">
         모임 앨범에 입장하시겠어요?
       </div>
-      <div className="flex flex-col bg-point-mint rounded-[14px] mx-6 my-auto px-5 py-7 text-white">
+      <div
+        className="flex flex-col rounded-[14px] mx-6 my-auto px-5 py-7 text-white"
+        style={{ backgroundColor: meetingSymbolColor || '#000000' }}
+      >
         <div className="flex w-full">
           <div className="w-11 max-h-11 mr-3 relative">
             {meetingData?.thumbnailUrl ? (

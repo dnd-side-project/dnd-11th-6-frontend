@@ -4,6 +4,7 @@ import Link from 'next/link'
 import CameraCaptureButton from '@/assets/CameraCaptureButton.svg'
 import CameraSwitchButton from '@/assets/CameraSwitchButton.svg'
 import Tooltip from '@/components/Tooltip'
+import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
 import CloseSvg from 'public/icons/CloseSvg'
@@ -26,6 +27,9 @@ function CameraView({
 }: CameraViewProps) {
   const { activeTooltip, hideTooltip, showTooltip } = useTooltipStore()
   const { currentMission, setCurrentMission } = useMissionStore()
+  const meetingSymbolColor = useMeetingStore(
+    (state) => state.meetingData?.symbolColor,
+  )
   const [videoSize, setVideoSize] = useState({ width: 0, height: 0 })
 
   const adjustVideoSize = useCallback(() => {
@@ -136,7 +140,10 @@ function CameraView({
   const missionDisplay = useMemo(
     () =>
       currentMission ? (
-        <div className="flex justify-center text-gray-50 bg-point-mint px-3 py-2 rounded-[14px] text-sm">
+        <div
+          className="flex justify-center text-gray-50 px-3 py-2 rounded-[14px] text-sm"
+          style={{ backgroundColor: meetingSymbolColor || '#000000' }}
+        >
           {currentMission}
           <button onClick={() => setCurrentMission(null)} className="ml-2">
             X

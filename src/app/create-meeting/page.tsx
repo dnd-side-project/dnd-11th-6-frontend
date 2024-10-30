@@ -4,6 +4,7 @@ import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
+import Loading from '@/components/Loading'
 import useMeetStore from '@/stores/useMeetStore'
 import CloseSvg from 'public/icons/CloseSvg'
 import useMeetingForm from './_hooks/useMeetingForm'
@@ -41,7 +42,7 @@ function CreateMeetingPage() {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   return (
@@ -64,7 +65,9 @@ function CreateMeetingPage() {
           </button>
         )}
       </div>
-      <Suspense fallback={<div>Loading...</div>}>{renderStep()}</Suspense>
+      <Suspense fallback={<Loading fullScreen={false} />}>
+        {renderStep()}
+      </Suspense>
     </div>
   )
 }

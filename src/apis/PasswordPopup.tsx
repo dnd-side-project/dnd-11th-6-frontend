@@ -9,9 +9,9 @@ import { reenterMeeting } from '@/apis/apiUtils'
 import { TextInput } from '@/components/Inputs/TextInput/index'
 import useDebounce from '@/hooks/useDebounce'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
+import useUserStore from '@/stores/useUserStore'
 import Popup from '../components/Popup/index'
-import { useValidatePassword } from './queries/meetingQueries'
-import { useGetParticipantsMe } from './queries/participantsQueries'
+import { useValidatePassword } from './meetingApi'
 
 const passwordSchema = z.object({
   password: z
@@ -31,7 +31,9 @@ function PasswordPopup() {
   const [lastCheckedPassword, setLastCheckedPassword] = useState('')
   const router = useRouter()
 
-  const { data: participantData } = useGetParticipantsMe(meetingId || 0)
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }))
 
   const {
     control,
@@ -95,8 +97,11 @@ function PasswordPopup() {
         const success = await reenterMeeting(meetingId, passwordValue)
         if (success) {
           if (onConfirm) {
-            onConfirm(passwordValue)
+            await onConfirm(passwordValue)
           }
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, 500)
+          })
           closePopup()
           router.push('/meeting-home')
         } else {
@@ -131,7 +136,7 @@ function PasswordPopup() {
       onConfirm={handleConfirm}
       title={
         <>
-          {participantData?.data.nickname || ''}님<br />
+          {nickname || ''}님<br />
           다시 오셨네요!
         </>
       }

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Snapshot } from '@/apis/getSnapApi'
 import Chip from '@/components/Chip'
+import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingData from '@/hooks/useMeetingData'
 import useScrollPosition from '@/hooks/useScrollPosition'
@@ -10,6 +11,7 @@ import useMeetingStore from '@/stores/useMeetingStore'
 import dice from '../../../public/icons/dice.svg'
 import profile from '../../../public/icons/profile.svg'
 import snappy from '../../../public/icons/snappy.svg'
+import AuthGuard from '../AuthGuard'
 import {
   MeetingHeader,
   MeetingActionButtons,
@@ -72,40 +74,42 @@ function MeetingHomePage() {
     }
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loading />
   if (error) return <div>An error has occurred: {error.message}</div>
 
   return (
-    <div className="pb-20">
-      <MeetingHeader
-        meetingInfo={meetingInfo!}
-        scrollPosition={scrollPosition}
-      />
-      <div className="bg-gray-50 px-4 py-[14px]">
-        <div className="flex space-x-2 py-4 overflow-x-auto ">
-          {chips.map((chip) => (
-            <Chip
-              key={chip.label}
-              label={chip.label}
-              variant={activeChip === chip.label ? 'active' : 'default'}
-              onClick={() => setActiveChip(chip.label)}
-              chipImage={chip.icon}
-            />
-          ))}
-        </div>
+    <AuthGuard>
+      <div className="pb-20">
+        <MeetingHeader
+          meetingInfo={meetingInfo!}
+          scrollPosition={scrollPosition}
+        />
+        <div className="bg-gray-50 px-4 py-[14px]">
+          <div className="flex space-x-2 py-4 overflow-x-auto ">
+            {chips.map((chip) => (
+              <Chip
+                key={chip.label}
+                label={chip.label}
+                variant={activeChip === chip.label ? 'active' : 'default'}
+                onClick={() => setActiveChip(chip.label)}
+                chipImage={chip.icon}
+              />
+            ))}
+          </div>
 
-        <MeetingPhotoGrid
-          activeChip={activeChip}
-          selectedImages={selectedImages}
-          onSelectImage={handleSelectImage}
-          isSelecting={isSelecting}
-        />
-        <MeetingActionButtons
-          isSelecting={isSelecting}
-          onToggleSelecting={handleToggleSelecting}
-        />
+          <MeetingPhotoGrid
+            activeChip={activeChip}
+            selectedImages={selectedImages}
+            onSelectImage={handleSelectImage}
+            isSelecting={isSelecting}
+          />
+          <MeetingActionButtons
+            isSelecting={isSelecting}
+            onToggleSelecting={handleToggleSelecting}
+          />
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   )
 }
 

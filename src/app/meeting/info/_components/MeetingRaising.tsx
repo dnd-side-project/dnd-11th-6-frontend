@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {
-  useGetMeetingPassword,
-  useShareMeeting,
-} from '@/apis/queries/meetingQueries'
-import { useGetParticipantMissions } from '@/apis/queries/missionQuries'
+import { useGetMeetingPassword, useShareMeeting } from '@/apis/meetingApi'
+import { useGetParticipantMissions } from '@/apis/missionApi'
 import QRPopup from '@/components/QRPopup'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'

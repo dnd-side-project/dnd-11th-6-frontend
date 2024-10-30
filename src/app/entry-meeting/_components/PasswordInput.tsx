@@ -6,7 +6,7 @@ import { z } from 'zod'
 import {
   useValidateLeaderAuthKey,
   useValidatePassword,
-} from '@/apis/queries/meetingQueries'
+} from '@/apis/meetingApi'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/Inputs/TextInput'
 import { ToggleSwitch } from '@/components/ToogleSwitch'

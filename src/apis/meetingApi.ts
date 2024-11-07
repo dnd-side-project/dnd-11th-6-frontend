@@ -1,34 +1,9 @@
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query'
 import axios from 'axios'
-
 import dayjs from 'dayjs'
 import { API_BASE_URL } from '@/constant/base_url'
 import { MeetingFormData } from '@/lib/meetingTypes'
-import useMeetingStore, { MeetingData } from '@/stores/useMeetingStore'
-import { apiCall, ApiResponse, ApiError } from './apiUtils'
 
-type CheckNicknameResponse = ApiResponse<{ isAvailableNickname: boolean }>
-type JoinMeetingResponse = ApiResponse<{ participantId: number }>
-type CheckMeetIdResponse = ApiResponse<MeetingData>
-type CheckMeetLinkResponse = ApiResponse<MeetingData>
-type ValidatePasswordResponse = ApiResponse
-type ValidateLeaderAuthKeyResponse = ApiResponse
-type ShareMeetingResponse = ApiResponse<{ meetingLink: string }>
-type MeetingPasswordResponse = ApiResponse<{
-  password: string
-  leaderAuthKey?: string
-}>
-type ModifyMeetingResponse = ApiResponse<{
-  meetingId: number
-  name: string
-  description: string
-  symbolColor: string
-}>
+import { apiCall } from './apiUtils'
 
 export const createMeeting = async (formData: MeetingFormData) => {
   const meetingData = {
@@ -63,167 +38,41 @@ export const createMeeting = async (formData: MeetingFormData) => {
   return response.data
 }
 
-export const useCheckNickname = (
+export const checkNickname = (meetingId: number, nickname: string) =>
+  apiCall(
+    `/meetings/${meetingId}/participants/check-nickname?nickname=${nickname}`,
+  )
+
+export const joinMeeting = (
   meetingId: number,
   nickname: string,
-  options?: UseQueryOptions<CheckNicknameResponse, ApiError>,
-) =>
-  useQuery<CheckNicknameResponse, ApiError>({
-    queryKey: ['nickname', meetingId, nickname],
-    queryFn: () =>
-      apiCall(
-        `/meetings/${meetingId}/participants/check-nickname?nickname=${nickname}`,
-      ),
-    enabled: !!nickname,
-    retry: false,
-    ...options,
-  })
+  role: string,
+) => apiCall(`/meetings/${meetingId}/participants`, 'POST', { nickname, role })
 
-export const useJoinMeeting = (
-  options?: UseMutationOptions<
-    JoinMeetingResponse,
-    ApiError,
-    { meetingId: number; nickname: string; role: string }
-  >,
-) =>
-  useMutation<
-    JoinMeetingResponse,
-    ApiError,
-    { meetingId: number; nickname: string; role: string }
-  >({
-    mutationFn: ({ meetingId, nickname, role }) =>
-      apiCall(`/meetings/${meetingId}/participants`, 'POST', {
-        nickname,
-        role,
-      }),
-    ...options,
-  })
+export const getMeetingByLink = (link: string) =>
+  apiCall(`/meetings?meetingLink=${link}`)
 
-export const useCheckMeetingLink = (
-  link: string,
-  options?: UseQueryOptions<CheckMeetLinkResponse, ApiError>,
-) => {
-  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
+export const getMeetingById = (meetingId: number) =>
+  apiCall(`/meetings/${meetingId}`)
 
-  return useQuery<CheckMeetLinkResponse, ApiError>({
-    queryKey: ['meeting', link],
-    queryFn: async () => {
-      const response = await apiCall(`/meetings?meetingLink=${link}`)
-      setMeetingData(response.data)
-      return response
-    },
-    enabled: !!link,
-    retry: false,
-    ...options,
-  })
-}
+export const validatePassword = (meetingId: number, password: string) =>
+  apiCall(`/meetings/${meetingId}/validate-password`, 'POST', { password })
 
-export const useCheckMeetingId = (
+export const validateLeaderAuthKey = (
   meetingId: number,
-  options?: UseQueryOptions<CheckMeetIdResponse, ApiError>,
-) => {
-  const setMeetingData = useMeetingStore((state) => state.setMeetingData)
-  return useQuery<CheckMeetIdResponse, ApiError>({
-    queryKey: ['meeting', meetingId],
-    queryFn: async () => {
-      const response = await apiCall(`/meetings/${meetingId}`)
-      setMeetingData(response.data)
-
-      return response
-    },
-    enabled: !!meetingId,
-    retry: false,
-    ...options,
-  })
-}
-
-export const useValidatePassword = (
-  options?: UseMutationOptions<
-    ValidatePasswordResponse,
-    ApiError,
-    { meetingId: number; password: string }
-  >,
+  leaderAuthKey: string,
 ) =>
-  useMutation<
-    ValidatePasswordResponse,
-    ApiError,
-    { meetingId: number; password: string }
-  >({
-    mutationFn: ({ meetingId, password }) =>
-      apiCall(`/meetings/${meetingId}/validate-password`, 'POST', { password }),
-    ...options,
+  apiCall(`/meetings/${meetingId}/validate-leader-key`, 'POST', {
+    leaderAuthKey,
   })
 
-export const useValidateLeaderAuthKey = (
-  options?: UseMutationOptions<
-    ValidateLeaderAuthKeyResponse,
-    ApiError,
-    { meetingId: number; leaderAuthKey: string }
-  >,
-) =>
-  useMutation<
-    ValidateLeaderAuthKeyResponse,
-    ApiError,
-    { meetingId: number; leaderAuthKey: string }
-  >({
-    mutationFn: ({ meetingId, leaderAuthKey }) =>
-      apiCall(`/meetings/${meetingId}/validate-leader-key`, 'POST', {
-        leaderAuthKey,
-      }),
-    ...options,
-  })
+export const shareMeeting = (meetingId: number) =>
+  apiCall(`/meetings/${meetingId}/share`)
 
-export const useShareMeeting = (
+export const getMeetingPassword = (meetingId: number) =>
+  apiCall(`/meetings/${meetingId}/password`)
+
+export const modifyMeeting = (
   meetingId: number,
-  options?: UseQueryOptions<ShareMeetingResponse, ApiError>,
-) =>
-  useQuery<ShareMeetingResponse, ApiError>({
-    queryKey: ['meeting', meetingId],
-    queryFn: () => apiCall(`/meetings/${meetingId}/share`),
-    enabled: !!meetingId,
-    retry: false,
-    ...options,
-  })
-
-export const useGetMeetingPassword = (
-  meetingId: number,
-  options?: UseQueryOptions<MeetingPasswordResponse, ApiError>,
-) =>
-  useQuery<MeetingPasswordResponse, ApiError>({
-    queryKey: ['meeting', meetingId, 'password'],
-    queryFn: () => apiCall(`/meetings/${meetingId}/password`),
-    enabled: !!meetingId,
-    retry: false,
-    ...options,
-  })
-
-export const useModifyMeeting = (
-  options?: UseMutationOptions<
-    ModifyMeetingResponse,
-    ApiError,
-    {
-      meetingId: number
-      name: string
-      description: string
-      symbolColor: string
-    }
-  >,
-) =>
-  useMutation<
-    ModifyMeetingResponse,
-    ApiError,
-    {
-      meetingId: number
-      name: string
-      description: string
-      symbolColor: string
-    }
-  >({
-    mutationFn: ({ meetingId, name, description, symbolColor }) =>
-      apiCall(`/meetings/${meetingId}`, 'PATCH', {
-        name,
-        description,
-        symbolColor,
-      }),
-    ...options,
-  })
+  data: { name: string; description: string; symbolColor: string },
+) => apiCall(`/meetings/${meetingId}`, 'PATCH', data)

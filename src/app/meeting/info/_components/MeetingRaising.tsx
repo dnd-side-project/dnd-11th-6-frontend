@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useGetMeetingPassword, useShareMeeting } from '@/apis/meetingApi'
-import { useGetParticipantMissions } from '@/apis/missionApi'
+import { getMeetingPassword, shareMeeting } from '@/apis/meetingApi'
+import { getParticipantMissions } from '@/apis/missionApi'
 import QRPopup from '@/components/QRPopup'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import { MeetingPasswordResponse, ShareMeetingResponse } from '@/types/meeting'
+import { GetParticipantMissionsResponse } from '@/types/mission'
 import Edit from 'public/icons/edit.svg'
 import LinkIcon from 'public/icons/link.svg'
 import QRCode from 'public/icons/qr-code.svg'
@@ -19,24 +23,39 @@ function MeetingRaising() {
   )
   const meetingId =
     useMeetingStore((state) => state.meetingData?.meetingId) ?? 0
+
   const {
     data: shareData,
     isLoading: isShareDataLoading,
     error: shareDataError,
-  } = useShareMeeting(meetingId)
-  console.log(shareData)
+  } = useQuery<ShareMeetingResponse, ApiError>({
+    queryKey: ['meeting', meetingId, 'share'],
+    queryFn: () => shareMeeting(meetingId),
+    enabled: !!meetingId,
+    retry: false,
+  })
 
   const {
     data: missionData,
     isLoading: isMissionDataLoading,
     error: missionDataError,
-  } = useGetParticipantMissions(meetingId)
+  } = useQuery<GetParticipantMissionsResponse, ApiError>({
+    queryKey: ['missions', meetingId],
+    queryFn: () => getParticipantMissions(meetingId),
+    enabled: !!meetingId,
+    retry: false,
+  })
 
   const {
     data: passwordData,
     isLoading: isPasswordDataLoading,
     error: passwordDataError,
-  } = useGetMeetingPassword(meetingId)
+  } = useQuery<MeetingPasswordResponse, ApiError>({
+    queryKey: ['meeting', meetingId, 'password'],
+    queryFn: () => getMeetingPassword(meetingId),
+    enabled: !!meetingId,
+    retry: false,
+  })
 
   const [sharePassword, setSharePassword] = useState(false)
   const [shareAdminKey, setShareAdminKey] = useState(false)

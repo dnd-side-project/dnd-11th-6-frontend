@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useGetParticipantsMe } from '@/apis/participantsApi'
 import Loading from '@/components/Loading'
+import useParticipantsMe from '@/hooks/useParticipantsMe'
 import useTokens from '@/hooks/useTokens'
 import useMeetingStore from '@/stores/useMeetingStore'
 
@@ -26,7 +26,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     refetch: refetchTokens,
   } = useTokens(meetingData?.meetingId ?? 0)
 
-  const { refetch: checkAuth } = useGetParticipantsMe(
+  const { refetch: checkAuth } = useParticipantsMe(
     meetingData?.meetingId ?? 0,
     tokenData?.hasTokens ?? false,
     false,

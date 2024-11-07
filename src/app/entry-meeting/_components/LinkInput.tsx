@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
-import { useCheckMeetingLink } from '@/apis/meetingApi'
 import { Button } from '@/components/Button'
 import Callout from '@/components/Callout'
 import { TextInput } from '@/components/Inputs/TextInput'
+import useCheckMeetingLink from '@/hooks/useCheckMeetingLink'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
@@ -39,8 +39,13 @@ function LinkInput({ onEnterClick, onHomeClick }: LinkInputProps) {
   const linkValue = watch('link')
   const debouncedLink = useDebounce(linkValue, 500)
 
-  const { data, isLoading, isSuccess, isError, error } =
-    useCheckMeetingLink(debouncedLink)
+  const { data, isLoading, isSuccess, isError, error } = useCheckMeetingLink(
+    debouncedLink,
+    {
+      enabled: !!debouncedLink && debouncedLink.length > 0,
+      queryKey: ['checkMeetingLink', debouncedLink],
+    },
+  )
 
   useEffect(() => {
     if (data) {

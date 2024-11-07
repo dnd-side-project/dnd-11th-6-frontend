@@ -1,26 +1,18 @@
 import useMeetingStore from '@/stores/useMeetingStore'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
 
-export interface ApiResponse<T = null> {
-  status: number
-  data: T
-}
-
-export interface ApiError {
-  status: number
-  data: null
-  error: {
-    code: string
-    message: string
-  }
-}
-
-export const handleExpiredToken = (shouldRedirectOnClose: boolean = true) => {
+const checkMeetingId = () => {
   const meetingId = useMeetingStore.getState().meetingData?.meetingId
   if (!meetingId) {
     console.error('Meeting ID not found')
-    return
+    window.location.href = '/'
+    throw new Error('Meeting ID not found')
   }
+  return meetingId
+}
+
+export const handleExpiredToken = (shouldRedirectOnClose: boolean = true) => {
+  const meetingId = checkMeetingId()
 
   const onConfirm = async (password: string) => {
     try {
@@ -45,11 +37,7 @@ export const handleExpiredToken = (shouldRedirectOnClose: boolean = true) => {
 }
 
 const refreshToken = async (): Promise<void> => {
-  const meetingId = useMeetingStore.getState().meetingData?.meetingId
-
-  if (!meetingId) {
-    throw new Error('Meeting ID not found')
-  }
+  const meetingId = checkMeetingId()
 
   const response = await fetch(`/api/v1/meetings/${meetingId}/tokens/refresh`, {
     method: 'POST',
@@ -78,8 +66,12 @@ export const apiCall = async (
       body: body ? JSON.stringify(body) : undefined,
       credentials: 'include',
     })
+    const result = await response.json()
 
-    if (response.status === 401 || response.status === 403) {
+    if (
+      (response.status === 401 || response.status === 403) &&
+      result.error?.code === 'JWT_EXPIRED_ERROR'
+    ) {
       try {
         await refreshToken()
         return await makeRequest()
@@ -89,7 +81,6 @@ export const apiCall = async (
       }
     }
 
-    const result = await response.json()
     if (!response.ok) throw result
     return result
   }

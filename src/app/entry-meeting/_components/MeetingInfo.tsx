@@ -2,11 +2,11 @@ import { useCallback, useEffect } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useCheckMeetingLink } from '@/apis/meetingApi'
-import { useGetParticipantsMe } from '@/apis/participantsApi'
 import { Button } from '@/components/Button'
 import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
+import useCheckMeetingLink from '@/hooks/useCheckMeetingLink'
+import useParticipantsMe from '@/hooks/useParticipantsMe'
 import useTokens from '@/hooks/useTokens'
 import useMeetingStore from '@/stores/useMeetingStore'
 import BackIcon from 'public/icons/back.svg'
@@ -34,12 +34,19 @@ function MeetingInfo({
   const meetingSymbolColor = useMeetingStore(
     (state) => state.meetingData?.symbolColor,
   )
-  const { data, isLoading, isSuccess } = useCheckMeetingLink(meetingCode || '')
+  const { data, isLoading, isSuccess } = useCheckMeetingLink(
+    meetingCode || '',
+    {
+      enabled: !!meetingCode,
+      queryKey: ['checkMeetingLink', meetingCode ?? ''],
+      retry: false,
+    },
+  )
   const { data: tokenData, isSuccess: tokenCheckSuccess } = useTokens(
     meetingData?.meetingId ?? 0,
   )
 
-  const { refetch: checkMyInfo } = useGetParticipantsMe(
+  const { refetch: checkMyInfo } = useParticipantsMe(
     meetingData?.meetingId ?? 0,
     tokenData?.hasTokens ?? false,
     false,

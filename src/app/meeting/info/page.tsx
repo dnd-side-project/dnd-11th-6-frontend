@@ -1,17 +1,20 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useCheckMeetingId } from '@/apis/meetingApi'
 import AuthGuard from '@/app/AuthGuard'
 import Loading from '@/components/Loading'
 import { ToastContainer } from '@/components/Toast'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useToastStore from '@/stores/useToastStore'
+import { ApiError } from '@/types/api'
+import { CheckMeetResponse } from '@/types/meeting'
 import Back from 'public/icons/back.svg'
 import Logo from 'public/logo.svg'
+import { getMeetingById } from '../../../apis/meetingApi'
 import MeetingDetail from './_components/MeetingDetail'
 import MeetingRaising from './_components/MeetingRaising'
 
@@ -21,20 +24,17 @@ function MeetingInfo() {
   const { meetingData, setMeetingData } = useMeetingStore()
   const { message, showToast } = useToastStore()
 
-  const { data, isLoading, error } = useCheckMeetingId(
-    meetingData?.meetingId ?? 0,
-    {
-      queryKey: ['checkMeetingId', meetingData?.meetingId],
-      enabled: !!meetingData?.meetingId,
-      refetchOnWindowFocus: false,
+  const { isLoading, error } = useQuery<CheckMeetResponse, ApiError>({
+    queryKey: ['meeting', meetingData?.meetingId],
+    queryFn: async () => {
+      const response = await getMeetingById(meetingData?.meetingId ?? 0)
+      setMeetingData(response.data)
+      return response
     },
-  )
-
-  useEffect(() => {
-    if (data?.data) {
-      setMeetingData(data.data)
-    }
-  }, [data, setMeetingData])
+    enabled: !!meetingData?.meetingId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
 
   useEffect(() => {
     if (message) {

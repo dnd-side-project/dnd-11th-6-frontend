@@ -1,18 +1,25 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
-  useGetCompletedMissions,
-  useGetInCompleteMissions,
-  useGetRandomMissions,
+  getCompletedMissions,
+  getIncompleteMissions,
+  getRandomMissions,
 } from '@/apis/missionApi'
 import { Button } from '@/components/Button'
 import Loading from '@/components/Loading'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
+import { ApiError } from '@/types/api'
+import {
+  GetCompletedMissionsResponse,
+  GetInCompleteMissionResponse,
+  GetRandomMissionsResponse,
+} from '@/types/mission'
 import Back from 'public/icons/back.svg'
 import Refresh from 'public/icons/refresh.svg'
 import Twinkle from 'public/icons/twinkle.svg'
@@ -35,24 +42,59 @@ function MissionCreationPage() {
   const [isSpinning, setIsSpinning] = useState(false)
   const meetingId = useMeetingStore().meetingData?.meetingId
   const [visibleMissions, setVisibleMissions] = useState<string[]>(['?'])
-  const {
-    data: completedMission,
-    isLoading: completedMissionLoading,
-    isError: completedMissionError,
-  } = useGetCompletedMissions(meetingId || 0)
-  const {
-    data: inCompleteMission,
-    isLoading: inCompleteMissionLoading,
-    isError: inCompleteMissionError,
-  } = useGetInCompleteMissions(meetingId || 0)
+
   const {
     data: randomMissions,
     isLoading: randomMissionLoading,
     isError: randomMissionError,
-  } = useGetRandomMissions()
+  } = useQuery<GetRandomMissionsResponse, ApiError>({
+    queryKey: ['missions', 'random'],
+    queryFn: () => getRandomMissions(),
+    retry: false,
+  })
+
+  const {
+    data: completedMission,
+    isLoading: completedMissionLoading,
+    isError: completedMissionError,
+  } = useQuery<GetCompletedMissionsResponse, ApiError>({
+    queryKey: ['missions', meetingId, 'completed'],
+    queryFn: () => {
+      if (!meetingId) throw new Error('Meeting ID not found')
+      return getCompletedMissions(meetingId)
+    },
+    enabled: !!meetingId,
+    retry: false,
+  })
+
+  const {
+    data: inCompleteMission,
+    isLoading: inCompleteMissionLoading,
+    isError: inCompleteMissionError,
+  } = useQuery<GetInCompleteMissionResponse, ApiError>({
+    queryKey: ['missions', meetingId, 'incomplete'],
+    queryFn: () => {
+      if (!meetingId) throw new Error('Meeting ID not found')
+      return getIncompleteMissions(meetingId)
+    },
+    enabled: !!meetingId,
+    retry: false,
+  })
 
   useEffect(() => {
     if (randomMissions && randomMissions.data.length > 0) {
+      setVisibleMissions([randomMissions.data[0].content])
+    }
+  }, [randomMissions])
+
+  useEffect(() => {
+    if (!missionType) {
+      setMissionType('random')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (randomMissions?.data && randomMissions.data.length > 0) {
       setVisibleMissions([randomMissions.data[0].content])
     }
   }, [randomMissions])
@@ -130,15 +172,10 @@ function MissionCreationPage() {
   ) {
     return <Loading />
   }
-  if (completedMissionError || inCompleteMissionError || randomMissionError) {
-    return <div>Error</div>
-  }
 
-  console.log('currentMission: ', currentMission)
-  console.log('missionType: ', missionType)
-  console.log('missionId: ', missionId)
-  console.log('Incomplete Missions:', inCompleteMission)
-  console.log('Completed Missions:', completedMission)
+  if (completedMissionError || inCompleteMissionError || randomMissionError) {
+    return <div>미션 정보를 불러오는데 실패했습니다.</div>
+  }
 
   return (
     <AuthGuard>

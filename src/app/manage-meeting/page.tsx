@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
-import { useModifyMeeting } from '@/apis/meetingApi'
+import { modifyMeeting } from '@/apis/meetingApi'
 import { Button } from '@/components/Button'
 import ColorPicker from '@/components/ColorPicker'
 import { TextInput } from '@/components/Inputs/TextInput'
@@ -35,9 +36,36 @@ function ManageMeeting() {
   const router = useRouter()
   const { meetingData } = useMeetingStore()
   const { setToast, showToast, message } = useToastStore()
-
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
   const defaultSymbolColor: ColorType =
     COLORS.find((color) => color === meetingData?.symbolColor) || COLORS[0]
+
+  const modifyMeetingMutation = useMutation({
+    mutationFn: ({
+      meetingId,
+      name,
+      description,
+      symbolColor,
+    }: {
+      meetingId: number
+      name: string
+      description: string
+      symbolColor: string
+    }) => modifyMeeting(meetingId, { name, description, symbolColor }),
+    onSuccess: () => {
+      setToast('모임정보 변경 완료되었어요!', {
+        position: 'bottom',
+      })
+      showToast()
+      router.back()
+    },
+    onError: (error) => {
+      const errorMessage = getUserErrorMessage(error)
+      setToast(errorMessage, { type: 'warning' })
+      showToast()
+      console.error('API Error:', error)
+    },
+  })
 
   const {
     control,
@@ -54,32 +82,14 @@ function ManageMeeting() {
     mode: 'onChange',
   })
 
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
-
   useEffect(() => {
     if (message) {
       showToast()
     }
   }, [message, showToast])
 
-  const modifyMeeting = useModifyMeeting({
-    onSuccess: () => {
-      setToast('모임정보 변경 완료되었어요!', {
-        position: 'bottom',
-      })
-      showToast()
-      router.back()
-    },
-    onError: (error) => {
-      const errorMessage = getUserErrorMessage(error)
-      setToast(errorMessage, { type: 'warning' })
-      showToast()
-      console.error('API Error:', error)
-    },
-  })
-
   const onSubmit = (data: MeetingFormData) => {
-    modifyMeeting.mutate({
+    modifyMeetingMutation.mutate({
       meetingId: meetingData?.meetingId ?? 0,
       name: data.meetingName,
       description: data.meetingDescription,
@@ -156,9 +166,15 @@ function ManageMeeting() {
             type="submit"
             variant="primary"
             className="mt-auto mb-5 w-full text-white"
-            disabled={!isDirty || Object.keys(errors).length > 0}
+            disabled={
+              !isDirty ||
+              Object.keys(errors).length > 0 ||
+              modifyMeetingMutation.isPending
+            }
           >
-            변경사항 저장하기
+            {modifyMeetingMutation.isPending
+              ? '저장 중...'
+              : '변경사항 저장하기'}
           </Button>
         </form>
         <Popup

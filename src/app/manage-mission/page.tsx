@@ -1,12 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useDeleteMission, useGetLeaderMission } from '@/apis/missionApi'
+import { deleteMission, getLeaderMissions } from '@/apis/missionApi'
 import { Button } from '@/components/Button'
 import Loading from '@/components/Loading'
 import useMeetingStore from '@/stores/useMeetingStore'
+import { ApiError } from '@/types/api'
+import {
+  DeleteMissionResponse,
+  GetLeaderMissionResponse,
+} from '@/types/mission'
 import Back from 'public/icons/back.svg'
 import PlusGray from 'public/icons/plus-gray.svg'
 import Trash from 'public/icons/trash.svg'
@@ -21,10 +27,9 @@ interface Mission {
 
 function ManageMission() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [isNewMissionOpen, setIsNewMissionOpen] = useState(false)
-  const meetingId = useMeetingStore(
-    (state) => state.meetingData?.meetingId ?? 0,
-  )
+  const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
   const meetingSymbolColor = useMeetingStore(
     (state) => state.meetingData?.symbolColor,
   )
@@ -36,9 +41,27 @@ function ManageMission() {
     error: getMissionError,
     isError,
     refetch,
-  } = useGetLeaderMission(meetingId)
+  } = useQuery<GetLeaderMissionResponse, ApiError>({
+    queryKey: ['missions', meetingId, 'leader'],
+    queryFn: () => getLeaderMissions(meetingId ?? 0),
+    enabled: meetingId !== undefined && meetingId !== null,
+    retry: false,
+  })
 
-  const deleteMission = useDeleteMission({
+  const deleteMissionMutation = useMutation<
+    DeleteMissionResponse,
+    ApiError,
+    { meetingId: number; missionId: number }
+  >({
+    mutationFn: ({ meetingId: mId, missionId }) =>
+      deleteMission(mId, missionId),
+    onSuccess: () => {
+      if (meetingId) {
+        queryClient.invalidateQueries({
+          queryKey: ['missions', meetingId, 'leader'],
+        })
+      }
+    },
     onError: (error) => {
       console.error('미션 삭제 실패:', error)
     },
@@ -61,7 +84,9 @@ function ManageMission() {
   }, [isNewMissionOpen, refetch])
 
   const handleDeleteMission = (missionId: number) => {
-    deleteMission.mutate({ meetingId, missionId })
+    if (meetingId !== undefined) {
+      deleteMissionMutation.mutate({ meetingId, missionId })
+    }
   }
 
   if (isLoading) return <Loading />
@@ -112,6 +137,7 @@ function ManageMission() {
                   {!mission.hasParticipants ? (
                     <button
                       onClick={() => handleDeleteMission(mission.missionId)}
+                      disabled={deleteMissionMutation.isPending}
                     >
                       <Image src={Trash} alt="trash" />
                     </button>

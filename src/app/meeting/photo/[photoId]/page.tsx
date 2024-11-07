@@ -1,13 +1,16 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useGetSnapDetail } from '@/apis/snapApi'
+import { getSnapDetail } from '@/apis/snapApi'
 import AuthGuard from '@/app/AuthGuard'
 import { Button } from '@/components/Button'
 import Loading from '@/components/Loading'
 import { IMAGE_BASE_URL } from '@/constant/base_url'
 import useMeetingStore from '@/stores/useMeetingStore'
+import { ApiError } from '@/types/api'
+import { GetSnapDetailResponse } from '@/types/snap'
 import CloseSvg from 'public/icons/CloseSvg'
 import Dice from 'public/icons/dice.svg'
 import Download from 'public/icons/download.svg'
@@ -19,11 +22,17 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
   const meetingSymbolColor = useMeetingStore(
     (state) => state.meetingData?.symbolColor,
   )
+
   const {
     data: snapData,
     isLoading,
     isError,
-  } = useGetSnapDetail(meetingId || 0, Number(params.photoId))
+  } = useQuery<GetSnapDetailResponse, ApiError>({
+    queryKey: ['snap', meetingId, params.photoId],
+    queryFn: () => getSnapDetail(meetingId ?? 0, Number(params.photoId)),
+    enabled: !!meetingId && !!params.photoId,
+    retry: false,
+  })
 
   const handleDownload = async () => {
     if (!snapData) return
@@ -45,8 +54,8 @@ function PhotoDetail({ params }: { params: { photoId: string } }) {
   }
 
   if (isLoading) return <Loading />
-  if (isError) return <div>Error loading snap details</div>
-  if (!snapData) return <div>No data available</div>
+  if (isError) return <div>스냅 상세 정보를 불러오는데 실패했습니다.</div>
+  if (!snapData?.data) return <div>스냅 정보를 찾을 수 없습니다.</div>
 
   const { snapUrl, shootDate, type, photographer, mission } = snapData.data
   const fullImageUrl = `${IMAGE_BASE_URL}/${snapUrl}`

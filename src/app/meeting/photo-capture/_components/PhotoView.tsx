@@ -1,16 +1,23 @@
 import { useEffect } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns/format'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useGetParticipantsMe } from '@/apis/participantsApi'
-import { useUploadSnap } from '@/apis/snapApi'
+import {
+  uploadMeetingMissionSnap,
+  uploadRandomMissionSnap,
+  uploadSimpleSnap,
+} from '@/apis/snapApi'
 import Refresh from '@/assets/Refresh.svg'
 import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
+import useParticipantsMe from '@/hooks/useParticipantsMe'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useMissionStore from '@/stores/useMissionStore'
 import useTooltipStore from '@/stores/useTooltipStore'
 import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import { UploadSnapResponse } from '@/types/snap'
 import CloseSvg from 'public/icons/CloseSvg'
 import Back from 'public/icons/back.svg'
 import Dice from 'public/icons/dice.svg'
@@ -35,7 +42,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
     (state) => state.meetingData?.symbolColor,
   )
 
-  const { refetch: refetchParticipantMe } = useGetParticipantsMe(meetingId ?? 0)
+  const { refetch: refetchParticipantMe } = useParticipantsMe(meetingId ?? 0)
 
   useEffect(() => {
     if (currentMission) {
@@ -45,23 +52,38 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
     }
   }, [currentMission, hideTooltip, showTooltip])
 
-  const { mutate: uploadSnap, isPending: isUploading } = useUploadSnap({
+  const uploadSnapMutation = useMutation<
+    UploadSnapResponse,
+    ApiError,
+    {
+      snapData: {
+        shootDate: string
+        randomMissionId?: number
+        missionId?: number
+      }
+      image: File
+    }
+  >({
+    mutationFn: async ({ snapData, image }) => {
+      if (!meetingId) throw new Error('Meeting ID is not available')
+
+      if (missionType === 'random') {
+        return uploadRandomMissionSnap(meetingId, snapData, image)
+      }
+      if (missionType === 'select') {
+        return uploadMeetingMissionSnap(meetingId, snapData, image)
+      }
+      return uploadSimpleSnap(meetingId, snapData, image)
+    },
     onSuccess: async () => {
       try {
         const { data } = await refetchParticipantMe()
-        console.log('Refetched participant data:', data)
         if (data?.data) {
           const { participantId, nickname, role, shootCount } = data.data
           setParticipantId(participantId)
           setNickname(nickname)
           setRole(role as 'LEADER' | 'PARTICIPANT')
           setShootCount(shootCount)
-          console.log('Updated user info:', {
-            participantId,
-            nickname,
-            role,
-            shootCount,
-          })
         }
       } catch (error) {
         console.error('Failed to fetch updated user info:', error)
@@ -83,23 +105,19 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
       ? format(captureTime, "yyyy-MM-dd'T'HH:mm")
       : format(new Date(), "yyyy-MM-dd'T'HH:mm")
 
-    const snapData: {
-      shootDate: string
-      randomMissionId?: number
-      missionId?: number
-    } = {
+    const snapData = {
       shootDate: formattedDate,
-    }
-
-    if (missionType === 'random') {
-      snapData.randomMissionId = missionId ?? undefined
-    } else if (missionType === 'select') {
-      snapData.missionId = missionId ?? undefined
+      ...(missionType === 'random'
+        ? { randomMissionId: missionId ?? undefined }
+        : {}),
+      ...(missionType === 'select'
+        ? { missionId: missionId ?? undefined }
+        : {}),
     }
 
     try {
       const file = await base64ToFile(photo, 'snap.jpg')
-      uploadSnap({ meetingId, snapData, image: file, missionType })
+      uploadSnapMutation.mutate({ snapData, image: file })
     } catch (error) {
       console.error('Error processing image:', error)
     }
@@ -153,7 +171,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
           type="button"
           onClick={onRetake}
           variant="light"
-          disabled={isUploading}
+          disabled={uploadSnapMutation.isPending}
         >
           <Image src={Refresh} alt="Retake Button" className="w-8 h-8" />
         </Button>
@@ -162,9 +180,9 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
           type="button"
           onClick={handleUpload}
           variant="primary"
-          className="text-white text-body1-semibold w-full relative"
+          className="!text-white text-body1-semibold w-full relative"
           style={{ backgroundColor: meetingSymbolColor || '#000000' }}
-          disabled={isUploading}
+          disabled={uploadSnapMutation.isPending}
         >
           <Tooltip
             message="한 번 업로드된 스냅은 삭제가 어려워요!"
@@ -175,7 +193,7 @@ function PhotoView({ photo, captureTime, onRetake, goHome }: PhotoViewProps) {
             arrowClassName="left-1/2"
             className="bottom-16 left-1/3"
           />
-          {isUploading ? '업로드 중...' : '스냅 업로드하기'}
+          {uploadSnapMutation.isPending ? '업로드 중...' : '스냅 업로드하기'}
         </Button>
       </div>
     </div>

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
-import {
-  useValidateLeaderAuthKey,
-  useValidatePassword,
-} from '@/apis/queries/meetingQueries'
+import { validateLeaderAuthKey, validatePassword } from '@/apis/meetingApi'
 import useDebounce from '@/hooks/useDebounce'
+import { ApiError } from '@/types/api'
+import {
+  ValidateLeaderAuthKeyResponse,
+  ValidatePasswordResponse,
+} from '@/types/meeting'
 
 const passwordSchema = z.object({
   password: z.string().min(6, '최소 6자 이상 입력해주세요.'),
@@ -41,12 +44,47 @@ export const usePasswordValidation = (currentMeetingId: number) => {
   const debouncedPassword = useDebounce(passwordValue, 500)
   const debouncedLeaderAuthKey = useDebounce(leaderAuthKeyValue, 500)
 
-  const validatePassword = useValidatePassword()
-  const validateLeaderAuthKey = useValidateLeaderAuthKey()
+  const validatePasswordMutation = useMutation<
+    ValidatePasswordResponse,
+    ApiError,
+    { meetingId: number; password: string }
+  >({
+    mutationFn: ({ meetingId, password }) =>
+      validatePassword(meetingId, password),
+    onError: (error) => {
+      setApiErrorMessagePassword(
+        error.error?.code === 'MEETING_INVALIDATE_PASSWORD'
+          ? '암호가 일치하지 않습니다.'
+          : error.error?.message || '오류가 발생했습니다. 다시 시도해주세요.',
+      )
+    },
+    onSuccess: () => {
+      setApiErrorMessagePassword(null)
+    },
+  })
+
+  const validateLeaderAuthKeyMutation = useMutation<
+    ValidateLeaderAuthKeyResponse,
+    ApiError,
+    { meetingId: number; leaderAuthKey: string }
+  >({
+    mutationFn: ({ meetingId, leaderAuthKey }) =>
+      validateLeaderAuthKey(meetingId, leaderAuthKey),
+    onError: (error) => {
+      setApiErrorMessageLeaderAuthKey(
+        error.error?.code === 'MEETING_INVALIDATE_AUTH_KEY'
+          ? '암호가 일치하지 않습니다.'
+          : error.error?.message || '오류가 발생했습니다. 다시 시도해주세요.',
+      )
+    },
+    onSuccess: () => {
+      setApiErrorMessageLeaderAuthKey(null)
+    },
+  })
 
   useEffect(() => {
     if (debouncedPassword && debouncedPassword.length >= 6) {
-      validatePassword.mutate({
+      validatePasswordMutation.mutate({
         meetingId: currentMeetingId,
         password: debouncedPassword,
       })
@@ -61,7 +99,7 @@ export const usePasswordValidation = (currentMeetingId: number) => {
       debouncedLeaderAuthKey &&
       debouncedLeaderAuthKey.length === 4
     ) {
-      validateLeaderAuthKey.mutate({
+      validateLeaderAuthKeyMutation.mutate({
         meetingId: currentMeetingId,
         leaderAuthKey: debouncedLeaderAuthKey,
       })
@@ -71,44 +109,9 @@ export const usePasswordValidation = (currentMeetingId: number) => {
   }, [isLeader, debouncedLeaderAuthKey, currentMeetingId])
 
   useEffect(() => {
-    if (validatePassword.isError) {
-      setApiErrorMessagePassword(
-        validatePassword.error?.error?.code === 'MEETING_INVALIDATE_PASSWORD'
-          ? '암호가 일치하지 않습니다.'
-          : validatePassword.error?.error?.message ||
-              '오류가 발생했습니다. 다시 시도해주세요.',
-      )
-    } else if (validatePassword.isSuccess) {
-      setApiErrorMessagePassword(null)
-    }
-  }, [
-    validatePassword.isError,
-    validatePassword.isSuccess,
-    validatePassword.error,
-  ])
-
-  useEffect(() => {
-    if (validateLeaderAuthKey.isError) {
-      setApiErrorMessageLeaderAuthKey(
-        validateLeaderAuthKey.error?.error?.code ===
-          'MEETING_INVALIDATE_AUTH_KEY'
-          ? '암호가 일치하지 않습니다.'
-          : validateLeaderAuthKey.error?.error?.message ||
-              '오류가 발생했습니다. 다시 시도해주세요.',
-      )
-    } else if (validateLeaderAuthKey.isSuccess) {
-      setApiErrorMessageLeaderAuthKey(null)
-    }
-  }, [
-    validateLeaderAuthKey.isError,
-    validateLeaderAuthKey.isSuccess,
-    validateLeaderAuthKey.error,
-  ])
-
-  useEffect(() => {
     reset({ password: '', leaderAuthKey: '' })
-    validatePassword.reset()
-    validateLeaderAuthKey.reset()
+    validatePasswordMutation.reset()
+    validateLeaderAuthKeyMutation.reset()
   }, [isLeader, reset])
 
   return {
@@ -118,8 +121,8 @@ export const usePasswordValidation = (currentMeetingId: number) => {
     setIsLeader,
     apiErrorMessagePassword,
     apiErrorMessageLeaderAuthKey,
-    validatePassword,
-    validateLeaderAuthKey,
+    validatePassword: validatePasswordMutation,
+    validateLeaderAuthKey: validateLeaderAuthKeyMutation,
   }
 }
 

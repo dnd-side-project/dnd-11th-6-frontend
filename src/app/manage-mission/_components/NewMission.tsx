@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
+import { createMission } from '@/apis/missionApi'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/Inputs/TextInput'
 import useMeetingStore from '@/stores/useMeetingStore'
+import { ApiError } from '@/types/api'
+import { CreateMissionResponse } from '@/types/mission'
 import CloseSvg from 'public/icons/CloseSvg'
 
 const missionSchema = z.object({
@@ -22,6 +25,9 @@ interface NewMissionProps {
 }
 
 function NewMission({ onClose, onSuccess }: NewMissionProps) {
+  const meetingId = useMeetingStore((state) => state.meetingData?.meetingId)
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
+
   const {
     control,
     watch,
@@ -34,33 +40,27 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
     mode: 'onChange',
   })
 
-  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null)
   const missionValue = watch('content')
-  const meetingId = useMeetingStore(
-    (state) => state.meetingData?.meetingId ?? 0,
-  )
 
-  const createMission = useMutation<
-    { status: number; data: any },
-    { status: number; error: { code: string; message: string } },
-    MissionFormData
+  const createMissionMutation = useMutation<
+    CreateMissionResponse,
+    ApiError,
+    { content: string }
   >({
-    mutationFn: async (data: MissionFormData) => {
-      const response = await fetch(`/api/v1/meetings/${meetingId}/missions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      const result = await response.json()
-      if (!response.ok) throw result
-      return result
+    mutationFn: (data) => {
+      if (!meetingId) {
+        throw new Error('Meeting ID is not available')
+      }
+      return createMission(meetingId, data)
     },
     onSuccess: () => {
       onSuccess()
       onClose()
     },
     onError: (error) => {
-      if (error.error?.message) {
+      if (error instanceof Error) {
+        setApiErrorMessage(error.message)
+      } else if (error.error?.message) {
         setApiErrorMessage(error.error.message)
       } else {
         setApiErrorMessage(
@@ -71,8 +71,13 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
   })
 
   const onSubmit = (data: MissionFormData) => {
+    if (!meetingId) {
+      setApiErrorMessage('유효하지 않은 모임입니다.')
+      return
+    }
+
     setApiErrorMessage(null)
-    createMission.mutate(data)
+    createMissionMutation.mutate(data)
   }
 
   useEffect(() => {
@@ -119,9 +124,11 @@ function NewMission({ onClose, onSuccess }: NewMissionProps) {
           type="submit"
           variant="primary"
           className="mt-auto mb-5 w-full text-white"
-          disabled={!missionValue || createMission.isPending}
+          disabled={
+            !missionValue || createMissionMutation.isPending || !meetingId
+          }
         >
-          완료
+          {createMissionMutation.isPending ? '미션 생성 중...' : '완료'}
         </Button>
       </form>
     </div>

@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
-import {
-  useValidateLeaderAuthKey,
-  useValidatePassword,
-} from '@/apis/queries/meetingQueries'
+import { validateLeaderAuthKey, validatePassword } from '@/apis/meetingApi'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/Inputs/TextInput'
 import { ToggleSwitch } from '@/components/ToogleSwitch'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import {
+  ValidateLeaderAuthKeyResponse,
+  ValidatePasswordResponse,
+} from '@/types/meeting'
 import CrownSvg from 'public/icons/CrownSvg'
 import BackIcon from 'public/icons/back.svg'
 
@@ -83,8 +86,28 @@ function PasswordInput({
   const debouncedPassword = useDebounce(passwordValue, 500)
   const debouncedLeaderAuthKey = useDebounce(leaderAuthKeyValue, 500)
 
-  const validatePassword = useValidatePassword()
-  const validateLeaderAuthKey = useValidateLeaderAuthKey()
+  const errorMessagePassword =
+    apiErrorMessagePassword || errors.password?.message || null
+  const errorMessageLeaderAuthKey =
+    apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message || null
+
+  const validatePasswordMutation = useMutation<
+    ValidatePasswordResponse,
+    ApiError,
+    { meetingId: number; password: string }
+  >({
+    mutationFn: ({ meetingId, password }) =>
+      validatePassword(meetingId, password),
+  })
+
+  const validateLeaderAuthKeyMutation = useMutation<
+    ValidateLeaderAuthKeyResponse,
+    ApiError,
+    { meetingId: number; leaderAuthKey: string }
+  >({
+    mutationFn: ({ meetingId, leaderAuthKey }) =>
+      validateLeaderAuthKey(meetingId, leaderAuthKey),
+  })
 
   const handleEnterClick = () => {
     if (isLeader && isPasswordValid && isLeaderAuthKeyValid) {
@@ -97,7 +120,7 @@ function PasswordInput({
 
   useEffect(() => {
     if (debouncedPassword && debouncedPassword.length >= 4) {
-      validatePassword.mutate({
+      validatePasswordMutation.mutate({
         meetingId: currentMeetingId!,
         password: debouncedPassword,
       })
@@ -105,7 +128,7 @@ function PasswordInput({
       setApiErrorMessagePassword(null)
       setIsPasswordValid(false)
     }
-  }, [debouncedPassword])
+  }, [debouncedPassword, currentMeetingId])
 
   useEffect(() => {
     if (
@@ -113,7 +136,7 @@ function PasswordInput({
       debouncedLeaderAuthKey &&
       debouncedLeaderAuthKey.length === 4
     ) {
-      validateLeaderAuthKey.mutate({
+      validateLeaderAuthKeyMutation.mutate({
         meetingId: currentMeetingId!,
         leaderAuthKey: debouncedLeaderAuthKey,
       })
@@ -121,43 +144,46 @@ function PasswordInput({
       setApiErrorMessageLeaderAuthKey(null)
       setIsLeaderAuthKeyValid(false)
     }
-  }, [isLeader, debouncedLeaderAuthKey])
+  }, [isLeader, debouncedLeaderAuthKey, currentMeetingId])
 
   useEffect(() => {
-    if (validatePassword.isError) {
-      if (validatePassword.error) {
+    if (validatePasswordMutation.isError) {
+      if (validatePasswordMutation.error) {
         if (
-          validatePassword.error.error.code === 'MEETING_INVALIDATE_PASSWORD'
+          validatePasswordMutation.error.error.code ===
+          'MEETING_INVALIDATE_PASSWORD'
         ) {
           setApiErrorMessagePassword('암호가 일치하지 않습니다.')
         } else {
-          setApiErrorMessagePassword(validatePassword.error.error.message)
+          setApiErrorMessagePassword(
+            validatePasswordMutation.error.error.message,
+          )
         }
       } else {
         setApiErrorMessagePassword('오류가 발생했습니다. 다시 시도해주세요.')
       }
       setIsPasswordValid(false)
-    } else if (validatePassword.isSuccess) {
+    } else if (validatePasswordMutation.isSuccess) {
       setApiErrorMessagePassword(null)
       setIsPasswordValid(true)
     }
   }, [
-    validatePassword.isError,
-    validatePassword.isSuccess,
-    validatePassword.error,
+    validatePasswordMutation.isError,
+    validatePasswordMutation.isSuccess,
+    validatePasswordMutation.error,
   ])
 
   useEffect(() => {
-    if (validateLeaderAuthKey.isError) {
-      if (validateLeaderAuthKey.error) {
+    if (validateLeaderAuthKeyMutation.isError) {
+      if (validateLeaderAuthKeyMutation.error) {
         if (
-          validateLeaderAuthKey.error.error.code ===
+          validateLeaderAuthKeyMutation.error.error.code ===
           'MEETING_INVALIDATE_AUTH_KEY'
         ) {
           setApiErrorMessageLeaderAuthKey('암호가 일치하지 않습니다.')
         } else {
           setApiErrorMessageLeaderAuthKey(
-            validateLeaderAuthKey.error.error.message,
+            validateLeaderAuthKeyMutation.error.error.message,
           )
         }
       } else {
@@ -166,25 +192,20 @@ function PasswordInput({
         )
       }
       setIsLeaderAuthKeyValid(false)
-    } else if (validateLeaderAuthKey.isSuccess) {
+    } else if (validateLeaderAuthKeyMutation.isSuccess) {
       setApiErrorMessageLeaderAuthKey(null)
       setIsLeaderAuthKeyValid(true)
     }
   }, [
-    validateLeaderAuthKey.isError,
-    validateLeaderAuthKey.isSuccess,
-    validateLeaderAuthKey.error,
+    validateLeaderAuthKeyMutation.isError,
+    validateLeaderAuthKeyMutation.isSuccess,
+    validateLeaderAuthKeyMutation.error,
   ])
-
-  const errorMessagePassword =
-    apiErrorMessagePassword || errors.password?.message || null
-  const errorMessageLeaderAuthKey =
-    apiErrorMessageLeaderAuthKey || errors.leaderAuthKey?.message || null
 
   useEffect(() => {
     reset({ password: '', leaderAuthKey: '' })
-    validatePassword.reset()
-    validateLeaderAuthKey.reset()
+    validatePasswordMutation.reset()
+    validateLeaderAuthKeyMutation.reset()
     setIsPasswordValid(false)
     setIsLeaderAuthKeyValid(false)
   }, [isLeader, reset])
@@ -226,7 +247,7 @@ function PasswordInput({
           success={isPasswordValid}
           successMessage="비밀번호 입력 완료!"
           error={errorMessagePassword}
-          checking={validatePassword.isPending}
+          checking={validatePasswordMutation.isPending}
         />
         {isLeader && (
           <TextInput
@@ -238,7 +259,7 @@ function PasswordInput({
             success={isLeaderAuthKeyValid}
             successMessage="인증키 입력 완료!"
             error={errorMessageLeaderAuthKey}
-            checking={validateLeaderAuthKey.isPending}
+            checking={validateLeaderAuthKeyMutation.isPending}
           />
         )}
       </div>

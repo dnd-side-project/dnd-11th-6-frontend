@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useCheckMeetingLink } from '@/apis/queries/meetingQueries'
+import Loading from '@/components/Loading'
+import useCheckMeetingLink from '@/hooks/useCheckMeetingLink'
 import useMeetingStore from '@/stores/useMeetingStore'
 import {
   LinkInput,
@@ -25,12 +26,12 @@ function EntryMeeting() {
     meetingCode ?? '',
     {
       enabled: !!meetingCode,
-      queryKey: ['checkMeetingLink', meetingCode],
+      queryKey: ['checkMeetingLink', meetingCode ?? ''],
     },
   )
 
   useEffect(() => {
-    if (meetingCode && isSuccess && data) {
+    if (meetingCode && isSuccess && data?.data) {
       setMeetingData(data.data)
       setPage(1)
     } else if (!meetingCode) {
@@ -105,7 +106,7 @@ function EntryMeeting() {
   }
 
   if (meetingCode && isLoading) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   if (meetingCode && isError) {

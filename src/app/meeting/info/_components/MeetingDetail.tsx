@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParticipants } from '@/apis/queries/participantsQueries'
+import { getParticipants } from '@/apis/participantsApi'
+import Loading from '@/components/Loading'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import { ParticipantsResponse } from '@/types/participants'
 import Edit from 'public/icons/edit.svg'
 import Leader from 'public/icons/leader.svg'
 
@@ -27,7 +31,20 @@ function MeetingDetail() {
     fetchNextPage,
     hasNextPage,
     isFetching,
-  } = useParticipants(meetingData?.meetingId ?? 0, limit)
+  } = useInfiniteQuery<ParticipantsResponse, ApiError>({
+    queryKey: ['participants', meetingData?.meetingId, limit],
+    queryFn: ({ pageParam = 0 }) => {
+      const meetingId = meetingData?.meetingId
+      if (!meetingId) {
+        throw new Error('Meeting ID not found')
+      }
+      return getParticipants(meetingId, pageParam as number, limit)
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage.data.hasNext ? lastPage.data.nextCursorId : undefined,
+    initialPageParam: 0,
+    enabled: !!meetingData?.meetingId,
+  })
 
   const observer = useRef<IntersectionObserver | null>(null)
   const lastParticipantRef = useCallback(
@@ -136,7 +153,7 @@ function MeetingDetail() {
               </div>
             )),
           )}
-          {isFetching && <div>Loading...</div>}
+          {isFetching && <Loading fullScreen={false} />}
         </div>
       </div>
     </div>

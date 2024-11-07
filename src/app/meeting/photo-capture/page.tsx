@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AuthGuard from '@/app/AuthGuard'
 import useCamera from '@/hooks/useCamera'
 import useMissionStore from '@/stores/useMissionStore'
 import CameraView from './_components/CameraView'
@@ -27,36 +28,36 @@ function PhotoCapture() {
   })
 
   const goHome = () => {
-    // 미션 데이터 초기화
     setMissionId(null)
     setMissionType(null)
     setCurrentMission(null)
 
-    // 홈으로 이동
     router.push(`/meeting-home`)
   }
 
   return (
-    <div className="flex flex-col items-center">
-      {isCameraOpen && (
-        <CameraView
-          videoRef={videoRef}
-          isRearCamera={isRearCamera}
-          onCapture={takePicture}
-          onToggleCamera={toggleCamera}
-          goBack={() => router.back()}
-        />
-      )}
-      {photo && (
-        <PhotoView
-          photo={photo}
-          captureTime={captureTime}
-          onRetake={openCamera}
-          goHome={goHome}
-        />
-      )}
-      <canvas ref={canvasRef} className="hidden" />
-    </div>
+    <AuthGuard>
+      <div className="flex flex-col items-center">
+        {isCameraOpen && (
+          <CameraView
+            videoRef={videoRef}
+            isRearCamera={isRearCamera}
+            onCapture={takePicture}
+            onToggleCamera={toggleCamera}
+            goBack={() => router.back()}
+          />
+        )}
+        {photo && (
+          <PhotoView
+            photo={photo}
+            captureTime={captureTime}
+            onRetake={openCamera}
+            goHome={goHome}
+          />
+        )}
+        <canvas ref={canvasRef} className="hidden" />
+      </div>
+    </AuthGuard>
   )
 }
 

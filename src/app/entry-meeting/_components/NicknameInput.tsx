@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import { z } from 'zod'
-import { useCheckNickname, useJoinMeeting } from '@/apis/queries/meetingQueries'
+import { checkNickname, joinMeeting } from '@/apis/meetingApi'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/Inputs/TextInput'
 import useDebounce from '@/hooks/useDebounce'
 import useMeetingStore from '@/stores/useMeetingStore'
 import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import { CheckNicknameResponse, JoinMeetingResponse } from '@/types/meeting'
 import BackIcon from 'public/icons/back.svg'
 
 const nicknameSchema = z.object({
@@ -71,11 +74,41 @@ function NicknameInput({
     isSuccess,
     isError,
     error: nicknameCheckError,
-  } = useCheckNickname(meetingId!, debouncedNickname, {
-    queryKey: ['checkNickname', meetingId, debouncedNickname],
+  } = useQuery<CheckNicknameResponse, ApiError>({
+    queryKey: ['nickname', meetingId, debouncedNickname],
+    queryFn: () => checkNickname(meetingId!, debouncedNickname),
     enabled: isNicknameValid && debouncedNickname.length > 0,
+    retry: false,
   })
-  const joinMeetingMutation = useJoinMeeting()
+
+  const joinMeetingMutation = useMutation<
+    JoinMeetingResponse,
+    ApiError,
+    {
+      meetingId: number
+      nickname: string
+      role: string
+    }
+  >({
+    mutationFn: ({ meetingId: id, nickname, role }) =>
+      joinMeeting(id, nickname, role),
+    onSuccess: (data) => {
+      setNickname(nicknameValue)
+      setParticipantId(data.data.participantId)
+      onEnterClick()
+    },
+    onError: (error) => {
+      console.error('Error joining meeting:', error)
+      if (error.error?.code === 'MEETING_JOIN_DENIED') {
+        setApiErrorMessage('이미 끝난 모임에는 참여할 수 없습니다.')
+      } else {
+        setApiErrorMessage(
+          '모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.',
+        )
+      }
+      setSuccessMessage(undefined)
+    },
+  })
 
   useEffect(() => {
     if (!isNicknameValid) {
@@ -111,27 +144,11 @@ function NicknameInput({
   const errorMessage = errors.nickname?.message || apiErrorMessage || undefined
 
   const onSubmit = handleSubmit((formData) => {
-    joinMeetingMutation.mutate(
-      {
-        meetingId: meetingId!,
-        nickname: formData.nickname,
-        role: userRole,
-      },
-      {
-        onSuccess: (joinMeetingData) => {
-          setNickname(formData.nickname)
-          setParticipantId(joinMeetingData.data.participantId)
-          onEnterClick()
-        },
-        onError: (joinMeetingError) => {
-          console.error('Error joining meeting:', joinMeetingError)
-          setApiErrorMessage(
-            '모임 참가 중 오류가 발생했습니다. 다시 시도해주세요.',
-          )
-          setSuccessMessage(undefined)
-        },
-      },
-    )
+    joinMeetingMutation.mutate({
+      meetingId: meetingId!,
+      nickname: formData.nickname,
+      role: userRole,
+    })
   })
 
   return (

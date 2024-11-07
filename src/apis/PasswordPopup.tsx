@@ -3,13 +3,18 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import { reenterMeeting } from '@/apis/apiUtils'
 import { TextInput } from '@/components/Inputs/TextInput/index'
 import useDebounce from '@/hooks/useDebounce'
 import { usePasswordPopupStore } from '@/stores/usePasswordPopupStore'
+import useUserStore from '@/stores/useUserStore'
+import { ApiError } from '@/types/api'
+import { ValidatePasswordResponse } from '@/types/meeting'
 import Popup from '../components/Popup/index'
-import { useValidatePassword } from './queries/meetingQueries'
+import { validatePassword } from './meetingApi'
 
 const passwordSchema = z.object({
   password: z
@@ -22,11 +27,16 @@ const passwordSchema = z.object({
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 function PasswordPopup() {
-  const { isOpen, meetingId, onConfirm, closePopup, closePopupAndRedirect } =
+  const { isOpen, meetingId, onConfirm, closePopup, shouldRedirectOnClose } =
     usePasswordPopupStore()
   const [isPasswordValid, setIsPasswordValid] = useState(false)
   const [isReentering, setIsReentering] = useState(false)
   const [lastCheckedPassword, setLastCheckedPassword] = useState('')
+  const router = useRouter()
+
+  const { nickname } = useUserStore((state) => ({
+    nickname: state.nickname,
+  }))
 
   const {
     control,
@@ -44,7 +54,12 @@ function PasswordPopup() {
   const passwordValue = watch('password')
   const debouncedPassword = useDebounce(passwordValue, 500)
 
-  const validatePassword = useValidatePassword({
+  const validatePasswordMutation = useMutation<
+    ValidatePasswordResponse,
+    ApiError,
+    { meetingId: number; password: string }
+  >({
+    mutationFn: ({ meetingId: id, password }) => validatePassword(id, password),
     onSuccess: () => {
       setIsPasswordValid(true)
       setLastCheckedPassword(debouncedPassword)
@@ -62,11 +77,14 @@ function PasswordPopup() {
       meetingId &&
       debouncedPassword !== lastCheckedPassword
     ) {
-      validatePassword.mutate({ meetingId, password: debouncedPassword })
+      validatePasswordMutation.mutate({
+        meetingId,
+        password: debouncedPassword,
+      })
     } else if (debouncedPassword !== lastCheckedPassword) {
       setIsPasswordValid(false)
     }
-  }, [debouncedPassword, meetingId, lastCheckedPassword, validatePassword])
+  }, [debouncedPassword, meetingId, lastCheckedPassword])
 
   useEffect(() => {
     if (!isOpen) {
@@ -76,6 +94,13 @@ function PasswordPopup() {
     }
   }, [isOpen, reset])
 
+  useEffect(
+    () => () => {
+      closePopup()
+    },
+    [closePopup],
+  )
+
   const handleConfirm = useCallback(async () => {
     if (isPasswordValid && meetingId) {
       setIsReentering(true)
@@ -83,9 +108,13 @@ function PasswordPopup() {
         const success = await reenterMeeting(meetingId, passwordValue)
         if (success) {
           if (onConfirm) {
-            onConfirm(passwordValue)
+            await onConfirm(passwordValue)
           }
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, 500)
+          })
           closePopup()
+          router.push('/meeting-home')
         } else {
           throw new Error('재입장 실패')
         }
@@ -96,11 +125,12 @@ function PasswordPopup() {
         setIsReentering(false)
       }
     }
-  }, [isPasswordValid, meetingId, passwordValue, onConfirm, closePopup])
+  }, [isPasswordValid, meetingId, passwordValue, onConfirm, closePopup, router])
 
   const errorMessage =
     errors.password?.message ||
-    (validatePassword.isError && debouncedPassword === lastCheckedPassword
+    (validatePasswordMutation.isError &&
+    debouncedPassword === lastCheckedPassword
       ? '틀린 암호입니다.'
       : null)
 
@@ -109,12 +139,27 @@ function PasswordPopup() {
       isOpen={isOpen}
       cancelText=""
       confirmText={isReentering ? '재입장 중...' : '입장하기'}
-      onClose={closePopupAndRedirect}
+      onClose={() => {
+        closePopup()
+        if (shouldRedirectOnClose) {
+          router.push('/')
+        }
+      }}
       onConfirm={handleConfirm}
-      title="다시 오셨네요!"
+      title={
+        <>
+          {nickname || ''}님<br />
+          다시 오셨네요!
+        </>
+      }
       hasCloseButton
       confirmDisabled={!isPasswordValid || isReentering}
     >
+      <p className="text-center text-body1 text-gray-500 mb-4">
+        진입을 위해서
+        <br />
+        모임 암호를 입력해주세요.
+      </p>
       <TextInput
         name="password"
         control={control}
@@ -123,7 +168,7 @@ function PasswordPopup() {
         success={isPasswordValid && debouncedPassword === lastCheckedPassword}
         successMessage="비밀번호 입력 완료!"
         error={errorMessage}
-        checking={validatePassword.isPending}
+        checking={validatePasswordMutation.isPending}
       />
     </Popup>
   )

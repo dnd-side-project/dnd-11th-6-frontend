@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import createMeeting from '@/apis/meetingApi'
+import { createMeeting } from '@/apis/meetingApi'
 import useZodForm from '@/hooks/useZodForm'
 import {
   MeetingDateFormModel,

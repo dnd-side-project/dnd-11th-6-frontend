@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -6,11 +6,30 @@ import { Button } from '@/components/Button'
 import Tooltip from '@/components/Tooltip'
 import useMeetStore from '@/stores/useMeetStore'
 import useTooltipStore from '@/stores/useTooltipStore'
+import Share from 'public/icons/share.svg'
 import Logo from 'public/logo.svg'
 
 function MeetingShare() {
   const { activeTooltip, showTooltip, hideTooltip } = useTooltipStore()
   const { meetingResult } = useMeetStore()
+  const [shareAdminKey, setShareAdminKey] = useState(false)
+  const [copyStatus, setCopyStatus] = useState('공유하기')
+
+  const handleShare = () => {
+    const meetingLink = `https://get-snappy.co.kr/entry-meeting/${meetingResult?.meetingLink}`
+    let shareText = `우리 모임에서 같이 스냅피하자!\n${meetingLink}\n`
+    shareText += `시작 시간: ${meetingResult?.startDate}\n`
+    shareText += `종료 시간: ${meetingResult?.endDate}\n`
+    shareText += `비밀번호: ${meetingResult?.password}\n`
+    if (shareAdminKey) {
+      shareText += `관리자키: ${meetingResult?.leaderAuthKey}\n`
+    }
+
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopyStatus('복사완료!')
+      setTimeout(() => setCopyStatus('공유하기'), 2000)
+    })
+  }
 
   if (!meetingResult) {
     return null
@@ -103,11 +122,16 @@ function MeetingShare() {
             <span className="text-sm font-medium mr-2">
               {meetingResult.leaderAuthKey}
             </span>
-            <input
-              type="checkbox"
-              className="form-checkbox h-4 w-4 text-blue-600"
-            />
-            <span className="text-sm text-gray-600 ml-1">함께 공유하기</span>
+
+            <label className="text-sm text-gray-600 ml-1">
+              <input
+                type="checkbox"
+                checked={shareAdminKey}
+                onChange={(e) => setShareAdminKey(e.target.checked)}
+                className="mr-2"
+              />
+              함께 공유하기
+            </label>
           </div>
         </div>
         <Button
@@ -116,7 +140,13 @@ function MeetingShare() {
           fullWidth
         >
           <Image src="../icons/share.svg" width={20} height={20} alt="share" />
-          <p className="text-black font-semibold text-base ml-2">공유하기</p>
+          <button
+            onClick={handleShare}
+            className="text-black font-semibold text-base ml-2"
+          >
+            <Image src={Share} alt="share" className="mr-2" />
+            {copyStatus}
+          </button>
         </Button>
       </div>
       <Link href="/entry-meeting">

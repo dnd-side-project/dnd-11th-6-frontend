@@ -53,8 +53,9 @@ function MeetingTheme() {
                   <Image
                     src={previewImage}
                     alt="Selected"
-                    width={150}
-                    height={150}
+                    // width={150}
+                    // height={150}
+                    layout="fill"
                     objectFit="cover"
                   />
                 ) : (
